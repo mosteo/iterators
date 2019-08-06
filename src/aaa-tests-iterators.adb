@@ -16,11 +16,11 @@ begin
    begin
       loop
          declare
-            Ref : constant Reference := Seq.Next;
+            Pos : constant Cursor'Class := Seq.Next;
          begin
-            exit when Ref.Element = null;
+            exit when not Pos.Has_Element;
             Count := Count + 1;
-            pragma Assert (Count = Ref);
+            pragma Assert (Count = Pos.Get);
          end;
       end loop;
    end;
@@ -38,6 +38,16 @@ begin
    for I of List'(Seq & Collect) loop
       null;
    end loop;
+
+   --  Test readonliness
+   declare
+      It : Iterator'Class := Just (1);
+   begin
+      It.Next.Ref := 2; -- Must fail with a Constraint_Error
+      raise Program_Error with "Should not be reached";
+   exception
+      when Constraint_Error => null;
+   end;
 
    Put_Line ("OK");
 

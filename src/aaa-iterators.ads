@@ -4,21 +4,43 @@ generic
    type Any_Element (<>) is private;
 package AAA.Iterators is
 
+   ----------------
+   -- References --
+   ----------------
+
    type Reference (Element : access Any_Element) is limited null record with
      Implicit_Dereference => Element;
 
    type Const_Ref (Element : access constant Any_Element) is limited null record with
      Implicit_Dereference => Element;
 
+   ------------
+   -- Cursor --
+   ------------
+
    type Cursor (<>) is tagged private;
 
---     function Get (This : Cursor) return Const_Ref;
---
---     function Ref (This : Cursor) return Reference;
+   function Has_Element (This : Cursor) return Boolean;
+
+   function Is_Empty (This : Cursor) return Boolean is (not This.Has_Element);
+
+   function Get (This : Cursor) return Const_Ref;
+
+   function Ref (This : Cursor) return Reference;
+
+   function New_Cursor (Element : access Any_Element) return Cursor;
+
+   function New_Const_Cursor (Element : access constant Any_Element) return Cursor;
+
+   function New_Empty_Cursor return Cursor;
+
+   --------------
+   -- Iterator --
+   --------------
 
    type Iterator is abstract tagged private;
 
-   function Next (This : in out Iterator) return Reference is abstract;
+   function Next (This : in out Iterator) return Cursor'Class is abstract;
 
    function "&" (L, R : Iterator'Class) return Iterator'Class;
 
@@ -41,9 +63,15 @@ package AAA.Iterators is
 
 private
 
-   type Cursor (Read_Only : Boolean) is tagged null record;
+   type Element_Ptr       is access all Any_Element;
+   type Element_Const_Ptr is access constant Any_Element;
 
-   function No_Element return Reference is (Element => null);
+   type Cursor (Read_Only : Boolean) is tagged record
+      case Read_Only is
+         when True =>  Const_Ptr : Element_Const_Ptr;
+         when False => Ptr       : Element_Ptr;
+      end case;
+   end record;
 
    type Proto_Iterator is tagged null record;
 

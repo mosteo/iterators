@@ -1,6 +1,55 @@
 package body AAA.Iterators is
 
    -----------------
+   -- Has_Element --
+   -----------------
+
+   function Has_Element (This : Cursor) return Boolean is
+     (This.Get.Element /= null);
+
+   ---------
+   -- Get --
+   ---------
+
+   function Get (This : Cursor) return Const_Ref is
+     (Element => (if This.Read_Only
+                  then This.Const_Ptr
+                  else This.Ptr));
+
+   ---------
+   -- Ref --
+   ---------
+
+   function Ref (This : Cursor) return Reference is
+     (Element => (if This.Read_Only
+                  then raise Constraint_Error with "Iterator is read-only"
+                  else This.Ptr));
+
+   ----------------
+   -- New_Cursor --
+   ----------------
+
+   function New_Cursor (Element : access Any_Element) return Cursor is
+     (Cursor'(Read_Only => False,
+              Ptr       => Element_Ptr (Element)));
+
+   ----------------------
+   -- New_Const_Cursor --
+   ----------------------
+
+   function New_Const_Cursor (Element : access constant Any_Element) return Cursor is
+     (Cursor'(Read_Only => True,
+              Const_Ptr  => Element_Const_Ptr (Element)));
+
+   ----------------------
+   -- New_Empty_Cursor --
+   ----------------------
+
+   function New_Empty_Cursor return Cursor is
+     (Cursor'(Read_Only => True,
+              Const_Ptr => null));
+
+   -----------------
    -- As_Iterator --
    -----------------
 
@@ -36,11 +85,11 @@ package body AAA.Iterators is
    end record;
 
    overriding
-   function Next (This : in out Append_Iterator) return Reference is
-      Prev : constant Reference := This.Upstream.Next;
+   function Next (This : in out Append_Iterator) return Cursor'Class is
+      Prev : constant Cursor'Class := This.Upstream.Next;
    begin
-      if Prev.Element /= null then
-         return (Element => Prev.Element);
+      if Prev.Has_Element then
+         return Prev;
       else
          return This.Extra.As_Iterator.Next;
       end if;
@@ -59,14 +108,14 @@ package body AAA.Iterators is
    is new Iterator with null record;
 
    overriding
-   function Next (This : in out Filter_Iterator) return Reference is
+   function Next (This : in out Filter_Iterator) return Cursor'Class is
    begin
       loop
          declare
-            Ref : constant Reference := This.Upstream.Next;
+            Pos : constant Cursor'Class := This.Upstream.Next;
          begin
-            if Ref.Element = null or else This.Tester (Ref) then
-               return Result : constant Reference := (Element => Ref.Element);
+            if Pos.Is_Empty or else This.Tester (Pos.Get) then
+               return Pos;
             else
                -- Skip non-complying value
                null;
@@ -91,16 +140,17 @@ package body AAA.Iterators is
    end record;
 
    overriding
-   function Next (This : in out Just_Iterator) return Reference is
+   function Next (This : in out Just_Iterator) return Cursor'Class is
    begin
       if not This.Given then
-         return Ref : constant Reference :=
-           (Element => This.Element.Reference.Element)
+         return Pos : constant Cursor :=
+           New_Const_Cursor (This.Element.Reference.Element.all'Access)
+           --  Bypass accessibility check
          do
             This.Given := True;
          end return;
       else
-         return No_Element;
+         return New_Empty_Cursor;
       end if;
    end Next;
 

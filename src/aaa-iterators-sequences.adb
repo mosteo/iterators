@@ -19,10 +19,10 @@ package body AAA.Iterators.Sequences is
    begin
       loop
          declare
-            Ref : constant Iterators.Reference := RW_It.Next;
+            Pos : constant Cursor'Class := RW_It.Next;
          begin
-            exit when Ref.Element = null;
-            Result.Append (Ref);
+            exit when Pos.Is_Empty;
+            Result.Append (Pos.Get);
          end;
       end loop;
 
