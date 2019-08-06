@@ -1,0 +1,10 @@
+aggregate project Dev is
+
+   for Project_Path use ("deps/aaa");
+
+   for Project_Files use ("aaa-iterators.gpr",
+                          "deps/aaa/aaa.gpr");
+
+   for Create_Missing_Dirs use "True";
+
+end Dev;

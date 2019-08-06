@@ -1,5 +1,9 @@
-# Object file
-*.o
-
-# Ada Library Information
 *.ali
+*.db
+*.o
+*-loc.xml
+
+bin
+gnatinspect.*
+lib
+obj

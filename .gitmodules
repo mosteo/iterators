@@ -1,0 +1,3 @@
+[submodule "deps/aaa"]
+	path = deps/aaa
+	url = https://github.com/mosteo/aaa.git
