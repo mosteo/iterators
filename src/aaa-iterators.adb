@@ -29,17 +29,17 @@ package body AAA.Iterators is
    -- New_Cursor --
    ----------------
 
-   function New_Cursor (Element : access Any_Element) return Cursor is
+   function New_Cursor (Element : aliased in out Any_Element) return Cursor is
      (Cursor'(Read_Only => False,
-              Ptr       => Element_Ptr (Element)));
+              Ptr       => Element'Access));
 
    ----------------------
    -- New_Const_Cursor --
    ----------------------
 
-   function New_Const_Cursor (Element : access constant Any_Element) return Cursor is
+   function New_Const_Cursor (Element : aliased Any_Element) return Cursor is
      (Cursor'(Read_Only => True,
-              Const_Ptr  => Element_Const_Ptr (Element)));
+              Const_Ptr  => Element'Access));
 
    ----------------------
    -- New_Empty_Cursor --
@@ -144,8 +144,7 @@ package body AAA.Iterators is
    begin
       if not This.Given then
          return Pos : constant Cursor :=
-           New_Const_Cursor (This.Element.Reference.Element.all'Access)
-           --  Bypass accessibility check
+           New_Const_Cursor (This.Element.Reference)
          do
             This.Given := True;
          end return;

@@ -28,9 +28,9 @@ package AAA.Iterators is
 
    function Ref (This : Cursor) return Reference;
 
-   function New_Cursor (Element : access Any_Element) return Cursor;
+   function New_Cursor (Element : aliased in out Any_Element) return Cursor;
 
-   function New_Const_Cursor (Element : access constant Any_Element) return Cursor;
+   function New_Const_Cursor (Element : aliased Any_Element) return Cursor;
 
    function New_Empty_Cursor return Cursor;
 

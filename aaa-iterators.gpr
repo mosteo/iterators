@@ -7,12 +7,13 @@ project AAA.Iterators is
    for Exec_Dir use "bin";
    for Create_Missing_Dirs use "True";
 
-   for Main use ("aaa-tests-iterators.adb");
+   for Main use ("aaa-tests-iterator_violations.adb",
+                 "aaa-tests-iterators.adb");
 
-   package Builder renames AAA.Builder;
+   package Builder renames Aaa.Builder;
 
-   package Compiler renames AAA.Compiler;
+   package Compiler renames Aaa.Compiler;
 
-   package Binder renames AAA.Binder;
+   package Binder renames Aaa.Binder;
 
 end AAA.Iterators;
