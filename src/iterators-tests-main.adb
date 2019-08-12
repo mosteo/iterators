@@ -1,10 +1,10 @@
-with AAA.Iterators.Sequences;
+with Iterators.Root.Sequences;
 
 with Ada.Text_IO; use Ada.Text_IO;
 
-procedure AAA.Tests.Iterators is
+procedure Iterators.Tests.Main is
 
-   package Int_Iterators is new AAA.Iterators (Integer); use Int_Iterators;
+   package Int_Iterators is new Iterators.Root (Integer); use Int_Iterators;
    package Int_Sequences is new Int_Iterators.Sequences; use Int_Sequences;
 
 begin
@@ -90,4 +90,4 @@ begin
 
    Put_Line ("OK");
 
-end AAA.Tests.Iterators;
+end Iterators.Tests.Main;

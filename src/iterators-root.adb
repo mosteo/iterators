@@ -1,4 +1,4 @@
-package body AAA.Iterators is
+package body Iterators.Root is
 
    -----------------
    -- Has_Element --
@@ -158,4 +158,4 @@ package body AAA.Iterators is
                      Element => Elem_Holders.To_Holder (Element),
                      Given   => <>));
 
-end AAA.Iterators;
+end Iterators.Root;

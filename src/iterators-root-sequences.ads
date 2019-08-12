@@ -1,7 +1,7 @@
 with Ada.Containers.Indefinite_Doubly_Linked_Lists;
 
 generic
-package AAA.Iterators.Sequences is
+package Iterators.Root.Sequences is
 
    -----------
    -- Lists --
@@ -26,4 +26,4 @@ package AAA.Iterators.Sequences is
                  return List;
    --  To be used with Collect
 
-end AAA.Iterators.Sequences;
+end Iterators.Root.Sequences;

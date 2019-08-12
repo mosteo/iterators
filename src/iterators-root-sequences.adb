@@ -1,4 +1,4 @@
-package body AAA.Iterators.Sequences is
+package body Iterators.Root.Sequences is
 
    -------------
    -- Collect --
@@ -90,4 +90,4 @@ package body AAA.Iterators.Sequences is
    end Const_Iter;
 
 
-end AAA.Iterators.Sequences;
+end Iterators.Root.Sequences;

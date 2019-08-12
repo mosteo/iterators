@@ -2,7 +2,7 @@ with AAA.Containers.Indefinite_Holders;
 
 generic
    type Any_Element (<>) is private;
-package AAA.Iterators is
+package Iterators.Root with Preelaborate is
 
    ----------------
    -- References --
@@ -92,4 +92,4 @@ private
 
    function Upstream (This : in out Iterator'Class) return Iterator_Reference;
 
-end AAA.Iterators;
+end Iterators.Root;
