@@ -1,8 +1,7 @@
-with AAA.Traits.Containers;
-
 with Ada.Containers.Vectors;
 
 with Iterators.Root.Adapters;
+with Iterators.Traits.Containers;
 
 generic
    with package Ada_Containers is new Ada.Containers.Vectors (<>);
@@ -12,38 +11,31 @@ package Iterators.From.Vectors with Preelaborate is
 
    package Core is new Iterators.Root (Ada_Containers.Element_Type);
 
-   function Const_Iter (C : aliased Container) return Core.Iterator'Class;
-
-   function Iter (C : aliased in out Container) return Core.Iterator'Class;
-
-private
-
-   function Ref  (C   : aliased in out Container;
-                  Pos : Ada_Containers.Cursor)
-                  return not null access Ada_Containers.Element_Type is
-      (C.Reference (Pos).Element);
-
-   function CRef (C   : aliased Container;
-                  Pos : Ada_Containers.Cursor)
-                  return not null access constant Ada_Containers.Element_Type is
-      (C.Constant_Reference (Pos).Element);
-
-   package Container_Traits is new AAA.Traits.Containers
+   package Container_Traits is new Traits.Containers
      (Container                   => Container,
-      Element                     => Ada_Containers.Element_Type,
+      Element_Type                => Ada_Containers.Element_Type,
+      Append                      => Ada_Containers.Append,
       Cursor                      => Ada_Containers.Cursor,
       First                       => Ada_Containers.First,
       Next                        => Ada_Containers.Next,
       Has_Element                 => Ada_Containers.Has_Element,
-      Reference                   => Ref,
-      Constant_Reference          => CRef);
+      Reference_Type              => Ada_Containers.Reference_Type,
+      Reference                   => Ada_Containers.Reference,
+      Constant_Reference_Type     => Ada_Containers.Constant_Reference_Type,
+      Constant_Reference          => Ada_Containers.Constant_Reference);
 
    package Adapters is new Core.Adapters (Container_Traits);
 
    function Const_Iter (C : aliased Container) return Core.Iterator'Class
-     renames Adapters.Const_Iter;
+                        renames Adapters.Const_Iter;
 
    function Iter (C : aliased in out Container) return Core.Iterator'Class
-     renames Adapters.Iter;
+                  renames Adapters.Iter;
+
+   function Collect return Container renames Adapters.Collect;
+
+   function "&" (L : Core.Iterator'Class;
+                 R : Container)
+                 return Container renames Adapters."&";
 
 end Iterators.From.Vectors;

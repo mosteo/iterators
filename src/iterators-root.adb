@@ -1,3 +1,5 @@
+with GNAT.IO; use GNAT.IO;
+
 package body Iterators.Root is
 
    ------------------------------------
@@ -124,7 +126,12 @@ package body Iterators.Root is
    function "&" (L, R : Iterator'Class) return Iterator'Class is
    begin
       return Result : Iterator'Class := R do
-         Result.Up := L.To_Holder;
+         if Result.Up.Is_Empty then
+            Result.Up := L.To_Holder;
+         else
+            Result.Up :=
+              To_Holder (L & Iterator'Class (Result.Up.Reference.Element.all));
+         end if;
       end return;
    end "&";
 
@@ -208,5 +215,23 @@ package body Iterators.Root is
      (Just_Iterator'(Up      => <>,
                      Element => Elem_Holders.To_Holder (Element),
                      Given   => <>));
+
+   -----------
+   -- No_Op --
+   -----------
+
+   type No_Op_Iterator is new Iterator with null record;
+
+   overriding
+   function Next (This : in out No_Op_Iterator) return Cursor'Class is
+   begin
+      Put_Line ("ASDF");
+      return This.Upstream.Next;
+   end Next;
+
+   function No_Op return Iterator'Class is
+   begin
+      return No_Op_Iterator'(Up => <>);
+   end No_Op;
 
 end Iterators.Root;

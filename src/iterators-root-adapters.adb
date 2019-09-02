@@ -2,6 +2,40 @@ with Ada.Unchecked_Conversion;
 
 package body Iterators.Root.Adapters is
 
+   -------------
+   -- Collect --
+   -------------
+
+   function Collect return Container is
+      Empty : Container with Warnings => Off;
+      --  Hoping that this will perform the expected default initialization...
+   begin
+      return Empty;
+   end Collect;
+
+   ---------
+   -- "&" --
+   ---------
+
+   function "&" (L : Iterator'Class;
+                 R : Container)
+                 return Container
+   is
+      Result : Container      := R;
+      RW_It  : Iterator'Class := L;
+   begin
+      loop
+         declare
+            Pos : constant Cursor'Class := RW_It.Next;
+         begin
+            exit when Pos.Is_Empty;
+            Containers.Append (Result, Pos.Get, 1);
+         end;
+      end loop;
+
+      return Result;
+   end "&";
+
    -------------------
    -- To_Const_Iter --
    -------------------
@@ -16,7 +50,7 @@ package body Iterators.Root.Adapters is
    begin
       if Containers.Has_Element (This.Pos) then
          return Pos : constant Cursor :=
-           New_Const_Cursor (Containers.Constant_Reference (This.Col.all, This.Pos).all)
+           New_Const_Cursor (Containers.Constant_Reference (This.Col.all, This.Pos).Element.all)
          do
             This.Pos := Containers.Next (This.Pos);
          end return;
@@ -44,7 +78,7 @@ package body Iterators.Root.Adapters is
    begin
       if Containers.Has_Element (This.Pos) then
          return Pos : constant Cursor :=
-           New_Cursor (Containers.Reference (This.Col.all, This.Pos).all)
+           New_Cursor (Containers.Reference (This.Col.all, This.Pos).Element.all)
          do
             This.Pos := Containers.Next (This.Pos);
          end return;

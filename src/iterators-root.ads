@@ -77,6 +77,8 @@ package Iterators.Root with Preelaborate is
      (Tester : access function (Element : Any_Element) return Boolean)
       return Iterator'Class;
 
+   function No_Op return Iterator'Class;
+
 --     function Restart return Iterator'Class;
 
    -------------

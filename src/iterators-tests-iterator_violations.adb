@@ -1,30 +1,33 @@
 --  Situations in which accessibility cannot prevent misuse of iterators.
 
-with Iterators.Root.Sequences;
-
+with Ada.Containers.Vectors;
 with Ada.Text_IO; use Ada.Text_IO;
+
+with Iterators.From.Vectors;
 
 procedure Iterators.Tests.Iterator_Violations is
 
-   package Int_Iterators is new Iterators.Root (Integer); use Int_Iterators;
-   package Int_Sequences is new Int_Iterators.Sequences; use Int_Sequences;
+   package Int_Vectors is new Ada.Containers.Vectors (Positive, Integer);
+   package Int_Iters is new From.Vectors (Int_Vectors);
+   use Int_Iters;
+   use Int_Iters.Core;
 
    --------------
    -- Dangling --
    --------------
 
    function Dangling return Iterator'Class is
-      L : List;
+      L : Container;
    begin
       L.Append (1);
       L.Append (2);
       L.Append (3);
-      return L.Iter;
+      return Iter (L);
    end Dangling;
 
 begin
    --  Will bomb because the original list is out of scope
-   for Int of List'(Dangling & Collect) loop
+   for Int of Container'(Dangling & Collect) loop
       Put_Line (Int'Img);
    end loop;
 

@@ -1,11 +1,15 @@
-with Iterators.Root.Sequences;
+with Ada.Containers.Vectors;
 
 with Ada.Text_IO; use Ada.Text_IO;
 
+with Iterators.From.Vectors;
+
 procedure Iterators.Tests.Main is
 
-   package Int_Iterators is new Iterators.Root (Integer); use Int_Iterators;
-   package Int_Sequences is new Int_Iterators.Sequences; use Int_Sequences;
+   package Int_Vectors is new Ada.Containers.Vectors (Positive, Integer);
+   package Int_Iters is new From.Vectors (Int_Vectors);
+   use Int_Iters;
+   use Int_Iters.Core;
 
    Seq : Iterator'Class := Just (1) & 2 & 3;
 
@@ -26,14 +30,14 @@ begin
       end loop;
 
       --  Test "of" with collected list
-      for I of List'(Seq & Collect) loop
+      for I of Container'(Seq & Collect) loop
          null;
       end loop;
    end;
 
    --  Check composition
    declare
-      L : constant Int_Sequences.List := Just (1) & 2 & 3 & Collect;
+      L : constant Container := Just (1) & 2 & 3 & Collect;
    begin
       pragma Assert (L.First_Element = 1 and then L.Last_Element = 3);
    end;
@@ -51,8 +55,8 @@ begin
    --  Test iteration over plain list
    declare
       Count : Natural := 0;
-      L : Int_Sequences.List := Just (1) & 2 & 3 & Collect;
-      I : Iterator'Class     := L.Iter;
+      L : Container  := Just (1) & 2 & 3 & Collect;
+      I : Iterator'Class     := Iter (L);
    begin
       loop
          declare
@@ -66,7 +70,7 @@ begin
 
       --  Test modification through iterators:
       declare
-         I : Iterator'Class := L.Iter;
+         I : Iterator'Class := Iter (L);
       begin
          I.Next.Ref := 4;
          pragma Assert (L.First_Element = 4);
@@ -76,8 +80,8 @@ begin
    --  Constant iteration over plain list
    declare
       Count : Natural := 0;
-      L : constant Int_Sequences.List := Just (1) & 2 & 3 & Collect;
-      I : Iterator'Class     := L.Const_Iter;
+      L : constant Container := Just (1) & 2 & 3 & Collect;
+      I : Iterator'Class     := Const_Iter (L);
    begin
       loop
          declare
@@ -101,13 +105,9 @@ begin
    end;
 
    --  Constant iteration with Ada "of" notation
-   declare
-      Seq   : Iterator'Class := Just (1) & 2 & 3;
-   begin
-      for I of Seq loop
-         Put_Line (I'Img);
-      end loop;
-   end;
+   for I of Iterator'Class'(Just (1) & 2 & 3) loop
+      Put_Line (I'Img);
+   end loop;
 
    Put_Line ("OK");
 
