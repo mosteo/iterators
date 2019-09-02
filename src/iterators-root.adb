@@ -1,5 +1,54 @@
 package body Iterators.Root is
 
+   ------------------------------------
+   -- ADA STANDARD ITERATION SUPPORT --
+   ------------------------------------
+
+   package Ada_Iterators is
+
+      type Ada_Iterator is new Ada_Iterator_Interfaces.Forward_Iterator with record
+         Base : access Iterator'Class;
+      end record;
+
+      overriding function First (This : Ada_Iterator) return Cursor is
+        (Cursor (This.Base.Next));
+
+      overriding function Next (This       : Ada_Iterator;
+                                Pos_Unused : Cursor) return Cursor is
+         (Cursor (This.Base.Next));
+
+   end Ada_Iterators;
+
+   -------------
+   -- Iterate --
+   -------------
+
+   function Iterate (This : aliased Iterator)
+                     return Ada_Iterator_Interfaces.Forward_Iterator'Class is
+     (Ada_Iterators.Ada_Iterator'(Base => This'Unrestricted_Access));
+   --  We need to store a RW pointer, so we must "cheat" here. If Ada iterators
+   --  supported several signatures for ro/rw iterate this would not be needed.
+   --  Even standard gnat containers use Unrestricted_Access for their
+   --  iterators.
+
+   -------------------
+   -- Get_Const_Ref --
+   -------------------
+
+   function Get_Const_Ref (This : aliased Iterator'Class;
+                           Pos  : Cursor'Class) return Const_Ref is (Pos.Get);
+
+   -----------------
+   -- Get_Var_Ref --
+   -----------------
+
+   function Get_Var_Ref (This : aliased in out Iterator'Class;
+                         Pos  : Cursor'Class) return Reference is (Pos.Ref);
+
+   --------------------
+   -- REST OF THINGS --
+   --------------------
+
    -----------------
    -- Has_Element --
    -----------------
@@ -46,8 +95,11 @@ package body Iterators.Root is
    ----------------------
 
    function New_Empty_Cursor return Cursor is
-     (Cursor'(Read_Only => True,
-              Const_Ptr => null));
+     (Cursor'(Read_Only => False,
+              Ptr       => null));
+   --  This is RW cursor because it is common to both RO/RW iterators. This is
+   --  OK because nobody should try to access the element of an empty cursor
+   --  anyway (and that will result in an access check failed).
 
    -----------------
    -- As_Iterator --
@@ -125,8 +177,7 @@ package body Iterators.Root is
    end Next;
 
    function Filter
-     (I      : Iterator'Class;
-      Tester : access function (Element : Any_Element) return Boolean)
+     (Tester : access function (Element : Any_Element) return Boolean)
       return Iterator'Class is
      (raise Program_Error);
 
@@ -144,7 +195,7 @@ package body Iterators.Root is
    begin
       if not This.Given then
          return Pos : constant Cursor :=
-           New_Const_Cursor (This.Element.Reference)
+           New_Cursor (This.Element.Reference)
          do
             This.Given := True;
          end return;

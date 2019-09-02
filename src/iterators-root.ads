@@ -1,5 +1,7 @@
 with AAA.Containers.Indefinite_Holders;
 
+with Ada.Iterator_Interfaces;
+
 generic
    type Any_Element (<>) is private;
 package Iterators.Root with Preelaborate is
@@ -34,15 +36,36 @@ package Iterators.Root with Preelaborate is
 
    function New_Empty_Cursor return Cursor;
 
+   package Ada_Iterator_Interfaces is new Ada.Iterator_Interfaces (Cursor, Has_Element);
+
    --------------
    -- Iterator --
    --------------
 
-   type Iterator is abstract tagged private;
+   type Iterator is abstract tagged private with
+     Constant_Indexing => Get_Const_Ref,
+     Variable_Indexing => Get_Var_Ref,
+     Default_Iterator => Iterate,
+     Iterator_Element => Any_Element;
 
    function Next (This : in out Iterator) return Cursor'Class is abstract;
 
    function "&" (L, R : Iterator'Class) return Iterator'Class;
+
+   ------------------------
+   -- Standard Iteration --
+   ------------------------
+
+   --  Support for "of" notation:
+
+   function Iterate (This : aliased Iterator)
+                     return Ada_Iterator_Interfaces.Forward_Iterator'Class;
+
+   function Get_Const_Ref (This : aliased Iterator'Class;
+                           Pos  : Cursor'Class) return Const_Ref;
+
+   function Get_Var_Ref (This : aliased in out Iterator'Class;
+                         Pos  : Cursor'Class) return Reference;
 
    ---------------
    -- Operators --
@@ -51,15 +74,18 @@ package Iterators.Root with Preelaborate is
    function "&" (L : Iterator'Class; R : Any_Element) return Iterator'Class;
 
    function Filter
-     (I      : Iterator'Class;
-      Tester : access function (Element : Any_Element) return Boolean)
+     (Tester : access function (Element : Any_Element) return Boolean)
       return Iterator'Class;
+
+--     function Restart return Iterator'Class;
 
    -------------
    -- Sources --
    -------------
 
    function Just (Element : Any_Element) return Iterator'Class;
+
+   --  See also the Iterators.From.* packages.
 
 private
 

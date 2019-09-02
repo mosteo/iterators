@@ -7,6 +7,8 @@ procedure Iterators.Tests.Main is
    package Int_Iterators is new Iterators.Root (Integer); use Int_Iterators;
    package Int_Sequences is new Int_Iterators.Sequences; use Int_Sequences;
 
+   Seq : Iterator'Class := Just (1) & 2 & 3;
+
 begin
    --  Check manual iteration
    declare
@@ -37,14 +39,14 @@ begin
    end;
 
    --  Test readonliness
-   declare
-      It : Iterator'Class := Just (1);
-   begin
-      It.Next.Ref := 2; -- Must fail with a Constraint_Error
-      raise Program_Error with "Should not be reached";
-   exception
-      when Constraint_Error => null;
-   end;
+--     declare
+--        It : Iterator'Class := Just (1);
+--     begin
+--        It.Next.Ref := 2; -- Must fail with a Constraint_Error
+--        raise Program_Error with "Should not be reached";
+--     exception
+--        when Constraint_Error => null;
+--     end;
 
    --  Test iteration over plain list
    declare
@@ -85,6 +87,25 @@ begin
             Count := Count + 1;
             pragma Assert (Count = Pos.Get);
          end;
+      end loop;
+   end;
+
+   --  Variable iteration with Ada "of" notation
+   declare
+      Seq   : Iterator'Class := Just (1) & 2 & 3;
+   begin
+      for I of Seq loop
+         Put_Line (I'Img);
+         I := I + 1;
+      end loop;
+   end;
+
+   --  Constant iteration with Ada "of" notation
+   declare
+      Seq   : Iterator'Class := Just (1) & 2 & 3;
+   begin
+      for I of Seq loop
+         Put_Line (I'Img);
       end loop;
    end;
 
