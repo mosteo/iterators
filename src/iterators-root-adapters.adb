@@ -2,12 +2,6 @@ with Ada.Unchecked_Conversion;
 
 package body Iterators.Root.Adapters is
 
-   type Elem_Ptr_Src is access all Containers.Element;
-   type Elem_Ptr_Dst is access all Any_Element;
-
-   function Same is new Ada.Unchecked_Conversion
-     (Elem_Ptr_Src, Elem_Ptr_Dst);
-
    -------------------
    -- To_Const_Iter --
    -------------------
@@ -21,7 +15,8 @@ package body Iterators.Root.Adapters is
    function Next (This : in out Const_Iterator) return Cursor'Class is
    begin
       if Containers.Has_Element (This.Pos) then
-         return Pos : constant Cursor := New_Const_Cursor (Same (Containers.Constant_Reference (This.Col.all, This.Pos)).all)
+         return Pos : constant Cursor :=
+           New_Const_Cursor (Containers.Constant_Reference (This.Col.all, This.Pos).all)
          do
             This.Pos := Containers.Next (This.Pos);
          end return;
@@ -48,7 +43,8 @@ package body Iterators.Root.Adapters is
    function Next (This : in out Var_Iterator) return Cursor'Class is
    begin
       if Containers.Has_Element (This.Pos) then
-         return Pos : constant Cursor := New_Cursor (Same (Containers.Reference (This.Col.all, This.Pos)).all)
+         return Pos : constant Cursor :=
+           New_Cursor (Containers.Reference (This.Col.all, This.Pos).all)
          do
             This.Pos := Containers.Next (This.Pos);
          end return;

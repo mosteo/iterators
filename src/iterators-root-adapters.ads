@@ -1,7 +1,8 @@
 with AAA.Traits.Containers;
 
 generic
-   with package Containers is new AAA.Traits.Containers (<>);
+   with package Containers is new AAA.Traits.Containers (Element => Any_Element,
+                                                         others  => <>);
 package Iterators.Root.Adapters with Preelaborate is
 
    subtype Container is Containers.Container;

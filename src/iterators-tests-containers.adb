@@ -17,7 +17,7 @@ begin
 
    --  Constant manual iteration
    declare
-      It : Intvecits.Core.Iterator'Class := Intvecits.Adapters.Const_Iter (V);
+      It : Intvecits.Core.Iterator'Class := Intvecits.Const_Iter (V);
       Count : Positive := 1;
    begin
       loop
@@ -33,7 +33,7 @@ begin
 
    --  Variable iteration
    declare
-      It : Intvecits.Core.Iterator'Class := Intvecits.Adapters.Iter (V);
+      It : Intvecits.Core.Iterator'Class := Intvecits.Iter (V);
       Count : Positive := 1;
    begin
       loop

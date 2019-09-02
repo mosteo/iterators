@@ -1,4 +1,5 @@
 *.ali
+*.cgpr
 *.db
 *.o
 *-loc.xml
