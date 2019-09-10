@@ -1,6 +1,9 @@
 --  with GNAT.IO; use GNAT.IO;
 
+with Iterators.Root.Impl_Append;
 with Iterators.Root.Impl_Copy;
+with Iterators.Root.Impl_Filter;
+with Iterators.Root.Impl_Just;
 with Iterators.Root.Impl_No_Op;
 
 package body Iterators.Root is
@@ -117,8 +120,6 @@ package body Iterators.Root is
    function Upstream (This : in out Iterator'Class) return Iterator_Reference is
      (This.Up.As_Iterator);
 
-   package Elem_Holders is new AAA.Containers.Indefinite_Holders (Any_Element);
-
    ---------
    -- "&" --
    ---------
@@ -139,86 +140,20 @@ package body Iterators.Root is
    --  OPERATORS  --
    -----------------
 
-   ------------
-   -- Append --
-   ------------
+   package  Append_Instance is new Impl_Append;
+   function Append (Element : Any_Element) return Iterator'Class
+                    renames Append_Instance.Create;
+   function "&" (L : Iterator'Class; R : Any_Element) return Iterator'Class
+                 renames Append_Instance."&";
 
-   type Append_Iterator is new Iterator with record
-      Extra : Holder; -- A Just iterator
-   end record;
-
-   overriding
-   function Next (This : in out Append_Iterator) return Cursor'Class is
-      Prev : constant Cursor'Class := This.Upstream.Next;
-   begin
-      if Prev.Has_Element then
-         return Prev;
-      else
-         return This.Extra.As_Iterator.Next;
-      end if;
-   end Next;
-
-   function "&" (L : Iterator'Class; R : Any_Element) return Iterator'Class is
-     (Append_Iterator'(Up    => L.To_Holder,
-                       Extra => Just (R).To_Holder));
-
-   ------------
-   -- Filter --
-   ------------
-
-   type Filter_Iterator
-     (Tester : access function (Element : Any_Element) return Boolean)
-   is new Iterator with null record;
-
-   overriding
-   function Next (This : in out Filter_Iterator) return Cursor'Class is
-   begin
-      loop
-         declare
-            Pos : constant Cursor'Class := This.Upstream.Next;
-         begin
-            if Pos.Is_Empty or else This.Tester (Pos.Get) then
-               return Pos;
-            else
-               -- Skip non-complying value
-               null;
-            end if;
-         end;
-      end loop;
-   end Next;
-
+   package  Filter_Instance is new Impl_Filter;
    function Filter
      (Tester : access function (Element : Any_Element) return Boolean)
-      return Iterator'Class is
-     (raise Program_Error);
+      return Iterator'Class is (Filter_Instance.Create (Tester));
 
-   ----------
-   -- Just --
-   ----------
-
-   type Just_Iterator is new Iterator with record
-      Element : Elem_Holders.Holder;
-      Given   : Boolean := False;
-   end record;
-
-   overriding
-   function Next (This : in out Just_Iterator) return Cursor'Class is
-   begin
-      if not This.Given then
-         return Pos : constant Cursor :=
-           New_Cursor (This.Element.Reference)
-         do
-            This.Given := True;
-         end return;
-      else
-         return New_Empty_Cursor;
-      end if;
-   end Next;
-
-   function Just (Element : Any_Element) return Iterator'Class is
-     (Just_Iterator'(Up      => <>,
-                     Element => Elem_Holders.To_Holder (Element),
-                     Given   => <>));
+   package  Just_Instance is new Impl_Just;
+   function Just (Element : Any_Element) return Iterator'Class
+                  renames Just_Instance.Create;
 
    package  Copy_Instance is new Impl_Copy;
    function Copy return Iterator'Class renames Copy_Instance.Create;

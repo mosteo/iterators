@@ -51,6 +51,7 @@ package Iterators.Root with Preelaborate is
    function Next (This : in out Iterator) return Cursor'Class is abstract;
 
    function "&" (L, R : Iterator'Class) return Iterator'Class;
+   --  Basic concatenator of iterators.
 
    ------------------------
    -- Standard Iteration --
@@ -72,27 +73,38 @@ package Iterators.Root with Preelaborate is
    ---------------
 
    function "&" (L : Iterator'Class; R : Any_Element) return Iterator'Class;
+   --  In-place aggregator of individual elements.
+
+   function Append (Element : Any_Element) return Iterator'Class;
+   --  Explicit variant of previous "&" operator.
 
    function Copy return Iterator'Class;
+   --  Copies the preceding iterator, so it is not consumed by subsequent
+   --  operators.
 
    function Filter
      (Tester : access function (Element : Any_Element) return Boolean)
       return Iterator'Class;
+   --  Let only pass elements accepted by the function argument.
 
    function No_Op return Iterator'Class;
+   --  Does nothing.
 
    -------------
    -- Sources --
    -------------
 
    function Just (Element : Any_Element) return Iterator'Class;
-
-   --  See also the Iterators.From.* packages.
+   --  Convert an element into an iterator.
+   --  See also "&" and the Iterators.From.* packages.
 
 private
 
    type Element_Ptr       is access all Any_Element;
    type Element_Const_Ptr is access constant Any_Element;
+
+   package Elem_Holders is new AAA.Containers.Indefinite_Holders (Any_Element);
+   --  Used by some child packages.
 
    type Cursor_Data (Read_Only : Boolean := False) is record
       case Read_Only is
@@ -110,6 +122,8 @@ private
    end record;
 
    type Proto_Iterator is tagged null record;
+   --  Needed to be able to store the upstream iterator without moving
+   --  everything to a separate file.
 
    package Holders is new AAA.Containers.Indefinite_Holders
      (Proto_Iterator'Class);

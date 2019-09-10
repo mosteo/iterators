@@ -1,13 +1,7 @@
-with Ada.Containers.Vectors;
-
 with Ada.Text_IO; use Ada.Text_IO;
-
-with Iterators.From.Vectors;
 
 procedure Iterators.Tests.Main is
 
-   package Int_Vectors is new Ada.Containers.Vectors (Positive, Integer);
-   package Int_Iters is new From.Vectors (Int_Vectors);
    use Int_Iters;
    use Int_Iters.Core;
 
@@ -93,7 +87,25 @@ procedure Iterators.Tests.Main is
          Count := Count + 1;
          pragma Assert (Count = -I);
       end loop;
+
+      --  Alternatively, using the read-write cursor returned by Iter allows
+      --  skipping the intermediate Iterator variable, although it's uglier:
+      for C in Iter (Vec).Iterate loop
+         C.Ref := -C.Ref;
+      end loop;
    end Variable_Of_Iteration;
+
+   procedure Op_Filter is
+      function Is_Even (I : Integer) return Boolean is (I mod 2 = 0);
+   begin
+      pragma Assert
+        (Natural
+           (Container'
+                (Const_Iter (Vec)
+                 & Filter (Is_Even'Access)
+                 & Collect)
+            .Length) = 1);
+   end Op_Filter;
 
 begin
    Manual_Constant_Iteration;
@@ -101,6 +113,8 @@ begin
 
    Constant_Of_Iteration;
    Variable_Of_Iteration;
+
+   Op_Filter;
 
    Put_Line ("OK");
 
