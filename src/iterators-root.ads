@@ -20,7 +20,7 @@ package Iterators.Root with Preelaborate is
    -- Cursor --
    ------------
 
-   type Cursor (<>) is tagged private;
+   type Cursor is tagged private;
 
    function Has_Element (This : Cursor) return Boolean;
 
