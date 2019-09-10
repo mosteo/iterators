@@ -20,8 +20,7 @@ package body Iterators.Root.Impl_Just is
    end Next;
 
    function Create (Element : Any_Element) return Root.Iterator'Class is
-     (Iterator'(Up      => <>,
-                Element => Elem_Holders.To_Holder (Element),
+     (Iterator'(Element => Elem_Holders.To_Holder (Element),
                 Given   => <>));
 
 end Iterators.Root.Impl_Just;

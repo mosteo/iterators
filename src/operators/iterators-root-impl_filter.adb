@@ -1,11 +1,11 @@
 package body Iterators.Root.Impl_Filter is
 
-   type Iterator is new Root.Iterator with record
+   type Operator is new Root.Operator with record
       Tester : Testers;
    end record;
 
    overriding
-   function Next (This : in out Iterator) return Cursor'Class is
+   function Next (This : in out Operator) return Cursor'Class is
    begin
       loop
          declare
@@ -25,10 +25,8 @@ package body Iterators.Root.Impl_Filter is
    -- Create --
    ------------
 
-   function Create
-     (Tester : Testers)
-      return Root.Iterator'Class is
-     (Iterator'(Up     => <>,
+   function Create (Tester : Testers) return Root.Operator'Class is
+     (Operator'(Up     => <>,
                 Tester => Tester));
 
 end Iterators.Root.Impl_Filter;

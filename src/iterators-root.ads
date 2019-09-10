@@ -42,7 +42,7 @@ package Iterators.Root with Preelaborate is
    -- Iterator --
    --------------
 
-   type Iterator is abstract tagged private with
+   type Iterator is interface with
      Constant_Indexing => Get_Const_Ref,
      Variable_Indexing => Get_Var_Ref,
      Default_Iterator => Iterate,
@@ -50,16 +50,13 @@ package Iterators.Root with Preelaborate is
 
    function Next (This : in out Iterator) return Cursor'Class is abstract;
 
-   function "&" (L, R : Iterator'Class) return Iterator'Class;
-   --  Basic concatenator of iterators.
-
    ------------------------
    -- Standard Iteration --
    ------------------------
 
    --  Support for "of" notation:
 
-   function Iterate (This : aliased Iterator)
+   function Iterate (This : aliased Iterator'Class)
                      return Ada_Iterator_Interfaces.Forward_Iterator'Class;
 
    function Get_Const_Ref (This : aliased Iterator'Class;
@@ -68,6 +65,16 @@ package Iterators.Root with Preelaborate is
    function Get_Var_Ref (This : aliased in out Iterator'Class;
                          Pos  : Cursor'Class) return Reference;
 
+   --------------
+   -- Operator --
+   --------------
+
+   type Operator is abstract new Iterator with private;
+
+   function "&" (L : Iterator'Class;
+                 R : Operator'Class) return Iterator'Class;
+   --  Basic concatenator of iterators.
+
    ---------------
    -- Operators --
    ---------------
@@ -75,19 +82,19 @@ package Iterators.Root with Preelaborate is
    function "&" (L : Iterator'Class; R : Any_Element) return Iterator'Class;
    --  In-place aggregator of individual elements.
 
-   function Append (Element : Any_Element) return Iterator'Class;
+   function Append (Element : Any_Element) return Operator'Class;
    --  Explicit variant of previous "&" operator.
 
-   function Copy return Iterator'Class;
+   function Copy return Operator'Class;
    --  Copies the preceding iterator, so it is not consumed by subsequent
    --  operators.
 
    function Filter
      (Tester : access function (Element : Any_Element) return Boolean)
-      return Iterator'Class;
+      return Operator'Class;
    --  Let only pass elements accepted by the function argument.
 
-   function No_Op return Iterator'Class;
+   function No_Op return Operator'Class;
    --  Does nothing.
 
    -------------
@@ -121,17 +128,12 @@ private
       Data : Cursor_Data;
    end record;
 
-   type Proto_Iterator is tagged null record;
-   --  Needed to be able to store the upstream iterator without moving
-   --  everything to a separate file.
-
-   package Holders is new AAA.Containers.Indefinite_Holders
-     (Proto_Iterator'Class);
+   package Holders is new AAA.Containers.Indefinite_Holders (Iterator'Class);
 
    type Holder is new Holders.Holder with null record;
 
-   type Iterator is abstract new Proto_Iterator with record
-      Up : Holder;
+   type Operator is abstract new Iterator with record
+      Up : Holder; -- An operator has a mandatory upstream Iterator
    end record;
 
    type Iterator_Reference (Ptr : access Iterator'Class) is
@@ -140,6 +142,6 @@ private
 
    function As_Iterator (This : in out Holder) return Iterator_Reference;
 
-   function Upstream (This : in out Iterator'Class) return Iterator_Reference;
+   function Upstream (This : in out Operator'Class) return Iterator_Reference;
 
 end Iterators.Root;

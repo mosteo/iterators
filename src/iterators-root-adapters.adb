@@ -52,8 +52,7 @@ package body Iterators.Root.Adapters is
    end Next;
 
    function Const_Iter (C : aliased Container) return Iterator'Class is
-     (Const_Iterator'(Up  => <>,
-                      Col => C'Access,
+     (Const_Iterator'(Col => C'Access,
                       Pos => Containers.First (C)));
 
    -------------
@@ -80,8 +79,7 @@ package body Iterators.Root.Adapters is
    end Next;
 
    function Iter (C : aliased in out Container) return Iterator'Class is
-     (Var_Iterator'(Up  => <>,
-                    Col => C'Access,
+     (Var_Iterator'(Col => C'Access,
                     Pos => Containers.First (C)));
 
 end Iterators.Root.Adapters;

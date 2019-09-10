@@ -1,14 +1,14 @@
 package body Iterators.Root.Impl_No_Op is
 
-   type Iterator is new Root.Iterator with null record;
+   type Operator is new Root.Operator with null record;
 
    overriding
-   function Next (This : in out Iterator) return Cursor'Class is
+   function Next (This : in out Operator) return Cursor'Class is
    begin
       return This.Upstream.Next;
    end Next;
 
-   function Create return Root.Iterator'Class is
-     (Iterator'(Up => <>));
+   function Create return Root.Operator'Class is
+     (Operator'(Up => <>));
 
 end Iterators.Root.Impl_No_Op;

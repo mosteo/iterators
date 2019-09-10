@@ -31,7 +31,7 @@ package body Iterators.Root is
    -- Iterate --
    -------------
 
-   function Iterate (This : aliased Iterator)
+   function Iterate (This : aliased Iterator'Class)
                      return Ada_Iterator_Interfaces.Forward_Iterator'Class is
      (Ada_Iterators.Ada_Iterator'(Base => This'Unrestricted_Access));
    --  We need to store a RW pointer, so we must "cheat" here. If Ada iterators
@@ -117,21 +117,30 @@ package body Iterators.Root is
    -- Upstream --
    --------------
 
-   function Upstream (This : in out Iterator'Class) return Iterator_Reference is
+   function Upstream (This : in out Operator'Class) return Iterator_Reference is
      (This.Up.As_Iterator);
 
    ---------
    -- "&" --
    ---------
 
-   function "&" (L, R : Iterator'Class) return Iterator'Class is
+   function "&" (L : Iterator'Class;
+                 R : Operator'Class) return Iterator'Class is
    begin
-      return Result : Iterator'Class := R do
+      return Result : Operator'Class := R do
          if Result.Up.Is_Empty then
             Result.Up := L.To_Holder;
          else
-            Result.Up :=
-              To_Holder (L & Iterator'Class (Result.Up.Reference.Element.all));
+            declare
+               Parent : Iterator'Class renames Result.Up.Reference.Element.all;
+            begin
+               if Parent in Operator'Class then
+                  Result.Up := To_Holder (L & Operator'Class (Parent));
+               else
+                  raise Constraint_Error with
+                    "Operator required in RHS of ""&"" concatenator";
+               end if;
+            end;
          end if;
       end return;
    end "&";
@@ -141,24 +150,24 @@ package body Iterators.Root is
    -----------------
 
    package  Append_Instance is new Impl_Append;
-   function Append (Element : Any_Element) return Iterator'Class
+   function Append (Element : Any_Element) return Operator'Class
                     renames Append_Instance.Create;
    function "&" (L : Iterator'Class; R : Any_Element) return Iterator'Class
                  renames Append_Instance."&";
 
+   package  Copy_Instance is new Impl_Copy;
+   function Copy return Operator'Class renames Copy_Instance.Create;
+
    package  Filter_Instance is new Impl_Filter;
    function Filter
      (Tester : access function (Element : Any_Element) return Boolean)
-      return Iterator'Class is (Filter_Instance.Create (Tester));
+      return Operator'Class is (Filter_Instance.Create (Tester));
 
    package  Just_Instance is new Impl_Just;
    function Just (Element : Any_Element) return Iterator'Class
                   renames Just_Instance.Create;
 
-   package  Copy_Instance is new Impl_Copy;
-   function Copy return Iterator'Class renames Copy_Instance.Create;
-
    package  No_Op_Instance is new Impl_No_Op;
-   function No_Op return Iterator'Class renames No_Op_Instance.Create;
+   function No_Op return Operator'Class renames No_Op_Instance.Create;
 
 end Iterators.Root;

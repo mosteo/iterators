@@ -25,17 +25,7 @@ procedure Iterators.Tests.Violations is
       return Iter (L);
    end Dangling;
 
-   Procedure Bad_Chain is
-      It : Iterator'Class := Just (1) & Just (2); -- Shouldn't be allowed.
-   begin
-      for I of It loop
-         Put_Line (I'Img); -- Will only print 2 (!)
-      end loop;
-   end Bad_Chain;
-
 begin
-   Bad_Chain;
-
    --  Will bomb because the original list is out of scope
    for Int of Container'(Dangling & Collect) loop
       Put_Line (Int'Img);
