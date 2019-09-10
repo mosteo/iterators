@@ -19,21 +19,13 @@ package body Iterators.Root.Adapters is
 
    function "&" (L : Iterator'Class;
                  R : Container)
-                 return Container
-   is
-      Result : Container      := R;
-      RW_It  : Iterator'Class := L;
+                 return Container is
    begin
-      loop
-         declare
-            Pos : constant Cursor'Class := RW_It.Next;
-         begin
-            exit when Pos.Is_Empty;
-            Containers.Append (Result, Pos.Get, 1);
-         end;
-      end loop;
-
-      return Result;
+      return Result : Container := R do
+         for E of L loop
+            Containers.Append (Result, E, 1);
+         end loop;
+      end return;
    end "&";
 
    -------------------

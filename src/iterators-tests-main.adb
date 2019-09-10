@@ -2,11 +2,15 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 procedure Iterators.Tests.Main is
 
+   use type Ada.Containers.Count_Type;
+
    use Int_Iters;
    use Int_Iters.Core;
 
+   Seq : constant Iterator'Class := Just (1) & 2 & 3;
    Vec : constant Container :=
-           Just (1) & 2 & 3
+           Seq
+           & Copy
            & Collect;
 
    --  Element collection
@@ -95,16 +99,28 @@ procedure Iterators.Tests.Main is
       end loop;
    end Variable_Of_Iteration;
 
+   procedure Op_Copy is
+      Seq : constant Iterator'Class := Main.Seq;
+   begin
+      pragma Assert (Container'(Seq & Copy & Collect).Length = 3);
+      --  Does not consume Seq because of Copy.
+
+      pragma Assert (Container'(Seq & Collect).Length = 3);
+      --  Consumes Seq.
+
+      pragma Assert (Container'(Seq & Collect).Length = 0);
+      --  Because Seq is already consumed.
+   end Op_Copy;
+
    procedure Op_Filter is
       function Is_Even (I : Integer) return Boolean is (I mod 2 = 0);
    begin
       pragma Assert
-        (Natural
-           (Container'
-                (Const_Iter (Vec)
-                 & Filter (Is_Even'Access)
-                 & Collect)
-            .Length) = 1);
+        (Container'
+           (Const_Iter (Vec)
+            & Filter (Is_Even'Access)
+            & Collect)
+         .Length = 1);
    end Op_Filter;
 
 begin
@@ -114,6 +130,7 @@ begin
    Constant_Of_Iteration;
    Variable_Of_Iteration;
 
+   Op_Copy;
    Op_Filter;
 
    Put_Line ("OK");
