@@ -7,7 +7,6 @@ project Iterators is
    for Exec_Dir use "bin";
    for Create_Missing_Dirs use "True";
    for Main use (
-                 "iterators-tests-containers.adb",
                  "iterators-tests-main.adb",
                  "iterators-tests-violations.adb"
                 );

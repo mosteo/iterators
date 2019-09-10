@@ -2,6 +2,7 @@
 
 with Iterators.Root.Impl_Append;
 with Iterators.Root.Impl_Copy;
+with Iterators.Root.Impl_Count;
 with Iterators.Root.Impl_Filter;
 with Iterators.Root.Impl_Just;
 with Iterators.Root.Impl_No_Op;
@@ -169,5 +170,14 @@ package body Iterators.Root is
 
    package  No_Op_Instance is new Impl_No_Op;
    function No_Op return Operator'Class renames No_Op_Instance.Create;
+
+   ----------------
+   --  REDUCERS  --
+   ----------------
+
+   package Count_Instance is new Impl_Count;
+   function Count return Counter is (null record);
+   function "&" (L : Iterator'Class; R : Counter) return Natural is (Count (L));
+   function Count (It : Iterator'Class) return Natural renames Count_Instance.Reduce;
 
 end Iterators.Root;

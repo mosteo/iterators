@@ -8,8 +8,7 @@ generic
 package Iterators.From.Vectors with Preelaborate is
 
    subtype Container is Ada_Containers.Vector;
-
-   package Core is new Iterators.Root (Ada_Containers.Element_Type);
+   subtype Elements  is Ada_Containers.Element_Type;
 
    package Container_Traits is new Traits.Containers
      (Container                   => Container,
@@ -24,18 +23,10 @@ package Iterators.From.Vectors with Preelaborate is
       Constant_Reference_Type     => Ada_Containers.Constant_Reference_Type,
       Constant_Reference          => Ada_Containers.Constant_Reference);
 
-   package Adapters is new Core.Adapters (Container_Traits);
+   package Iterators is new Standard.Iterators.Root (Elements);
+   --  This package provides the regular sources, operators, and sinks.
 
-   function Const_Iter (C : aliased Container) return Core.Iterator'Class
-                        renames Adapters.Const_Iter;
-
-   function Iter (C : aliased in out Container) return Core.Iterator'Class
-                  renames Adapters.Iter;
-
-   function Collect return Container renames Adapters.Collect;
-
-   function "&" (L : Core.Iterator'Class;
-                 R : Container)
-                 return Container renames Adapters."&";
+   package Containers is new Iterators.Adapters (Container_Traits);
+   --  This package provides the container adapters
 
 end Iterators.From.Vectors;

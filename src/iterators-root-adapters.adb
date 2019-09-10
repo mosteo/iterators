@@ -13,6 +13,12 @@ package body Iterators.Root.Adapters is
       return Empty;
    end Collect;
 
+   -------------
+   -- Collect --
+   -------------
+
+   function Collect (It : Iterator'Class) return Container is (It & Collect);
+
    ---------
    -- "&" --
    ---------

@@ -1,11 +1,11 @@
-with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Text_IO;
 
 procedure Iterators.Tests.Main is
 
    use type Ada.Containers.Count_Type;
 
-   use Int_Iters;
-   use Int_Iters.Core;
+   use Int_Iters.Iterators;
+   use Int_Iters.Containers;
 
    Seq : constant Iterator'Class := Just (1) & 2 & 3;
    Vec : constant Container :=
@@ -102,14 +102,17 @@ procedure Iterators.Tests.Main is
    procedure Op_Copy is
       Seq : constant Iterator'Class := Main.Seq;
    begin
-      pragma Assert (Container'(Seq & Copy & Collect).Length = 3);
+      pragma Assert (Seq & Copy & Count = 3);
       --  Does not consume Seq because of Copy.
 
-      pragma Assert (Container'(Seq & Collect).Length = 3);
+      pragma Assert (Seq & Count = 3);
       --  Consumes Seq.
 
+      pragma Assert (Seq & Count = 0);
+      --  Because Seq was just consumed.
+
       pragma Assert (Container'(Seq & Collect).Length = 0);
-      --  Because Seq is already consumed.
+      --  Alternate way, testing Collect
    end Op_Copy;
 
    procedure Op_Filter is
@@ -133,6 +136,6 @@ begin
    Op_Copy;
    Op_Filter;
 
-   Put_Line ("OK");
+   Ada.Text_IO.Put_Line ("OK");
 
 end Iterators.Tests.Main;

@@ -97,6 +97,15 @@ package Iterators.Root with Preelaborate is
    function No_Op return Operator'Class;
    --  Does nothing.
 
+   --------------
+   -- Reducers --
+   --------------
+
+   type Counter (<>) is private;
+   function Count return Counter;
+   function Count (It : Iterator'Class) return Natural;
+   function "&" (L : Iterator'Class; R : Counter) return Natural;
+
    -------------
    -- Sources --
    -------------
@@ -131,6 +140,16 @@ private
    package Holders is new AAA.Containers.Indefinite_Holders (Iterator'Class);
 
    type Holder is new Holders.Holder with null record;
+
+   --------------
+   -- Reducers --
+   --------------
+
+   type Counter is null record;
+
+   --------------
+   -- Operator --
+   --------------
 
    type Operator is abstract new Iterator with record
       Up : Holder; -- An operator has a mandatory upstream Iterator

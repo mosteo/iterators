@@ -1,16 +1,11 @@
 --  Situations in which accessibility cannot prevent misuse of iterators.
 
-with Ada.Containers.Vectors;
 with Ada.Text_IO; use Ada.Text_IO;
-
-with Iterators.From.Vectors;
 
 procedure Iterators.Tests.Violations is
 
-   package Int_Vectors is new Ada.Containers.Vectors (Positive, Integer);
-   package Int_Iters is new From.Vectors (Int_Vectors);
-   use Int_Iters;
-   use Int_Iters.Core;
+   use Int_Iters.Iterators;
+   use Int_Iters.Containers;
 
    --------------
    -- Dangling --
