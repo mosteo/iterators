@@ -11,13 +11,18 @@ procedure Iterators.Tests.Main is
    use Int_Iters;
    use Int_Iters.Core;
 
-   Seq : Iterator'Class := Just (1) & 2 & 3;
+   Vec : constant Container :=
+           Just (1) & 2 & 3
+           & Collect;
 
-begin
-   --  Check manual iteration
-   declare
+   --  Element collection
+   pragma Assert (Vec.First_Element = 1 and then Vec.Last_Element = 3);
+
+   --  Individual tests
+
+   procedure Manual_Constant_Iteration is
       Count : Natural := 0;
-      Seq   : Iterator'Class := Just (1) & 2 & 3;
+      Seq   : Iterator'Class := Const_Iter (Vec);
    begin
       loop
          declare
@@ -28,86 +33,74 @@ begin
             pragma Assert (Count = Pos.Get);
          end;
       end loop;
+   end Manual_Constant_Iteration;
 
-      --  Test "of" with collected list
-      for I of Container'(Seq & Collect) loop
-         null;
-      end loop;
-   end;
-
-   --  Check composition
-   declare
-      L : constant Container := Just (1) & 2 & 3 & Collect;
+   procedure Manual_Variable_Iteration is
+      Count : Natural        := 0;
+      Vec   : Container      := Main.Vec; -- Use RW copy
+      Seq1  : Iterator'Class := Iter (Vec);       -- 1st pass, modifying
+      Seq2  : Iterator'Class := Const_Iter (Vec); -- 2nd pass, verifying
    begin
-      pragma Assert (L.First_Element = 1 and then L.Last_Element = 3);
-   end;
-
-   --  Test readonliness
---     declare
---        It : Iterator'Class := Just (1);
---     begin
---        It.Next.Ref := 2; -- Must fail with a Constraint_Error
---        raise Program_Error with "Should not be reached";
---     exception
---        when Constraint_Error => null;
---     end;
-
-   --  Test iteration over plain list
-   declare
-      Count : Natural := 0;
-      L : Container  := Just (1) & 2 & 3 & Collect;
-      I : Iterator'Class     := Iter (L);
-   begin
+      --  1st pass, modifying
       loop
          declare
-            Pos : constant Cursor'Class := I.Next;
+            Pos : constant Cursor'Class := Seq1.Next;
          begin
-            exit when Pos.Is_Empty;
+            exit when not Pos.Has_Element;
             Count := Count + 1;
             pragma Assert (Count = Pos.Get);
+            Pos.Ref := -Pos.Ref;
+            pragma Assert (Count = -Pos.Get);
          end;
       end loop;
 
-      --  Test modification through iterators:
-      declare
-         I : Iterator'Class := Iter (L);
-      begin
-         I.Next.Ref := 4;
-         pragma Assert (L.First_Element = 4);
-      end;
-   end;
-
-   --  Constant iteration over plain list
-   declare
-      Count : Natural := 0;
-      L : constant Container := Just (1) & 2 & 3 & Collect;
-      I : Iterator'Class     := Const_Iter (L);
-   begin
+      --  2nd pass, verifying
+      Count := 0;
       loop
          declare
-            Pos : constant Cursor'Class := I.Next;
+            Pos : constant Cursor'Class := Seq2.Next;
          begin
-            exit when Pos.Is_Empty;
+            exit when not Pos.Has_Element;
             Count := Count + 1;
-            pragma Assert (Count = Pos.Get);
+            pragma Assert (Count = -Pos.Get);
          end;
       end loop;
-   end;
+   end Manual_Variable_Iteration;
 
-   --  Variable iteration with Ada "of" notation
-   declare
-      Seq   : Iterator'Class := Just (1) & 2 & 3;
+   procedure Constant_Of_Iteration is
+      Count : Natural := 0;
    begin
-      for I of Seq loop
-         Put_Line (I'Img);
-         I := I + 1;
+      for I of Const_Iter (Vec) loop
+         Count := Count + 1;
+         pragma Assert (Count = I);
       end loop;
-   end;
+   end Constant_Of_Iteration;
 
-   --  Constant iteration with Ada "of" notation
-   for I of Iterator'Class'(Just (1) & 2 & 3) loop
-      Put_Line (I'Img);
-   end loop;
+   procedure Variable_Of_Iteration is
+      Count : Natural           := 0;
+      Vec   : aliased Container := Main.Vec;
+      It    : Iterator'Class    := Iter (Vec);
+      --  Unfortunately, for Ada to allow variable iteration, the expression
+      --  after "of" must be a variable; so we need an otherwise superfluous
+      --  iterator as intermediate variable. This can be avoided by using the
+      --  own Iterator modification operators (e.g., Map).
+   begin
+      for I of It loop
+         I := -I;
+      end loop;
+
+      for I of Vec loop
+         Count := Count + 1;
+         pragma Assert (Count = -I);
+      end loop;
+   end Variable_Of_Iteration;
+
+begin
+   Manual_Constant_Iteration;
+   Manual_Variable_Iteration;
+
+   Constant_Of_Iteration;
+   Variable_Of_Iteration;
 
    Put_Line ("OK");
 

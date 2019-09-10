@@ -73,13 +73,13 @@ package Iterators.Root with Preelaborate is
 
    function "&" (L : Iterator'Class; R : Any_Element) return Iterator'Class;
 
+   function Copy return Iterator'Class;
+
    function Filter
      (Tester : access function (Element : Any_Element) return Boolean)
       return Iterator'Class;
 
    function No_Op return Iterator'Class;
-
---     function Restart return Iterator'Class;
 
    -------------
    -- Sources --
@@ -94,11 +94,19 @@ private
    type Element_Ptr       is access all Any_Element;
    type Element_Const_Ptr is access constant Any_Element;
 
-   type Cursor (Read_Only : Boolean) is tagged record
+   type Cursor_Data (Read_Only : Boolean := False) is record
       case Read_Only is
-         when True =>  Const_Ptr : Element_Const_Ptr;
+         when True  => Const_Ptr : Element_Const_Ptr;
          when False => Ptr       : Element_Ptr;
       end case;
+   end record;
+   --  It seems having having constraints in the cursor makes things
+   --  innecessarily complicated for "of" notation, since we cannot
+   --  ensure that a cursor in the LHS has always the same constraints.
+   --  As tagged types cannot have discriminant defaults, this is a workaround.
+
+   type Cursor is tagged record
+      Data : Cursor_Data;
    end record;
 
    type Proto_Iterator is tagged null record;

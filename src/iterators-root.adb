@@ -1,4 +1,7 @@
-with GNAT.IO; use GNAT.IO;
+--  with GNAT.IO; use GNAT.IO;
+
+with Iterators.Root.Impl_Copy;
+with Iterators.Root.Impl_No_Op;
 
 package body Iterators.Root is
 
@@ -17,7 +20,7 @@ package body Iterators.Root is
 
       overriding function Next (This       : Ada_Iterator;
                                 Pos_Unused : Cursor) return Cursor is
-         (Cursor (This.Base.Next));
+        (Cursor (This.Base.Next));
 
    end Ada_Iterators;
 
@@ -63,45 +66,42 @@ package body Iterators.Root is
    ---------
 
    function Get (This : Cursor) return Const_Ref is
-     (Element => (if This.Read_Only
-                  then This.Const_Ptr
-                  else This.Ptr));
+     (Element => (if This.Data.Read_Only
+                  then This.Data.Const_Ptr
+                  else This.Data.Ptr));
 
    ---------
    -- Ref --
    ---------
 
    function Ref (This : Cursor) return Reference is
-     (Element => (if This.Read_Only
+     (Element => (if This.Data.Read_Only
                   then raise Constraint_Error with "Iterator is read-only"
-                  else This.Ptr));
+                  else This.Data.Ptr));
 
    ----------------
    -- New_Cursor --
    ----------------
 
    function New_Cursor (Element : aliased in out Any_Element) return Cursor is
-     (Cursor'(Read_Only => False,
-              Ptr       => Element'Access));
+     (Data => (Read_Only => False,
+               Ptr       => Element'Access));
 
    ----------------------
    -- New_Const_Cursor --
    ----------------------
 
    function New_Const_Cursor (Element : aliased Any_Element) return Cursor is
-     (Cursor'(Read_Only => True,
-              Const_Ptr  => Element'Access));
+     (Data => (Read_Only => True,
+               Const_Ptr => Element'Access));
 
    ----------------------
    -- New_Empty_Cursor --
    ----------------------
 
    function New_Empty_Cursor return Cursor is
-     (Cursor'(Read_Only => False,
-              Ptr       => null));
-   --  This is RW cursor because it is common to both RO/RW iterators. This is
-   --  OK because nobody should try to access the element of an empty cursor
-   --  anyway (and that will result in an access check failed).
+     (Data => (Read_Only => True,
+               Const_Ptr => null));
 
    -----------------
    -- As_Iterator --
@@ -134,6 +134,10 @@ package body Iterators.Root is
          end if;
       end return;
    end "&";
+
+   -----------------
+   --  OPERATORS  --
+   -----------------
 
    ------------
    -- Append --
@@ -216,22 +220,10 @@ package body Iterators.Root is
                      Element => Elem_Holders.To_Holder (Element),
                      Given   => <>));
 
-   -----------
-   -- No_Op --
-   -----------
+   package  Copy_Instance is new Impl_Copy;
+   function Copy return Iterator'Class renames Copy_Instance.Create;
 
-   type No_Op_Iterator is new Iterator with null record;
-
-   overriding
-   function Next (This : in out No_Op_Iterator) return Cursor'Class is
-   begin
-      Put_Line ("ASDF");
-      return This.Upstream.Next;
-   end Next;
-
-   function No_Op return Iterator'Class is
-   begin
-      return No_Op_Iterator'(Up => <>);
-   end No_Op;
+   package  No_Op_Instance is new Impl_No_Op;
+   function No_Op return Iterator'Class renames No_Op_Instance.Create;
 
 end Iterators.Root;
