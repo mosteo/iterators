@@ -6,11 +6,12 @@ procedure Iterators.Tests.Main is
 
    --  Regular sequences
    use Int_Iters.Iterators;
-   use Int_Iters.Containers;
+   use Int_Iters.Collectors;
+   use Int_Iters.Generators;
 
    --  Keyed sequences
 --   package KI renames Int_Iters.Keyed_Iterators;
-   package KC renames Int_Iters.Keyed_Containers;
+   package KG renames Int_Iters.Keyed_Generators;
 
    Seq : constant Iterator'Class := Just (1) & 2 & 3;
    Vec : constant Container :=
@@ -161,12 +162,25 @@ procedure Iterators.Tests.Main is
 
    procedure Keyed_Constant_Iteration is
    begin
-      for Pair of KC.Const_Iter (Vec) loop
+      for Pair of KG.Const_Iter (Vec) loop
 --           Ada.Text_IO.Put_Line (Pair.Key'Img);
 --           Ada.Text_IO.Put_Line (Pair.Pos.Element'Img);
          pragma Assert (Pair.Key = Pair.Pos.Get);
       end loop;
    end Keyed_Constant_Iteration;
+
+   ------------------------------
+   -- Keyed_Variable_Iteration --
+   ------------------------------
+
+   procedure Keyed_Variable_Iteration is
+      Vec : Container := Main.Vec;
+   begin
+      for Pair of KG.Iter (Vec) loop
+         Pair.Pos.Ref := Pair.Pos.Ref + 1;
+         pragma Assert (Pair.Key = Pair.Pos.Get - 1);
+      end loop;
+   end Keyed_Variable_Iteration;
 
 begin
    Manual_Constant_Iteration;
@@ -179,6 +193,7 @@ begin
    Op_Filter;
 
    Keyed_Constant_Iteration;
+   Keyed_Variable_Iteration;
 
    Ada.Text_IO.Put_Line ("OK");
 

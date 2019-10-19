@@ -1,38 +1,6 @@
-with Ada.Unchecked_Conversion;
+package body Iterators.Generators is
 
-package body Iterators.Root.Adapters is
-
-   -------------
-   -- Collect --
-   -------------
-
-   function Collect return Container is
-      Empty : Container with Warnings => Off;
-      --  Hoping that this will perform the expected default initialization...
-   begin
-      return Empty;
-   end Collect;
-
-   -------------
-   -- Collect --
-   -------------
-
-   function Collect (It : Iterator'Class) return Container is (It & Collect);
-
-   ---------
-   -- "&" --
-   ---------
-
-   function "&" (L : Iterator'Class;
-                 R : Container)
-                 return Container is
-   begin
-      return Result : Container := R do
-         for E of L loop
-            Containers.Append (Result, E, 1);
-         end loop;
-      end return;
-   end "&";
+   use Root;
 
    -------------------
    -- To_Const_Iter --
@@ -88,4 +56,4 @@ package body Iterators.Root.Adapters is
      (Var_Iterator'(Col => C'Access,
                     Pos => Containers.First (C)));
 
-end Iterators.Root.Adapters;
+end Iterators.Generators;

@@ -1,11 +1,7 @@
-with Ada.Containers;
-
 generic
    pragma Warnings (Off); -- For the unreferenced entities
-   type Container is private;
+   type Container is tagged private;
    type Element_Type (<>) is private;
-
-   with procedure Append (C : in out Container; E : Element_Type; Count : Ada.Containers.Count_Type);
 
    type Cursor is private;
    with function First (C : Container) return Cursor;
