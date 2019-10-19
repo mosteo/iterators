@@ -26,6 +26,8 @@ package Iterators.Root with Preelaborate is
 
    function Is_Empty (This : Cursor) return Boolean is (not This.Has_Element);
 
+   function Element (This : Cursor) return Any_Element;
+
    function Get (This : Cursor) return Const_Ref;
 
    function Ref (This : Cursor) return Reference;

@@ -4,8 +4,13 @@ procedure Iterators.Tests.Main is
 
    use type Ada.Containers.Count_Type;
 
+   --  Regular sequences
    use Int_Iters.Iterators;
    use Int_Iters.Containers;
+
+   --  Keyed sequences
+--   package KI renames Int_Iters.Keyed_Iterators;
+   package KC renames Int_Iters.Keyed_Containers;
 
    Seq : constant Iterator'Class := Just (1) & 2 & 3;
    Vec : constant Container :=
@@ -17,6 +22,10 @@ procedure Iterators.Tests.Main is
    pragma Assert (Vec.First_Element = 1 and then Vec.Last_Element = 3);
 
    --  Individual tests
+
+   -------------------------------
+   -- Manual_Constant_Iteration --
+   -------------------------------
 
    procedure Manual_Constant_Iteration is
       Count : Natural := 0;
@@ -32,6 +41,10 @@ procedure Iterators.Tests.Main is
          end;
       end loop;
    end Manual_Constant_Iteration;
+
+   -------------------------------
+   -- Manual_Variable_Iteration --
+   -------------------------------
 
    procedure Manual_Variable_Iteration is
       Count : Natural        := 0;
@@ -65,6 +78,10 @@ procedure Iterators.Tests.Main is
       end loop;
    end Manual_Variable_Iteration;
 
+   ---------------------------
+   -- Constant_Of_Iteration --
+   ---------------------------
+
    procedure Constant_Of_Iteration is
       Count : Natural := 0;
    begin
@@ -73,6 +90,10 @@ procedure Iterators.Tests.Main is
          pragma Assert (Count = I);
       end loop;
    end Constant_Of_Iteration;
+
+   ---------------------------
+   -- Variable_Of_Iteration --
+   ---------------------------
 
    procedure Variable_Of_Iteration is
       Count : Natural           := 0;
@@ -99,6 +120,10 @@ procedure Iterators.Tests.Main is
       end loop;
    end Variable_Of_Iteration;
 
+   -------------
+   -- Op_Copy --
+   -------------
+
    procedure Op_Copy is
       Seq : constant Iterator'Class := Main.Seq;
    begin
@@ -115,6 +140,10 @@ procedure Iterators.Tests.Main is
       --  Alternate way, testing Collect
    end Op_Copy;
 
+   ---------------
+   -- Op_Filter --
+   ---------------
+
    procedure Op_Filter is
       function Is_Even (I : Integer) return Boolean is (I mod 2 = 0);
    begin
@@ -126,6 +155,19 @@ procedure Iterators.Tests.Main is
          .Length = 1);
    end Op_Filter;
 
+   ------------------------------
+   -- Keyed_Constant_Iteration --
+   ------------------------------
+
+   procedure Keyed_Constant_Iteration is
+   begin
+      for Pair of KC.Const_Iter (Vec) loop
+--           Ada.Text_IO.Put_Line (Pair.Key'Img);
+--           Ada.Text_IO.Put_Line (Pair.Pos.Element'Img);
+         pragma Assert (Pair.Key = Pair.Pos.Get);
+      end loop;
+   end Keyed_Constant_Iteration;
+
 begin
    Manual_Constant_Iteration;
    Manual_Variable_Iteration;
@@ -135,6 +177,8 @@ begin
 
    Op_Copy;
    Op_Filter;
+
+   Keyed_Constant_Iteration;
 
    Ada.Text_IO.Put_Line ("OK");
 

@@ -37,7 +37,7 @@ package body Iterators.Root is
      (Ada_Iterators.Ada_Iterator'(Base => This'Unrestricted_Access));
    --  We need to store a RW pointer, so we must "cheat" here. If Ada iterators
    --  supported several signatures for ro/rw iterate this would not be needed.
-   --  Even standard gnat containers use Unrestricted_Access for their
+   --  Even standard GNAT containers use Unrestricted_Access for their
    --  iterators.
 
    -------------------
@@ -57,6 +57,13 @@ package body Iterators.Root is
    --------------------
    -- REST OF THINGS --
    --------------------
+
+   -------------
+   -- Element --
+   -------------
+
+   function Element (This : Cursor) return Any_Element is
+     (This.Get.Element.all);
 
    -----------------
    -- Has_Element --
