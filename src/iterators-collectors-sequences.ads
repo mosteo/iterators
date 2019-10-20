@@ -10,6 +10,9 @@ package Iterators.Collectors.Sequences with Preelaborate is
 
    --  Collect into a container that respects the appending order.
 
+   package Containers_Bis renames Containers;
+   --  Visibility bug workaround.
+
    function "&" (L : Root.Iterator'Class;
                  R : Containers.Container)
                     return Containers.Container;

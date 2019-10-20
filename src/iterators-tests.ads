@@ -1,6 +1,10 @@
 with Ada.Containers.Ordered_Maps;
 with Ada.Containers.Vectors;
 
+pragma Warnings (Off);
+with Iterators.From.Lists; -- force compilation
+pragma Warnings (On);
+
 with Iterators.From.Ordered_Maps;
 with Iterators.From.Vectors;
 

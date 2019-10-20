@@ -1,6 +1,8 @@
 with Ada.Containers.Doubly_Linked_Lists;
 
 with Iterators.Collectors.Sequences;
+with Iterators.Generators;
+with Iterators.Linkers.Sequences;
 with Iterators.Root;
 with Iterators.Traits.Containers.Appendable;
 
@@ -29,6 +31,9 @@ package Iterators.From.Lists with Preelaborate is
    package Iterators is new Standard.Iterators.Root (Elements);
    --  This package provides the regular sources, operators, and sinks.
 
+   subtype Iterator is Iterators.Iterator;
+   subtype Cursor   is Iterators.Cursor;
+
    package Collectors is new Standard.Iterators.Collectors.Sequences
      (Iterators,
       Container_Traits,
@@ -39,5 +44,9 @@ package Iterators.From.Lists with Preelaborate is
      (Iterators,
       Container_Traits);
    --  Provides conversion from container into iterator.
+
+   package Linkers is new Standard.Iterators.Linkers.Sequences
+     (Iterators,
+      Collectors);
 
 end Iterators.From.Lists;

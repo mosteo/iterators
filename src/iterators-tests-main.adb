@@ -5,18 +5,17 @@ procedure Iterators.Tests.Main is
    use type Ada.Containers.Count_Type;
 
    --  Regular sequences
-   use Int_Vec_Iters.Iterators;
-   use Int_Vec_Iters.Collectors;
-   use Int_Vec_Iters.Generators;
+   use Int_Vec_Iters.Linkers;
+   package Ints renames Int_Vec_Iters;
 
    --  Keyed sequences
    package KG renames Int_Vec_Iters.Keyed_Generators;
 
-   Seq : constant Iterator'Class := Just (1) & 2 & 3;
-   Vec : constant Container :=
+   Seq : constant Ints.Iterator'Class := Ints.Iterators.Just (1) & 2 & 3;
+   Vec : constant Ints.Container :=
            Seq
-           & Copy
-           & Collect;
+           & Ints.Iterators.Copy
+           & Ints.Collectors.Collect;
 
    --  Element collection
    pragma Assert (Vec.First_Element = 1 and then Vec.Last_Element = 3);
@@ -29,11 +28,11 @@ procedure Iterators.Tests.Main is
 
    procedure Manual_Constant_Iteration is
       Count : Natural := 0;
-      Seq   : Iterator'Class := Const_Iter (Vec);
+      Seq   : Ints.Iterator'Class := Ints.Generators.Const_Iter (Vec);
    begin
       loop
          declare
-            Pos : constant Cursor'Class := Seq.Next;
+            Pos : constant Ints.Cursor'Class := Seq.Next;
          begin
             exit when not Pos.Has_Element;
             Count := Count + 1;
@@ -47,15 +46,15 @@ procedure Iterators.Tests.Main is
    -------------------------------
 
    procedure Manual_Variable_Iteration is
-      Count : Natural        := 0;
-      Vec   : Container      := Main.Vec; -- Use RW copy
-      Seq1  : Iterator'Class := Iter (Vec);       -- 1st pass, modifying
-      Seq2  : Iterator'Class := Const_Iter (Vec); -- 2nd pass, verifying
+      Count : Natural             := 0;
+      Vec   : Ints.Container      := Main.Vec; -- Use RW copy
+      Seq1  : Ints.Iterator'Class := Ints.Generators.Iter (Vec);       -- 1st pass, modifying
+      Seq2  : Ints.Iterator'Class := Ints.Generators.Const_Iter (Vec); -- 2nd pass, verifying
    begin
       --  1st pass, modifying
       loop
          declare
-            Pos : constant Cursor'Class := Seq1.Next;
+            Pos : constant Ints.Cursor'Class := Seq1.Next;
          begin
             exit when not Pos.Has_Element;
             Count := Count + 1;
@@ -69,7 +68,7 @@ procedure Iterators.Tests.Main is
       Count := 0;
       loop
          declare
-            Pos : constant Cursor'Class := Seq2.Next;
+            Pos : constant Ints.Cursor'Class := Seq2.Next;
          begin
             exit when not Pos.Has_Element;
             Count := Count + 1;
@@ -85,7 +84,7 @@ procedure Iterators.Tests.Main is
    procedure Constant_Of_Iteration is
       Count : Natural := 0;
    begin
-      for I of Const_Iter (Vec) loop
+      for I of Ints.Generators.Const_Iter (Vec) loop
          Count := Count + 1;
          pragma Assert (Count = I);
       end loop;
@@ -96,9 +95,9 @@ procedure Iterators.Tests.Main is
    ---------------------------
 
    procedure Variable_Of_Iteration is
-      Count : Natural           := 0;
-      Vec   : aliased Container := Main.Vec;
-      It    : Iterator'Class    := Iter (Vec);
+      Count : Natural                := 0;
+      Vec   : aliased Ints.Container := Main.Vec;
+      It    : Ints.Iterator'Class    := Ints.Generators.Iter (Vec);
       --  Unfortunately, for Ada to allow variable iteration, the expression
       --  after "of" must be a variable; so we need an otherwise superfluous
       --  iterator as intermediate variable. This can be avoided by using the
@@ -115,7 +114,7 @@ procedure Iterators.Tests.Main is
 
       --  Alternatively, using the read-write cursor returned by Iter allows
       --  skipping the intermediate Iterator variable, although it's uglier:
-      for C in Iter (Vec).Iterate loop
+      for C in Ints.Generators.Iter (Vec).Iterate loop
          C.Ref := -C.Ref;
       end loop;
    end Variable_Of_Iteration;
@@ -125,18 +124,20 @@ procedure Iterators.Tests.Main is
    -------------
 
    procedure Op_Copy is
-      Seq : constant Iterator'Class := Main.Seq;
+      Seq : constant Ints.Iterator'Class := Main.Seq;
    begin
-      pragma Assert (Seq & Copy & Count = 3);
+      pragma Assert (Seq
+                     & Ints.Iterators.Copy
+                     & Ints.Iterators.Count = 3);
       --  Does not consume Seq because of Copy.
 
-      pragma Assert (Seq & Count = 3);
+      pragma Assert (Seq & Ints.Iterators.Count = 3);
       --  Consumes Seq.
 
-      pragma Assert (Seq & Count = 0);
+      pragma Assert (Seq & Ints.Iterators.Count = 0);
       --  Because Seq was just consumed.
 
-      pragma Assert (Container'(Seq & Collect).Length = 0);
+      pragma Assert (Ints.Container'(Seq & Ints.Collectors.Collect).Length = 0);
       --  Alternate way, testing Collect
    end Op_Copy;
 
@@ -148,10 +149,10 @@ procedure Iterators.Tests.Main is
       function Is_Even (I : Integer) return Boolean is (I mod 2 = 0);
    begin
       pragma Assert
-        (Container'
-           (Const_Iter (Vec)
-            & Filter (Is_Even'Access)
-            & Collect)
+        (Ints.Container'
+           (Ints.Generators.Const_Iter (Vec)
+            & Ints.Iterators.Filter (Is_Even'Access)
+            & Ints.Collectors.Collect)
          .Length = 1);
    end Op_Filter;
 
@@ -173,7 +174,7 @@ procedure Iterators.Tests.Main is
    ------------------------------
 
    procedure Keyed_Variable_Iteration is
-      Vec : Container := Main.Vec;
+      Vec : Ints.Container := Main.Vec;
    begin
       for Pair of KG.Iter (Vec) loop
          Pair.Pos.Ref := Pair.Pos.Ref + 1;
@@ -187,11 +188,6 @@ procedure Iterators.Tests.Main is
 
    procedure Map_Collection is
       Map : Int_Maps.Map;
-
-      --  Make "&" visible
-      use all type Int_Map_Iters.Iterators.Iterator'Class;
-      use all type Int_Map_Iters.Keyed_Iterators.Iterator'Class;
-
       K, V : Integer;
    begin
       Map.Insert (1, 2);

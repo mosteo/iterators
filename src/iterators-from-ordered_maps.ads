@@ -3,6 +3,7 @@ with Ada.Containers.Ordered_Maps;
 with Iterators.Collectors.Mappings;
 with Iterators.Generators.Keyed;
 with Iterators.Keyed;
+with Iterators.Linkers.Mappings;
 with Iterators.Root;
 with Iterators.Traits.Containers.Keyed;
 
@@ -34,10 +35,15 @@ package Iterators.From.Ordered_Maps with Preelaborate is
    package Iterators is new Standard.Iterators.Root (Elements);
    --  This package provides the regular sources, operators, and sinks.
 
+   subtype Iterator is Iterators.Iterator;
+   subtype Cursor   is Iterators.Cursor;
+
    package Keyed_Iterators is new Standard.Iterators.Keyed
      (Iterators,
       Keys => Ada_Containers.Key_Type);
    --  Provides iterators over pairs key+value.
+
+   subtype Keyed_Iterator is Keyed_Iterators.Iterator;
 
    package Keyed_Collectors is new Standard.Iterators.Collectors.Mappings
      (Keyed_Iterators,
@@ -55,5 +61,9 @@ package Iterators.From.Ordered_Maps with Preelaborate is
       Keyed_Iterators,
       Keyed_Traits);
    --  Provides conversion from keyed container into keyed iterator.
+
+   package Linkers is new Standard.Iterators.Linkers.Mappings
+     (Keyed_Iterators,
+      Keyed_Collectors);
 
 end Iterators.From.Ordered_Maps;

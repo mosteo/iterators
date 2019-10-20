@@ -3,6 +3,7 @@ with Ada.Containers.Vectors;
 with Iterators.Collectors.Sequences;
 with Iterators.Generators.Keyed;
 with Iterators.Keyed;
+with Iterators.Linkers.Sequences;
 with Iterators.Root;
 with Iterators.Traits.Containers.Appendable;
 with Iterators.Traits.Containers.Keyed;
@@ -45,6 +46,9 @@ package Iterators.From.Vectors with Preelaborate is
    package Iterators is new Standard.Iterators.Root (Elements);
    --  This package provides the regular sources, operators, and sinks.
 
+   subtype Iterator is Iterators.Iterator;
+   subtype Cursor   is Iterators.Cursor;
+
    package Collectors is new Standard.Iterators.Collectors.Sequences
      (Iterators,
       Container_Traits,
@@ -66,5 +70,9 @@ package Iterators.From.Vectors with Preelaborate is
       Keyed_Iterators,
       Keyed_Traits);
    --  Provides conversion from keyed container into keyed iterator.
+
+   package Linkers is new Standard.Iterators.Linkers.Sequences
+     (Iterators,
+      Collectors);
 
 end Iterators.From.Vectors;

@@ -18,6 +18,7 @@ package Iterators.Traits.Containers with Preelaborate is
 
    --  Reuse the gist of standard containers.
 
+   subtype Container_Bis is Container;
    subtype Elements is Element_Type;
    --  Visibility bug workaround.
 
