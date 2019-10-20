@@ -1,10 +1,14 @@
 with AAA.Containers.Indefinite_Holders;
 
+with Ada.Containers.Indefinite_Doubly_Linked_Lists;
 with Ada.Iterator_Interfaces;
 
 generic
    type Any_Element (<>) is private;
 package Iterators.Root with Preelaborate is
+
+   subtype Elements is Any_Element;
+   --  Work around visibility bug.
 
    ----------------
    -- References --
@@ -51,6 +55,14 @@ package Iterators.Root with Preelaborate is
      Iterator_Element => Any_Element;
 
    function Next (This : in out Iterator) return Cursor'Class is abstract;
+
+   ----------
+   -- List --
+   ----------
+
+   package Lists is new Ada.Containers.Indefinite_Doubly_Linked_Lists (Any_Element);
+
+   subtype List is Lists.List;
 
    ------------------------
    -- Standard Iteration --
@@ -102,6 +114,10 @@ package Iterators.Root with Preelaborate is
    --------------
    -- Reducers --
    --------------
+
+   function Collect return List;
+   function Collect (It : Iterator'Class) return List;
+   function "&" (L : Iterator'Class; R : List) return List;
 
    type Counter (<>) is private;
    function Count return Counter;

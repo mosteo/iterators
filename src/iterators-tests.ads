@@ -1,5 +1,6 @@
 with Ada.Containers.Vectors;
 
+with Iterators.From.Ordered_Maps;
 with Iterators.From.Vectors;
 
 package Iterators.Tests with Preelaborate is

@@ -20,6 +20,8 @@ package Iterators.Pairs with Preelaborate is
 
    function Pos (Pair : Pairs) return Root.Cursor;
 
+   function Val (Pair : Pairs) return Root.Any_Element;
+
 private
 
    package Key_Holders is new AAA.Containers.Indefinite_Holders (Keys);
@@ -49,5 +51,11 @@ private
    ---------
 
    function Pos (Pair : Pairs) return Root.Cursor is (Pair.Pos);
+
+   ---------
+   -- Val --
+   ---------
+
+   function Val (Pair : Pairs) return Root.Any_Element is (Pair.Pos.Element);
 
 end Iterators.Pairs;

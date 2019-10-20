@@ -16,6 +16,9 @@ generic
    pragma Warnings (On);
 package Iterators.Traits.Containers with Preelaborate is
 
-   --  Reuse the gist of standard containers
+   --  Reuse the gist of standard containers.
+
+   subtype Elements is Element_Type;
+   --  Visibility bug workaround.
 
 end Iterators.Traits.Containers;
