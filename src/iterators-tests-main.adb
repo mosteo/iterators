@@ -5,13 +5,12 @@ procedure Iterators.Tests.Main is
    use type Ada.Containers.Count_Type;
 
    --  Regular sequences
-   use Int_Iters.Iterators;
-   use Int_Iters.Collectors;
-   use Int_Iters.Generators;
+   use Int_Vec_Iters.Iterators;
+   use Int_Vec_Iters.Collectors;
+   use Int_Vec_Iters.Generators;
 
    --  Keyed sequences
---   package KI renames Int_Iters.Keyed_Iterators;
-   package KG renames Int_Iters.Keyed_Generators;
+   package KG renames Int_Vec_Iters.Keyed_Generators;
 
    Seq : constant Iterator'Class := Just (1) & 2 & 3;
    Vec : constant Container :=
@@ -182,6 +181,63 @@ procedure Iterators.Tests.Main is
       end loop;
    end Keyed_Variable_Iteration;
 
+   --------------------
+   -- Map_Collection --
+   --------------------
+
+   procedure Map_Collection is
+      Map : Int_Maps.Map;
+
+      --  Make "&" visible
+      use all type Int_Map_Iters.Iterators.Iterator'Class;
+      use all type Int_Map_Iters.Keyed_Iterators.Iterator'Class;
+
+      K, V : Integer;
+   begin
+      Map.Insert (1, 2);
+      Map.Insert (2, 4);
+      Map.Insert (3, 6);
+
+      --  Verify plain iteration
+      V := 2;
+      for V2 of Int_Map_Iters.Generators.Const_Iter (Map) loop
+         pragma Assert (V = V2);
+         V := V + 2;
+      end loop;
+
+      --  Verify key/value pairs
+      K := 1; V := 2;
+      for Pair of Int_Map_Iters.Keyed_Generators.Const_Iter (Map) loop
+         pragma Assert (K = Pair.Key);
+         pragma Assert (V = Pair.Val);
+         K := K + 1;
+         V := K * 2;
+      end loop;
+
+      --  Verify collection into plain list
+--        V := 2;
+--        for V2 of Int_Map_Iters.Iterators.List'
+--          (Int_Map_Iters.Keyed_Generators.Const_Iter (Map)
+--           & Strip -- TODO: implement this as part of the type transformation operators
+--           & Int_Map_Iters.Iterators.Collect)
+--        loop
+--           null;
+--        end loop;
+
+      --  Verify reassembly as map
+      declare
+         Map2 : constant Int_Maps.Map :=
+                  Int_Map_Iters.Keyed_Collectors.Collect
+                    (Int_Map_Iters.Keyed_Generators.Const_Iter (Map));
+         use Ada.Containers;
+      begin
+         pragma Assert (Map.Length = Map2.Length);
+         for Pos in Map.Iterate loop
+            pragma Assert (Map (Pos) = Map2 (Int_Maps.Key (Pos)));
+         end loop;
+      end;
+   end Map_Collection;
+
 begin
    Manual_Constant_Iteration;
    Manual_Variable_Iteration;
@@ -194,6 +250,8 @@ begin
 
    Keyed_Constant_Iteration;
    Keyed_Variable_Iteration;
+
+   Map_Collection;
 
    Ada.Text_IO.Put_Line ("OK");
 

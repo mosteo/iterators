@@ -4,9 +4,9 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 procedure Iterators.Tests.Violations is
 
-   use Int_Iters.Iterators;
-   use Int_Iters.Collectors;
-   use Int_Iters.Generators;
+   use Int_Vec_Iters.Iterators;
+   use Int_Vec_Iters.Collectors;
+   use Int_Vec_Iters.Generators;
 
    --------------
    -- Dangling --

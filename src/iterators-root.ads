@@ -36,6 +36,8 @@ package Iterators.Root with Preelaborate is
 
    function Ref (This : Cursor) return Reference;
 
+   function Val (This : Cursor) return Any_Element;
+
    function New_Cursor (Element : aliased in out Any_Element) return Cursor;
 
    function New_Const_Cursor (Element : aliased Any_Element) return Cursor;

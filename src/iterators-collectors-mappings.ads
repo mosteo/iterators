@@ -9,7 +9,7 @@ generic
      (Keys => Keyed_Iterators.Keys, others => <>);
 package Iterators.Collectors.Mappings with Preelaborate is
 
-   --  Collect into a container that respects the appending order.
+   --  Collect into a container that has key/value mapping concept.
 
    function "&" (L : Keyed_Iterators.Iterator'Class;
                  R : Containers.Container)

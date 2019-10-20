@@ -91,6 +91,12 @@ package body Iterators.Root is
                   then raise Constraint_Error with "Iterator is read-only"
                   else This.Data.Ptr));
 
+   ---------
+   -- Val --
+   ---------
+
+   function Val (This : Cursor) return Any_Element is (This.Get.Element.all);
+
    ----------------
    -- New_Cursor --
    ----------------

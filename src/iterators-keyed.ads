@@ -21,6 +21,4 @@ package Iterators.Keyed with Preelaborate is
    subtype Any_Element is Iterators.Elements;
    subtype Iterator is Iterators.Iterator;
 
-   --  TODO: re-expose Iterators.* here?
-
 end Iterators.Keyed;
