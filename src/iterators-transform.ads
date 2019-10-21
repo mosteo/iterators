@@ -35,4 +35,7 @@ private
       Up : Holder; -- An operator has a mandatory upstream Iterator
    end record;
 
+   procedure Set_Upstream (This     : in out Operator;
+                           Upstream : From.Iterator'Class);
+
 end Iterators.Transform;
