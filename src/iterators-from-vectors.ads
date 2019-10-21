@@ -4,7 +4,7 @@ with Iterators.Collectors.Sequences;
 with Iterators.Generators.Keyed;
 with Iterators.Keyed;
 with Iterators.Linkers.Sequences;
-with Iterators.Root;
+with Iterators.Root.Operators;
 with Iterators.Traits.Containers.Appendable;
 with Iterators.Traits.Containers.Keyed;
 
@@ -70,6 +70,9 @@ package Iterators.From.Vectors with Preelaborate is
       Keyed_Iterators,
       Keyed_Traits);
    --  Provides conversion from keyed container into keyed iterator.
+
+   package Operators is new Iterators.Operators;
+   --  Provides type-preserving operators.
 
    package Linkers is new Standard.Iterators.Linkers.Sequences
      (Iterators,

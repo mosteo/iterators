@@ -1,6 +1,6 @@
-with Iterators.Transform.Impl_Map;
+with Iterators.Operators.Impl_Map;
 
-package body Iterators.Transform is
+package body Iterators.Operators is
 
    -------------
    -- Linkers --
@@ -57,4 +57,4 @@ package body Iterators.Transform is
                    function (E : From.Any_Element) return Into.Any_Element)
                  return Operator'Class renames Map_Instance.Create;
 
-end Iterators.Transform;
+end Iterators.Operators;

@@ -1,4 +1,4 @@
-package body Iterators.Transform.Impl_Map is
+package body Iterators.Operators.Impl_Map is
 
    function Create
      (Map : not null access
@@ -6,4 +6,4 @@ package body Iterators.Transform.Impl_Map is
       return Operator'Class is
       (raise Unimplemented);
 
-end Iterators.Transform.Impl_Map;
+end Iterators.Operators.Impl_Map;

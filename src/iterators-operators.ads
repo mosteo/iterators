@@ -5,7 +5,16 @@ with Iterators.Root;
 generic
    with package From is new Root (<>);
    with package Into is new Root (<>);
-package Iterators.Transform with Preelaborate is
+package Iterators.Operators with Preelaborate is
+
+   --  Operators are chainable functions (monads) that take an iterator and
+   --  return another iterator. The ones in this package transform the type
+   --  they take into the one they generate. Thus, using any of these operators
+   --  produces a read-only sequence, since the root container cursor cannot be
+   --  preserved.
+
+   --  On the contrary, some operators in Root.Operators take and return same-
+   --  typed operators; in that case a read-write sequence can be maintained.
 
    --------------
    -- Operator --
@@ -46,4 +55,4 @@ private
    procedure Set_Upstream (This     : in out Operator;
                            Upstream : From.Iterator'Class);
 
-end Iterators.Transform;
+end Iterators.Operators;
