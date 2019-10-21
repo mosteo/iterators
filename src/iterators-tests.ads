@@ -3,6 +3,8 @@ with Ada.Containers.Vectors;
 
 pragma Warnings (Off);
 with Iterators.From.Lists; -- force compilation
+with Iterators.Root.Preservers;
+with Iterators.Transform;
 pragma Warnings (On);
 
 with Iterators.From.Ordered_Maps;

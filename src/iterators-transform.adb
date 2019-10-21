@@ -1,3 +1,5 @@
+with Iterators.Transform.Impl_Map;
+
 package body Iterators.Transform is
 
    -------------
@@ -42,5 +44,17 @@ package body Iterators.Transform is
          end;
       end if;
    end Set_Upstream;
+
+   -------------------------------------------------------------------------
+   -------------------------------------------------------------------------
+
+   ---------
+   -- Map --
+   ---------
+
+   package Map_Instance is new Impl_Map;
+   function Map (Map : not null access
+                   function (E : From.Any_Element) return Into.Any_Element)
+                 return Operator'Class renames Map_Instance.Create;
 
 end Iterators.Transform;

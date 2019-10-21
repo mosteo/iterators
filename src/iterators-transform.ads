@@ -21,6 +21,14 @@ package Iterators.Transform with Preelaborate is
 
    end Linkers;
 
+   ---------------
+   -- Operators --
+   ---------------
+
+   function Map (Map : not null access
+                   function (E : From.Any_Element) return Into.Any_Element)
+                 return Operator'Class;
+
 private
 
    package Holders is new AAA.Containers.Indefinite_Holders (From.Iterator'Class);
