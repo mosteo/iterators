@@ -72,7 +72,12 @@ package Iterators.From.Vectors with Preelaborate is
    --  Provides conversion from keyed container into keyed iterator.
 
    package Operators is new Iterators.Operators;
+   package Op renames Operators; -- shortcut
    --  Provides type-preserving operators.
+
+   package Keyed_Operators is new Keyed_Iterators.Iterators.Operators;
+   package Keyop renames Keyed_Operators;
+   --  Provides type-preserving keyed operators.
 
    package Linkers is new Standard.Iterators.Linkers.Sequences
      (Iterators,
