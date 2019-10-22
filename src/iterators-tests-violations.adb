@@ -4,26 +4,25 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 procedure Iterators.Tests.Violations is
 
-   use Int_Vec_Iters.Iterators;
-   use Int_Vec_Iters.Collectors;
-   use Int_Vec_Iters.Generators;
+   package Ints renames Int_Vec_Iters;
+   use Ints.Linkers;
 
    --------------
    -- Dangling --
    --------------
 
    function Dangling return Iterator'Class is
-      L : Container;
+      L : Ints.Container;
    begin
       L.Append (1);
       L.Append (2);
       L.Append (3);
-      return Iter (L);
+      return Ints.Gen.Iter (L);
    end Dangling;
 
 begin
    --  Will bomb because the original list is out of scope
-   for Int of Container'(Dangling & Collect) loop
+   for Int of Ints.Container'(Dangling & Ints.Col.Collect) loop
       Put_Line (Int'Img);
    end loop;
 

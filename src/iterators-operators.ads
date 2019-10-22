@@ -1,5 +1,3 @@
-private with AAA.Containers.Indefinite_Holders;
-
 with Iterators.Root;
 
 generic
@@ -23,12 +21,12 @@ package Iterators.Operators with Preelaborate is
    type Operator is abstract new Into.Iterator with private;
    --  Operators that transform from one type into another.
 
-   package Linkers is
+   function Upstream (This : in out Operator'Class) return From.Iterator_Reference;
 
-      function "&" (L : From.Iterator'Class;
-                    R : Operator'Class) return Into.Iterator'Class;
-
-   end Linkers;
+   function Concatenate (L : From.Iterator'Class;
+                         R : Operator'Class) return Into.Iterator'Class;
+   --  Function to build a chain of iterator & operators.
+   --  Intended to be renamed as "&" in Linkers packages.
 
    ---------------
    -- Operators --
@@ -40,9 +38,7 @@ package Iterators.Operators with Preelaborate is
 
 private
 
-   package Holders is new AAA.Containers.Indefinite_Holders (From.Iterator'Class);
-
-   type Holder is new Holders.Holder with null record;
+   subtype Holder is From.Holder;
 
    --------------
    -- Operator --

@@ -1,14 +1,11 @@
---  with GNAT.IO; use GNAT.IO;
-
-with Iterators.Root.Impl_Append;
-with Iterators.Root.Impl_Collect;
-with Iterators.Root.Impl_Copy;
-with Iterators.Root.Impl_Count;
-with Iterators.Root.Impl_Filter;
-with Iterators.Root.Impl_Just;
-with Iterators.Root.Impl_No_Op;
-
 package body Iterators.Root is
+
+   -----------------
+   -- As_Iterator --
+   -----------------
+
+   function As_Iterator (This : in out Holder) return Iterator_Reference is
+     (Ptr => Iterator'Class (This.Reference.Element.all)'Access);
 
    ------------------------------------
    -- ADA STANDARD ITERATION SUPPORT --
@@ -120,96 +117,5 @@ package body Iterators.Root is
    function New_Empty_Cursor return Cursor is
      (Data => (Read_Only => True,
                Const_Ptr => null));
-
-   -----------------
-   -- As_Iterator --
-   -----------------
-
-   function As_Iterator (This : in out Holder) return Iterator_Reference is
-     (Ptr => Iterator'Class (This.Reference.Element.all)'Access);
-
-   --------------
-   -- Upstream --
-   --------------
-
-   function Upstream (This : in out Operator'Class) return Iterator_Reference is
-     (This.Up.As_Iterator);
-
-   ---------
-   -- "&" --
-   ---------
-
-   function "&" (L : Iterator'Class;
-                 R : Operator'Class) return Iterator'Class is
-   begin
-      return Result : Operator'Class := R do
-         if Result.Up.Is_Empty then
-            Result.Up := L.To_Holder;
-         else
-            declare
-               Parent : Iterator'Class renames Result.Up.Reference.Element.all;
-            begin
-               if Parent in Operator'Class then
-                  Result.Up := To_Holder (L & Operator'Class (Parent));
-               else
-                  raise Constraint_Error with
-                    "Operator required in RHS of ""&"" concatenator";
-               end if;
-            end;
-         end if;
-      end return;
-   end "&";
-
-   -----------------
-   --  OPERATORS  --
-   -----------------
-
-   -- Append --
-
-   package  Append_Instance is new Impl_Append;
-   function Append (Element : Any_Element) return Operator'Class
-                    renames Append_Instance.Create;
-   function "&" (L : Iterator'Class; R : Any_Element) return Iterator'Class
-                 renames Append_Instance."&";
-
-   -- Copy --
-
-   package  Copy_Instance is new Impl_Copy;
-   function Copy return Operator'Class renames Copy_Instance.Create;
-
-   -- Filter --
-
-   package  Filter_Instance is new Impl_Filter;
-   function Filter
-     (Tester : access function (Element : Any_Element) return Boolean)
-      return Operator'Class is (Filter_Instance.Create (Tester));
-
-   -- Just --
-
-   package  Just_Instance is new Impl_Just;
-   function Just (Element : Any_Element) return Iterator'Class
-                  renames Just_Instance.Create;
-
-   -- No_Op --
-
-   package  No_Op_Instance is new Impl_No_Op;
-   function No_Op return Operator'Class renames No_Op_Instance.Create;
-
-   ----------------
-   --  REDUCERS  --
-   ----------------
-
-   package Collect_Instance is new Impl_Collect;
-   function Collect return List is (Lists.Empty_List);
-   function Collect (It : Iterator'Class) return List is
-      (Collect_Instance.Reduce (It, Lists.Empty_List));
-   function "&" (L : Iterator'Class; R : List) return List renames Collect_Instance.Reduce;
-
-   -- Count --
-
-   package Count_Instance is new Impl_Count;
-   function Count return Counter is (null record);
-   function "&" (L : Iterator'Class; R : Counter) return Natural is (Count (L));
-   function Count (It : Iterator'Class) return Natural renames Count_Instance.Reduce;
 
 end Iterators.Root;

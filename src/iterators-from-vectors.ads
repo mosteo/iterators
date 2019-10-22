@@ -1,8 +1,8 @@
 with Ada.Containers.Vectors;
 
 with Iterators.Collectors.Sequences;
-with Iterators.Generators.Keyed;
-with Iterators.Keyed;
+with Iterators.From.Keyed;
+with Iterators.Generators;
 with Iterators.Linkers.Sequences;
 with Iterators.Root.Operators;
 with Iterators.Traits.Containers.Appendable;
@@ -54,33 +54,27 @@ package Iterators.From.Vectors with Preelaborate is
       Container_Traits,
       Appendable_Traits);
    --  Provides collection back into the same container type.
+   package Col renames Collectors;
 
    package Generators is new Standard.Iterators.Generators
      (Iterators,
       Container_Traits);
    --  Provides conversion from container into iterator.
+   package Gen renames Generators;
 
-   package Keyed_Iterators is New Standard.Iterators.Keyed
-     (Iterators,
-      Ada_Containers.Index_Type);
-   --  Provides iterators over pairs (key + root element).
-
-   package Keyed_Generators is new Generators.Keyed
-     (Container_Traits,
-      Keyed_Iterators,
-      Keyed_Traits);
-   --  Provides conversion from keyed container into keyed iterator.
+   package Keyed is new From.Keyed
+     (Unkeyed_Generators => Generators,
+      Containers         => Container_Traits,
+      Keyed_Containers   => Keyed_Traits);
+   --  Provides the Keyed alternatives: generators, operators, collectors.
 
    package Operators is new Iterators.Operators;
    package Op renames Operators; -- shortcut
    --  Provides type-preserving operators.
 
-   package Keyed_Operators is new Keyed_Iterators.Iterators.Operators;
-   package Keyop renames Keyed_Operators;
-   --  Provides type-preserving keyed operators.
-
    package Linkers is new Standard.Iterators.Linkers.Sequences
      (Iterators,
+      Operators,
       Collectors);
 
 end Iterators.From.Vectors;

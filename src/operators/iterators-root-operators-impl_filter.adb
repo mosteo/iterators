@@ -1,6 +1,6 @@
-package body Iterators.Root.Impl_Filter is
+package body Iterators.Root.Operators.Impl_Filter is
 
-   type Operator is new Root.Operator with record
+   type Operator is new Operators.Operator with record
       Tester : Testers;
    end record;
 
@@ -25,8 +25,8 @@ package body Iterators.Root.Impl_Filter is
    -- Create --
    ------------
 
-   function Create (Tester : Testers) return Root.Operator'Class is
-     (Operator'(Up     => <>,
+   function Create (Tester : Testers) return Operators.Operator'Class is
+     (Operator'(Operators.Operator with
                 Tester => Tester));
 
-end Iterators.Root.Impl_Filter;
+end Iterators.Root.Operators.Impl_Filter;

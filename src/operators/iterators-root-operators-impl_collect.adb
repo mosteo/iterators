@@ -1,4 +1,4 @@
-package body Iterators.Root.Impl_Collect is
+package body Iterators.Root.Operators.Impl_Collect is
 
    function Reduce (L : Iterator'Class; R : List) return List is
    begin
@@ -12,4 +12,4 @@ package body Iterators.Root.Impl_Collect is
       end return;
    end Reduce;
 
-end Iterators.Root.Impl_Collect;
+end Iterators.Root.Operators.Impl_Collect;

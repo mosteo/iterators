@@ -1,4 +1,4 @@
-package body Iterators.Root.Impl_Count is
+package body Iterators.Root.Operators.Impl_Count is
 
    function Reduce (It : Iterator'Class) return Natural is
    begin
@@ -9,4 +9,4 @@ package body Iterators.Root.Impl_Count is
       end return;
    end Reduce;
 
-end Iterators.Root.Impl_Count;
+end Iterators.Root.Operators.Impl_Count;

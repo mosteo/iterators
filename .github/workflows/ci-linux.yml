@@ -2,6 +2,7 @@ name: CI linux
 
 on:
   push:
+    branch: master
     paths-ignore:
       - 'doc/**'
 
@@ -20,8 +21,9 @@ jobs:
       matrix:
         tag: # Those are our dockerhub alire/gnat:tag machines
             - community-current
-            - debian-stable
-            - ubuntu-lts
+# Compilers too old to be tested:
+#            - debian-stable
+#            - ubuntu-lts
  
     steps:
     - name: Check out repository

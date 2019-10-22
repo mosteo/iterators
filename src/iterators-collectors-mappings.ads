@@ -11,16 +11,16 @@ package Iterators.Collectors.Mappings with Preelaborate is
 
    --  Collect into a container that has key/value mapping concept.
 
-   function "&" (L : Keyed_Iterators.Iterator'Class;
-                 R : Containers.Container)
-                    return Containers.Container;
-   --  To be used with Collect.
-   --  Alternatively, if R is not empty, L and then R will be collected.
-   --  This version uses "Insert", hence repeated keys will raise.
-
    function Collect return Containers.Container;
    --  Returns an empty container, to have a unique signature for the previous
    --  "&" operator.
+
+   function Collect (L : Keyed_Iterators.Iterator'Class;
+                     R : Containers.Container)
+                     return Containers.Container;
+   --  To be used as "&".
+   --  Alternatively, if R is not empty, L and then R will be collected.
+   --  This version uses "Insert", hence repeated keys will raise.
 
    function Collect (L                 : Keyed_Iterators.Iterator'Class;
                      R                 : Containers.Container := Collect;

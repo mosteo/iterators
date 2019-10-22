@@ -1,12 +1,12 @@
 package body Iterators.Collectors.Mappings is
 
-   ---------
-   -- "&" --
-   ---------
+   -------------
+   -- Collect --
+   -------------
 
-   function "&" (L : Keyed_Iterators.Iterator'Class;
-                 R : Containers.Container)
-                 return Containers.Container is
+   function Collect (L : Keyed_Iterators.Iterator'Class;
+                     R : Containers.Container)
+                     return Containers.Container is
       (Collect (L, R, Allow_Replacement => False));
 
    -------------

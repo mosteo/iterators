@@ -1,26 +1,24 @@
 with Iterators.Operators.Impl_Map;
+--  with Iterators.Root.Impl_Collect;
+--  with Iterators.Root.Impl_Copy;
+--  with Iterators.Root.Impl_Count;
+--  with Iterators.Root.Impl_Filter;
+--  with Iterators.Root.Impl_Just;
+--  with Iterators.Root.Impl_No_Op;
 
 package body Iterators.Operators is
 
-   -------------
-   -- Linkers --
-   -------------
+   -----------------
+   -- Concatenate --
+   -----------------
 
-   package body Linkers is
-
-      ---------
-      -- "&" --
-      ---------
-
-      function "&" (L : From.Iterator'Class;
-                    R : Operator'Class) return Into.Iterator'Class is
-      begin
-         return RW : Operator'Class := R do
-            RW.Set_Upstream (L);
-         end return;
-      end "&";
-
-   end Linkers;
+   function Concatenate (L : From.Iterator'Class;
+                         R : Operator'Class) return Into.Iterator'Class is
+   begin
+      return RW : Operator'Class := R do
+         RW.Set_Upstream (L);
+      end return;
+   end Concatenate;
 
    ------------------
    -- Set_Upstream --
@@ -30,7 +28,7 @@ package body Iterators.Operators is
                            Upstream : From.Iterator'Class) is
    begin
       if This.Up.Is_Empty then
-         This.Up := To_Holder (Upstream);
+         This.Up := Upstream.To_Holder;
       else
          declare
             Parent : From.Iterator'Class renames This.Up.Reference.Element.all;
@@ -45,7 +43,16 @@ package body Iterators.Operators is
       end if;
    end Set_Upstream;
 
+   --------------
+   -- Upstream --
+   --------------
+
+   function Upstream (This : in out Operator'Class)
+                      return From.Iterator_Reference is
+     (This.Up.As_Iterator);
+
    -------------------------------------------------------------------------
+   -- OPERATORS ------------------------------------------------------------
    -------------------------------------------------------------------------
 
    ---------
