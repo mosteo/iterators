@@ -10,4 +10,7 @@ package Iterators.Traits.Containers.Appendable with Preelaborate is
    --  Doubly_Linked_Lists
    --  Vectors
 
+   procedure Copy (Dst : in out Container;
+                   Src :        Container);
+
 end Iterators.Traits.Containers.Appendable;

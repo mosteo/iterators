@@ -2,13 +2,15 @@ with Iterators.Keyed;
 with Iterators.Traits.Containers.Keyed;
 
 generic
-   with package Containers is new Traits.Containers
-     (Element_Type => Generators.Root.Any_Element,
-      others       => <>);
    with package Keyed_Iterators is new Iterators.Keyed
-     (Unkeyed => Generators.Root, others => <>);
+     (Unkeyed => Iterators.Generators.Root,
+      others  => <>);
+   with package Containers is new Traits.Containers
+     (Element_Type => Iterators.Generators.Root.Any_Element,
+      others       => <>);
    with package Keyed_Containers is new Containers.Keyed
-     (Keys => Keyed_Iterators.Keys, others => <>);
+     (Keys   => Keyed_Iterators.Keys,
+      others => <>);
 package Iterators.Generators.Keyed with Preelaborate is
 
    subtype Container is Containers.Container;

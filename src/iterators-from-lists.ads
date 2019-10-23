@@ -3,7 +3,7 @@ with Ada.Containers.Doubly_Linked_Lists;
 with Iterators.Collectors.Sequences;
 with Iterators.Generators;
 with Iterators.Linkers.Sequences;
-with Iterators.Root;
+with Iterators.Root.Operators;
 with Iterators.Traits.Containers.Appendable;
 
 generic
@@ -45,8 +45,13 @@ package Iterators.From.Lists with Preelaborate is
       Container_Traits);
    --  Provides conversion from container into iterator.
 
+   package Operators is new Iterators.Operators;
+   package Op renames Operators; -- shortcut
+   --  Provides type-preserving operators.
+
    package Linkers is new Standard.Iterators.Linkers.Sequences
      (Iterators,
+      Operators,
       Collectors);
 
 end Iterators.From.Lists;

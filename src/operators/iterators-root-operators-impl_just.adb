@@ -1,4 +1,4 @@
-package body Iterators.Root.Impl_Just is
+package body Iterators.Root.Operators.Impl_Just is
 
    type Iterator is new Root.Iterator with record
       Element : Elem_Holders.Holder;
@@ -9,9 +9,7 @@ package body Iterators.Root.Impl_Just is
    function Next (This : in out Iterator) return Cursor'Class is
    begin
       if not This.Given then
-         return Pos : constant Cursor :=
-           New_Cursor (This.Element.Reference)
-         do
+         return Pos : constant Cursor := New_Cursor (This.Element.Reference) do
             This.Given := True;
          end return;
       else
@@ -21,6 +19,6 @@ package body Iterators.Root.Impl_Just is
 
    function Create (Element : Any_Element) return Root.Iterator'Class is
      (Iterator'(Element => Elem_Holders.To_Holder (Element),
-                Given   => <>));
+                Given   => False));
 
-end Iterators.Root.Impl_Just;
+end Iterators.Root.Operators.Impl_Just;

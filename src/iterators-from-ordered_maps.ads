@@ -1,10 +1,10 @@
 with Ada.Containers.Ordered_Maps;
 
 with Iterators.Collectors.Mappings;
-with Iterators.Generators.Keyed;
-with Iterators.Keyed;
+with Iterators.From.Keyed;
+with Iterators.Generators;
 with Iterators.Linkers.Mappings;
-with Iterators.Root;
+with Iterators.Root.Operators;
 with Iterators.Traits.Containers.Keyed;
 
 generic
@@ -38,32 +38,33 @@ package Iterators.From.Ordered_Maps with Preelaborate is
    subtype Iterator is Iterators.Iterator;
    subtype Cursor   is Iterators.Cursor;
 
-   package Keyed_Iterators is new Standard.Iterators.Keyed
-     (Iterators,
-      Keys => Ada_Containers.Key_Type);
-   --  Provides iterators over pairs key+value.
-
-   subtype Keyed_Iterator is Keyed_Iterators.Iterator;
-
-   package Keyed_Collectors is new Standard.Iterators.Collectors.Mappings
-     (Keyed_Iterators,
-      Container_Traits,
-      Keyed_Traits);
-   --  Provides collection back into the same container type.
-
    package Generators is new Standard.Iterators.Generators
      (Iterators,
       Container_Traits);
+   package Gen renames Generators;
    --  Provides conversion from container into iterator.
 
-   package Keyed_Generators is new Generators.Keyed
-     (Container_Traits,
-      Keyed_Iterators,
+   package Keyed is new From.Keyed
+     (Unkeyed_Generators => Generators,
+      Containers         => Container_Traits,
+      Keyed_Containers   => Keyed_Traits);
+   --  Provides the Keyed alternatives: generators, operators, collectors.
+
+   package Collectors is new Standard.Iterators.Collectors.Mappings
+     (Keyed.Iterators,
+      Container_Traits,
       Keyed_Traits);
-   --  Provides conversion from keyed container into keyed iterator.
+   package Col renames Collectors;
+   --  Provides collection back into the same container type.
+
+   package Operators is new Iterators.Operators;
+   package Op renames Operators; -- shortcut
+   --  Provides type-preserving operators.
 
    package Linkers is new Standard.Iterators.Linkers.Mappings
-     (Keyed_Iterators,
-      Keyed_Collectors);
+     (Iterators,
+      Keyed.Iterators,
+      Operators,
+      Collectors);
 
 end Iterators.From.Ordered_Maps;

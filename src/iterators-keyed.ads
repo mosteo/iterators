@@ -1,5 +1,5 @@
 with Iterators.Pairs;
-with Iterators.Root;
+with Iterators.Root.Operators;
 
 generic
    with package Unkeyed is new Root (<>);
@@ -16,9 +16,14 @@ package Iterators.Keyed with Preelaborate is
    package Iterators is new Root (Pairs.Pairs);
    --  Provides the actual iterators for Pairs.
 
+   package Operators is new Iterators.Operators;
+   package Op renames Operators;
+   --  Provides type-preserving keyed operators.
+
    --  Some types are re-exposed here for the benefit of clients and children:
 
    subtype Any_Element is Iterators.Elements;
    subtype Iterator is Iterators.Iterator;
+   subtype Operator is Operators.Operator;
 
 end Iterators.Keyed;
