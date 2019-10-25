@@ -13,12 +13,4 @@ generic
       others => <>);
 package Iterators.Generators.Keyed with Preelaborate is
 
-   subtype Container is Containers.Container;
-
-   subtype Iterator is Keyed_Iterators.Iterator;
-
-   function Const_Iter (C : aliased Container) return Iterator'Class;
-
-   function Iter (C : aliased in out Container) return Iterator'Class;
-
 end Iterators.Generators.Keyed;

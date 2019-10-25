@@ -1,20 +1,11 @@
-with "aaa";
-
 project Iterators is
 
-   for Source_Dirs use ("src", "src/operators");
+   for Source_Dirs use ("src");
    for Object_Dir use "obj";
    for Exec_Dir use "bin";
    for Create_Missing_Dirs use "True";
    for Main use (
-                 "iterators-tests-main.adb",
-                 "iterators-tests-violations.adb"
+                 "iterators-tests-main.adb"
                 );
-
-   package Builder renames Aaa.Builder;
-
-   package Compiler renames Aaa.Compiler;
-
-   package Binder renames Aaa.Binder;
 
 end Iterators;
