@@ -27,7 +27,7 @@ package Iterators.Linkers.Sequences with Preelaborate is
 
    function "&" (L : Iterator'Class;
                  R : Operator'Class) return Iterator'Class
-                 renames Operators.Operators.Concatenate;
+                 renames Operators.Operators.Linking."&";
 
    function "&" (L : Iterator'Class;
                  R : Container)

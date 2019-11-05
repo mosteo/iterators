@@ -1,3 +1,4 @@
+with Iterators.Contracts;
 with Iterators.Root;
 
 generic
@@ -18,13 +19,38 @@ package Iterators.Operators with Preelaborate is
    -- Operator --
    --------------
 
-   type Operator is abstract new Into.Iterator with private;
+   type Operator is abstract
+   new Into.Iterator
+   and Contracts.Linkable with private;
    --  Operators that transform from one type into another.
+
+   overriding
+   procedure Concatenate (This   : in out Operator;
+                          Parent : Contracts.Iterator'Class);
+   --  Dynamic linking.
+
+   not overriding
+   procedure Concatenate (This   : in out Operator;
+                          Parent : From.Iterator'Class);
+   --  Static linking.
+
+   -------------
+   -- Linking --
+   -------------
+
+   package Linking is
+
+      --  Statically-checked linker operator
+
+      function "&" (L : From.Iterator'Class;
+                    R : Operator'Class) return Into.Iterator'Class;
+
+   end Linking;
 
    function Upstream (This : in out Operator'Class) return From.Iterator_Reference;
 
-   function Concatenate (L : From.Iterator'Class;
-                         R : Operator'Class) return Into.Iterator'Class;
+--     function Concatenate (L : From.Iterator'Class;
+--                           R : Operator'Class) return Into.Iterator'Class;
    --  Function to build a chain of iterator & operators.
    --  Intended to be renamed as "&" in Linkers packages.
 
@@ -44,7 +70,10 @@ private
    -- Operator --
    --------------
 
-   type Operator is abstract new Into.Iterator with record
+   type Operator is abstract
+   new Into.Iterator
+   and Contracts.Linkable
+   with record
       Up : Holder; -- An operator has a mandatory upstream Iterator
    end record;
 

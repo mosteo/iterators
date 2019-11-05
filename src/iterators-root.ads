@@ -3,6 +3,8 @@ with AAA.Containers.Indefinite_Holders;
 with Ada.Containers.Indefinite_Doubly_Linked_Lists;
 with Ada.Iterator_Interfaces;
 
+with Iterators.Contracts;
+
 generic
    type Any_Element (<>) is private;
 package Iterators.Root with Preelaborate is
@@ -50,7 +52,7 @@ package Iterators.Root with Preelaborate is
    -- Iterator --
    --------------
 
-   type Iterator is interface with
+   type Iterator is interface and Contracts.Iterator with
      Constant_Indexing => Get_Const_Ref,
      Variable_Indexing => Get_Var_Ref,
      Default_Iterator => Iterate,

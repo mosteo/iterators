@@ -29,7 +29,7 @@ package Iterators.Linkers.Mappings with Preelaborate is
 
    function "&" (L : Root.Iterator'Class;
                  R : Operators.Operator'Class) return Root.Iterator'Class
-                 renames Operators.Operators.Concatenate;
+                 renames Operators.Operators.Linking."&";
 
 --     --  Keyed sequences
 
@@ -47,7 +47,7 @@ package Iterators.Linkers.Mappings with Preelaborate is
 
    function "&" (L : Keyed.Iterator'Class;
                  R : Keyed.Operator'Class) return Keyed.Iterators.Iterator'Class
-                 renames Keyed.Operators.Operators.Concatenate;
+                 renames Keyed.Operators.Operators.Linking."&";
 
    --  Collectors
 
