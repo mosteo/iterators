@@ -1,4 +1,4 @@
-aggregate project Dev is
+aggregate project Iterators_Dev is
 
    for Project_Path use ("deps/aaa");
 
@@ -7,4 +7,4 @@ aggregate project Dev is
 
    for Create_Missing_Dirs use "True";
 
-end Dev;
+end Iterators_Dev;
