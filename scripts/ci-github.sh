@@ -9,7 +9,7 @@ set -o nounset
 export PATH+=:${PWD}/bin
 
 # Build
-gprbuild -j0 -p -P dev
+gprbuild -j0 -p -P iterators_dev
 
 # For the record
 echo ENVIRONMENT:
