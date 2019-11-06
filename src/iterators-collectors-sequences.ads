@@ -29,4 +29,12 @@ package Iterators.Collectors.Sequences with Preelaborate is
    function Collect (It : Iterator'Class) return Container;
    --  Alternate regular function version.
 
+   package Linking is
+
+      function "&" (L : Iterator'Class;
+                    R : Container)
+                    return Container renames Collect;
+
+   end Linking;
+
 end Iterators.Collectors.Sequences;
