@@ -59,6 +59,33 @@ package Iterators.Root.Operators with Preelaborate is
    function Just (Element : Any_Element) return Iterator'Class;
    --  Convert an element into an iterator for use as start of a sequence.
 
+   -------------
+   -- Linking --
+   -------------
+
+   package Linking is
+
+      --  Expose here the linking operators for Operators and Reducers. This is
+      --  an "use"-intended package.
+
+      function "&" (L : Iterator'Class;
+                    R : Operator'Class) return Iterator'Class
+                    renames Operators.Linking."&";
+
+      function "&" (L : Iterator'Class;
+                    R : Any_Element) return Iterator'Class
+              renames Append;
+
+      function "&" (L : Iterator'Class;
+                    R : Counter) return Natural
+                    renames Count;
+
+      function "&" (L : Iterator'Class;
+                    R : List) return List
+                    renames Collect;
+
+   end Linking;
+
 private
 
    type Counter is null record;

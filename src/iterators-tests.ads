@@ -1,14 +1,14 @@
 with Ada.Containers.Ordered_Maps;
 with Ada.Containers.Vectors;
 
-pragma Warnings (Off);
-with Iterators.From.Lists; -- force compilation
-pragma Warnings (On);
-
+with Iterators.From.Elements;
 with Iterators.From.Ordered_Maps;
 with Iterators.From.Vectors;
 
 package Iterators.Tests with Preelaborate is
+
+   package Ints    is new From.Elements (Integer);
+   package Strings is new From.Elements (String);
 
    package Int_Maps is new Ada.Containers.Ordered_Maps (Positive, Integer);
    package Int_Map_Iters is new From.Ordered_Maps (Int_Maps);

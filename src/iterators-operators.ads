@@ -28,6 +28,19 @@ package Iterators.Operators with Preelaborate is
    --  Function to build a chain of iterator & operators.
    --  Intended to be renamed as "&" in Linkers packages.
 
+   -------------
+   -- Linking --
+   -------------
+
+   package Linking is
+
+      function "&" (L : From.Iterator'Class;
+                    R : Operator'Class) return Into.Iterator'Class
+                    renames Concatenate;
+      --  Function to build a chain of iterator & operators.
+
+   end Linking;
+
    ---------------
    -- Operators --
    ---------------
