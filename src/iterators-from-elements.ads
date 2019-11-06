@@ -13,12 +13,12 @@ package Iterators.From.Elements with Preelaborate is
    package Operators is new Iterators.Operators;
    package Op renames Operators;
 
+   package Linking renames Operators.Linking;
+
 --     package Collectors renames List_Iterators.Collectors;
 --     package Col renames Collectors;
 --
 --     package Generators renames List_Iterators.Generators;
 --     package Gen renames Generators;
---
---     package Linkers renames List_Iterators.Linkers;
 
 end Iterators.From.Elements;
