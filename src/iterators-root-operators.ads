@@ -11,6 +11,34 @@ package Iterators.Root.Operators with Preelaborate is
    subtype Operator is Operators.Operator;
 
    ---------------
+   -- Reduction --
+   ---------------
+   --  Defining a reducer type allows cutting down the number of "&" to be
+   --  defined.
+
+   type Reducer is interface;
+
+   function Reduce (This : Reducer;
+                    From : Iterator'Class) return Reducer is abstract;
+
+   -------------
+   -- Linking --
+   -------------
+
+   package Linking is
+
+      --  Expose here the linking operators for Operators and Reducers
+
+      function "&" (L : Iterator'Class;
+                    R : Operator'Class) return Iterator'Class
+                    renames Operators.Linking."&";
+
+--        function "&" (L : Iterator'Class;
+--                      R : Reducer'Class) return Reducer'Class;
+
+   end Linking;
+
+   ---------------
    -- Operators --
    ---------------
 
