@@ -2,7 +2,7 @@ name: CI linux
 
 on:
   push:
-    branch: master
+    branches: master
     paths-ignore:
       - 'doc/**'
 
