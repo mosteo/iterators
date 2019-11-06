@@ -6,6 +6,7 @@ with Iterators.From.Ordered_Maps;
 with Iterators.From.Vectors;
 with Iterators.Generators.Arrays;
 with Iterators.Operators;
+with Iterators.Shebang;
 
 package Iterators.Tests is
 
@@ -15,6 +16,8 @@ package Iterators.Tests is
    package Strings is new From.Elements (String);
    package Int2str is new Operators (Ints.Iterators, Strings.Iterators);
    package Str2int is new Operators (Strings.Iterators, Ints.Iterators);
+
+   package Chars is new Shebang (Character);
 
    package Int_Lists is new Ints.Lists;
 
