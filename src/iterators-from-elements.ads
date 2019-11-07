@@ -10,6 +10,8 @@ package Iterators.From.Elements with Preelaborate is
    package Iterators is new Standard.Iterators.Root (Any_Element);
    package Iters renames Iterators;
 
+   subtype Iterator is Iterators.Iterator;
+
    package Operators is new Iterators.Operators;
    package Op renames Operators;
 
