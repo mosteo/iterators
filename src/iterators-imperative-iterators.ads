@@ -48,8 +48,15 @@ package Iterators.Imperative.Iterators with Preelaborate is
                   Map  : not null access
                     function (E : Any_Element) return Any_Element) is null;
 
+   procedure No_Op (This : in out Iterator) is null;
+
 private
 
-   type Iterator is limited new Iterable with null record;
+   type Iterator is limited new Iterable with record
+      Prev : Root.Holder;
+   end record;
+
+   procedure Link (This : in out Iterator;
+                   Last :        Root.Iterator'Class);
 
 end Iterators.Imperative.Iterators;

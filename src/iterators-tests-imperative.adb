@@ -27,6 +27,7 @@ begin
    Imp.Copy;
    I2S.Map (Imp, Image'Access);
    Str.Resume (I2S);
+   Str.No_Op;
 
    Pos := 1;
    for Img of Str.Iterate loop
