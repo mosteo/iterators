@@ -12,7 +12,7 @@ package Iterators.Imperative.Iterators with Preelaborate is
 
    type Iterable is limited interface;
 
-   function Iterate (This : Iterable) return Root.Iterator'Class is abstract;
+   function Iterate (This : in out Iterable) return Root.Iterator'Class is abstract;
 
    -------------------------
    -- Imperative iterator --
@@ -21,28 +21,34 @@ package Iterators.Imperative.Iterators with Preelaborate is
    type Iterator is limited new Iterable with private;
 
    procedure Start (This : in out Iterator;
-                    From : Root.Iterator'Class) is null;
+                    From : Root.Iterator'Class);
+   --  Requires This to be unused
+
+   procedure Restart (This : in out Iterator;
+                      From : Root.Iterator'Class);
+   --  Requires This to be already Started, previous From is forgotten
 
    procedure Resume (This : in out Iterator;
                      From : Iterable'Class) is null;
+   --  Although seemingly differen, what we want is simply to continue
+   --  consuming the From iterable, which may be a fresh one or not.
 
    ---------------
    -- Iteration --
    ---------------
 
-   function Iterate (This : Iterator) return Root.Iterator'Class is
-      (raise Unimplemented);
+   function Iterate (This : in out Iterator) return Root.Iterator'Class;
    --  Go back into root iterator class, which accepts "of"
 
    ---------------
    -- Operators --
    ---------------
 
-   procedure Copy (This : in out Iterator) is null;
+   procedure Copy (This : in out Iterator);
 
    procedure Filter
      (This   : in out Iterator;
-      Tester : access function (Element : Any_Element) return Boolean) is null;
+      Tester : access function (Element : Any_Element) return Boolean);
 
    procedure Map (This : in out Iterator;
                   Map  : not null access

@@ -8,8 +8,8 @@ package Iterators.Imperative.Operators with Preelaborate is
    type Operator is limited new Into.Iterable with private;
 
    overriding
-   function Iterate (This : Operator) return Into.Root.Iterator'Class is
-      (raise Unimplemented);
+   function Iterate (This : in out Operator) return Into.Root.Iterator'Class is
+     (Into.Iterable'Class (This).Iterate);
 
    procedure Map (This : in out Operator;
                   Prev : From.Iterable'Class;
