@@ -30,12 +30,33 @@ package body Iterators.Root.Operators is
                      renames Collect_Instance.Reduce;
 
 
+   --------------
+   -- Continue --
+   --------------
+
+   overriding
+   procedure Continue (This : in out Sequence;
+                       Last :        Operator'Class) is
+   begin
+      if This.Has_Last then
+         Operators.Sequence (This).Continue
+           (Operator'Class (Operators.Concatenate (This.Iterate, Last)));
+      else
+         Operators.Sequence (This).Continue (Last); -- just set it
+      end if;
+   end Continue;
+
    ----------
    -- Copy --
    ----------
 
    package  Copy_Instance is new Impl_Copy;
    function Copy return Operator'Class renames Copy_Instance.Create;
+
+   procedure Copy (This : in out Sequence) is
+   begin
+      This.Continue (Copy);
+   end Copy;
 
    -----------
    -- Count --
@@ -54,9 +75,7 @@ package body Iterators.Root.Operators is
    function Filter
      (Tester : access function (Element : Any_Element) return Boolean)
       return Operator'Class is (Filter_Instance.Create (Tester));
---
---     -- Just --
---
+
    ----------
    -- Just --
    ----------

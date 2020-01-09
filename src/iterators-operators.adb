@@ -20,6 +20,44 @@ package body Iterators.Operators is
       end return;
    end Concatenate;
 
+   --------------
+   -- Continue --
+   --------------
+
+   procedure Continue (This : in out Sequence;
+                       Last :        Operator'Class) is
+   begin
+      if This.First.Is_Empty then
+         raise Iterator_Error with
+           "Attempt to continue without initial iterator";
+      else
+         This.Last.Hold
+           (Concatenate
+              (This.First.Element, Last));
+      end if;
+   end Continue;
+
+   ---------------
+   -- Has_First --
+   ---------------
+
+   function Has_First (This : Sequence) return Boolean is
+     (This.First.Is_Valid);
+
+   --------------
+   -- Has_Last --
+   --------------
+
+   function Has_Last (This : Sequence) return Boolean is
+     (This.Last.Is_Valid);
+
+   -------------
+   -- Iterate --
+   -------------
+
+   function Iterate (This : Sequence) return Into.Iterator'Class is
+     (This.Last.Element);
+
    ------------------
    -- Set_Upstream --
    ------------------
@@ -43,6 +81,21 @@ package body Iterators.Operators is
       end if;
    end Set_Upstream;
 
+   -----------
+   -- Start --
+   -----------
+
+   procedure Start (This  : in out Sequence;
+                    First :        From.Iterator'Class) is
+   begin
+      if This.Last.Is_Valid then
+         raise Iterator_Error with
+           "Attempting to start an already-started sequence";
+      else
+         This.First.Hold (First);
+      end if;
+   end Start;
+
    --------------
    -- Upstream --
    --------------
@@ -62,6 +115,14 @@ package body Iterators.Operators is
    package Map_Instance is new Impl_Map;
    function Map (Map : not null access
                    function (E : From.Any_Element) return Into.Any_Element)
-                 return Operator'Class renames Map_Instance.Create;
+                 return Operator'Class is
+     (Map_Instance.Create (Map));
+
+   procedure Map (This : in out Sequence;
+                  Map  : not null access
+                    function (E : From.Any_Element) return Into.Any_Element) is
+   begin
+      This.Continue (Map_Instance.Create (Map));
+   end Map;
 
 end Iterators.Operators;

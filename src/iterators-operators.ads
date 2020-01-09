@@ -1,3 +1,5 @@
+with AAA.Containers.Indefinite_Holders;
+
 with Iterators.Root;
 
 generic
@@ -41,6 +43,33 @@ package Iterators.Operators with Preelaborate is
 
    end Linking;
 
+   --------------
+   -- Sequence --
+   --------------
+
+   --  The Sequence type is the imperative alternative to "&"; it is a helper
+   --  type that stores a sequence of iterator -> operator -> operator ...
+
+   type Sequence is tagged limited private;
+
+   procedure Start (This  : in out Sequence;
+                    First :        From.Iterator'Class);
+   --  Begin a sequence with First at the root
+
+   procedure Continue (This : in out Sequence;
+                       Last :        Operator'Class);
+   --  This presumes that This already contains a chain, and Last is going
+   --  to become the bottom of the chain, stored in this operator.
+
+   function Iterate (This : Sequence) return Into.Iterator'Class;
+   --  Functional view of the sequence
+
+   --  Support functions, not normally needed for use
+
+   function Has_First (This : Sequence) return Boolean;
+
+   function Has_Last (This : Sequence) return Boolean;
+
    ---------------
    -- Operators --
    ---------------
@@ -49,19 +78,35 @@ package Iterators.Operators with Preelaborate is
                    function (E : From.Any_Element) return Into.Any_Element)
                  return Operator'Class;
 
+   procedure Map (This : in out Sequence;
+                  Map : not null access
+                   function (E : From.Any_Element) return Into.Any_Element);
+
 private
 
-   subtype Holder is From.Holder;
+   subtype Upstream_Holder is From.Holder;
 
    --------------
    -- Operator --
    --------------
 
    type Operator is abstract new Into.Iterator with record
-      Up : Holder; -- An operator has a mandatory upstream Iterator
+      Up : Upstream_Holder; -- An operator has a mandatory upstream Iterator
    end record;
 
    procedure Set_Upstream (This     : in out Operator;
                            Upstream : From.Iterator'Class);
+
+   --------------
+   -- Sequence --
+   --------------
+
+   package Holders is new
+     AAA.Containers.Indefinite_Holders (Operator'Class);
+
+   type Sequence is tagged limited record
+      First : From.Holder;
+      Last  : Into.Holder;
+   end record;
 
 end Iterators.Operators;

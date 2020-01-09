@@ -10,6 +10,13 @@ package Iterators.Root.Operators with Preelaborate is
 
    subtype Operator is Operators.Operator;
 
+   type Sequence is new Operators.Sequence with null record;
+
+   overriding
+   procedure Continue (This : in out Sequence;
+                       Last :        Operator'Class);
+
+
    ---------------
    -- Operators --
    ---------------
@@ -25,6 +32,8 @@ package Iterators.Root.Operators with Preelaborate is
    --  Copies the preceding iterator, so it is not consumed by subsequent
    --  operators.
 
+   procedure Copy (This : in out Sequence);
+
    function Filter
      (Tester : access function (Element : Any_Element) return Boolean)
       return Operator'Class;
@@ -32,7 +41,8 @@ package Iterators.Root.Operators with Preelaborate is
 
    function Map (Map : not null access
                    function (E : Any_Element) return Any_Element)
-                 return Operator'Class renames Operators.Map;
+                 return Operator'Class is
+      (Operators.Map (Map));
 
    function No_Op return Operator'Class;
    --  Does nothing.
