@@ -1,3 +1,5 @@
+with Iterators.Root.Operators;
+
 package body Iterators.Collectors.Sequences is
 
    -------------
@@ -22,12 +24,14 @@ package body Iterators.Collectors.Sequences is
    -- Collect --
    -------------
 
+   package Operators is new Root.Operators;
+
    function Collect (L : Iterator'Class;
                      R : Container)
                      return Container is
    begin
       return Result : Container do
-         for E of L loop
+         for E of Operators.Operators.Concatenate (L, Operators.Copy) loop
             Appendable.Append (Result, E, 1);
          end loop;
          Appendable.Copy (Result, R);

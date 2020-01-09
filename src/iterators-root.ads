@@ -44,7 +44,8 @@ package Iterators.Root with Preelaborate is
 
    function New_Empty_Cursor return Cursor;
 
-   package Ada_Iterator_Interfaces is new Ada.Iterator_Interfaces (Cursor, Has_Element);
+   package Ada_Iterator_Interfaces is new
+     Ada.Iterator_Interfaces (Cursor, Has_Element);
 
    --------------
    -- Iterator --
@@ -106,7 +107,7 @@ package Iterators.Root with Preelaborate is
 
    type Iterable is limited interface;
 
-   function Iterate (This : in out Iterable) return Iterator'Class is abstract;
+   function Iterate (This : Iterable) return Iterator'Class is abstract;
 
 private
 

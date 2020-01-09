@@ -9,7 +9,6 @@ procedure Iterators.Tests.Vectors is
    Seq : constant Ints.Iterator'Class := Ints.Op.Just (1) & 2 & 3;
    Vec : constant Ints.Container :=
            Seq
-           & Ints.Op.Copy
            & Ints.Col.Collect;
 
    --  Element collection
@@ -119,21 +118,17 @@ procedure Iterators.Tests.Vectors is
    -------------
 
    procedure Op_Copy is
-      Seq : constant Ints.Iterator'Class := Vectors.Seq;
    begin
-      pragma Assert (Seq
+      pragma Assert (Ints.Container'(
+                     Seq
                      & Ints.Op.Copy
-                     & Ints.Op.Count = 3);
-      --  Does not consume Seq because of Copy.
+                     & Ints.Col.Collect).Length = 3);
 
-      pragma Assert (Seq & Ints.Op.Count = 3);
-      --  Consumes Seq.
-
-      pragma Assert (Seq & Ints.Op.Count = 0);
-      --  Because Seq was just consumed.
-
-      pragma Assert (Ints.Container'(Seq & Ints.Collectors.Collect).Length = 0);
-      --  Alternate way, testing Collect
+      pragma Assert (Ints.Container'(
+                     Seq
+                     & Ints.Op.Copy
+                     & Ints.Op.Copy
+                     & Ints.Col.Collect).Length = 3);
    end Op_Copy;
 
    ---------------

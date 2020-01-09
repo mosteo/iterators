@@ -1,10 +1,4 @@
 with Iterators.Operators.Impl_Map;
---  with Iterators.Root.Impl_Collect;
---  with Iterators.Root.Impl_Copy;
---  with Iterators.Root.Impl_Count;
---  with Iterators.Root.Impl_Filter;
---  with Iterators.Root.Impl_Just;
---  with Iterators.Root.Impl_No_Op;
 
 package body Iterators.Operators is
 
@@ -25,17 +19,23 @@ package body Iterators.Operators is
    --------------
 
    procedure Continue (This : in out Sequence;
-                       Last :        Operator'Class) is
+                       Last :        Operator'Class)
+   is
+      RW : Operator'Class := Last;
    begin
-      if This.First.Is_Empty then
-         raise Iterator_Error with
-           "Attempt to continue without initial iterator";
-      else
-         This.Last.Hold
-           (Concatenate
-              (This.First.Element, Last));
+      if Last.Up.Is_Empty and then This.First.Is_Valid then
+         RW.Up.Hold (This.First.Element);
       end if;
+
+      This.Last.Hold (RW);
    end Continue;
+
+   -----------
+   -- First --
+   -----------
+
+   function First (This : Sequence) return From.Iterator'Class is
+     (This.First.Element);
 
    ---------------
    -- Has_First --
@@ -74,8 +74,8 @@ package body Iterators.Operators is
             if Parent in Operator'Class then
                Operator'Class (Parent).Set_Upstream (Upstream);
             else
-               raise Constraint_Error with
-                 "Operator required upstream while linking partial chains";
+               --  Root of chain reached
+               This.Up := Upstream.To_Holder;
             end if;
          end;
       end if;
@@ -86,14 +86,16 @@ package body Iterators.Operators is
    -----------
 
    procedure Start (This  : in out Sequence;
+                    First :        From.Iterable'Class) is
+   begin
+      This.Start (First.Iterate);
+   end Start;
+
+   procedure Start (This  : in out Sequence;
                     First :        From.Iterator'Class) is
    begin
-      if This.Last.Is_Valid then
-         raise Iterator_Error with
-           "Attempting to start an already-started sequence";
-      else
-         This.First.Hold (First);
-      end if;
+      This.First.Hold (First);
+      This.Last.Clear;
    end Start;
 
    --------------
@@ -119,10 +121,14 @@ package body Iterators.Operators is
      (Map_Instance.Create (Map));
 
    procedure Map (This : in out Sequence;
+                  Prev :        From.Iterable'Class;
                   Map  : not null access
-                    function (E : From.Any_Element) return Into.Any_Element) is
+                    function (E : From.Any_Element) return Into.Any_Element)
+   is
+      Last : Operator'Class := Map_Instance.Create (Map);
    begin
-      This.Continue (Map_Instance.Create (Map));
+      Last.Up.Hold (Prev.Iterate);
+      This.Last.Hold (Last);
    end Map;
 
 end Iterators.Operators;
