@@ -1,10 +1,12 @@
 with Ada.Text_IO;
 
+with Iterators.Tests.Imperative;
 with Iterators.Tests.Maps;
 with Iterators.Tests.Vectors;
 
 procedure Iterators.Tests.Main is
 begin
+   Tests.Imperative;
    Tests.Maps;
    Tests.Vectors;
 

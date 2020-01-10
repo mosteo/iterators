@@ -44,7 +44,8 @@ package Iterators.Root with Preelaborate is
 
    function New_Empty_Cursor return Cursor;
 
-   package Ada_Iterator_Interfaces is new Ada.Iterator_Interfaces (Cursor, Has_Element);
+   package Ada_Iterator_Interfaces is new
+     Ada.Iterator_Interfaces (Cursor, Has_Element);
 
    --------------
    -- Iterator --
@@ -94,13 +95,24 @@ package Iterators.Root with Preelaborate is
 
    function As_Iterator (This : in out Holder) return Iterator_Reference;
 
+   package Elem_Holders is new AAA.Containers.Indefinite_Holders (Any_Element);
+   --  Used by some child packages.
+
+   --------------------
+   -- Iterable trait --
+   --------------------
+
+   --  This interface here allows later simpler notation for imperative
+   --  interfaces.
+
+   type Iterable is limited interface;
+
+   function Iterate (This : Iterable) return Iterator'Class is abstract;
+
 private
 
    type Element_Ptr       is access all Any_Element;
    type Element_Const_Ptr is access constant Any_Element;
-
-   package Elem_Holders is new AAA.Containers.Indefinite_Holders (Any_Element);
-   --  Used by some child packages.
 
    type Cursor_Data (Read_Only : Boolean := False) is record
       case Read_Only is

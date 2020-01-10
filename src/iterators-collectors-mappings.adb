@@ -1,3 +1,5 @@
+with Iterators.Root.Operators;
+
 package body Iterators.Collectors.Mappings is
 
    -------------
@@ -22,6 +24,8 @@ package body Iterators.Collectors.Mappings is
    -- Collect --
    -------------
 
+   package Operators is new Keyed_Iterators.Iterators.Operators;
+
    function Collect (L                 : Keyed_Iterators.Iterator'Class;
                      R                 : Containers.Container := Collect;
                      Allow_Replacement : Boolean := False)
@@ -31,7 +35,7 @@ package body Iterators.Collectors.Mappings is
 
          --  Collect the iterator first:
 
-         for E of L loop
+         for E of Operators.Operators.Concatenate (L, Operators.Copy) loop
             if Allow_Replacement then
                Keyed_Containers.Include (Result, E.Key, E.Val);
             else

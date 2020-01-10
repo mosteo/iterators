@@ -15,6 +15,11 @@ package Iterators.From.Elements with Preelaborate is
 
    package Linking renames Operators.Linking;
 
+   --  Re-expose common user types:
+   subtype Iterator is Iterators.Iterator;
+   subtype Operator is Operators.Operator;
+   subtype Sequence is Operators.Sequence;
+
 --     package Collectors renames List_Iterators.Collectors;
 --     package Col renames Collectors;
 --

@@ -30,12 +30,37 @@ package body Iterators.Root.Operators is
                      renames Collect_Instance.Reduce;
 
 
+   --------------
+   -- Continue --
+   --------------
+
+   overriding
+   procedure Continue (This : in out Sequence;
+                       Last :        Operator'Class) is
+   begin
+      if This.Has_Last then
+         Operators.Sequence (This).Continue
+           (Operator'Class (Operators.Concatenate (This.Iterate, Last)));
+      elsif This.Has_First then
+         Operators.Sequence (This).Continue
+           (Operator'Class (Operators.Concatenate (This.First, Last)));
+      else
+         raise Iterator_Error with
+           "Attempting to continue without source iterator";
+      end if;
+   end Continue;
+
    ----------
    -- Copy --
    ----------
 
    package  Copy_Instance is new Impl_Copy;
    function Copy return Operator'Class renames Copy_Instance.Create;
+
+   procedure Copy (This : in out Sequence) is
+   begin
+      This.Continue (Copy);
+   end Copy;
 
    -----------
    -- Count --
@@ -54,9 +79,29 @@ package body Iterators.Root.Operators is
    function Filter
      (Tester : access function (Element : Any_Element) return Boolean)
       return Operator'Class is (Filter_Instance.Create (Tester));
---
---     -- Just --
---
+   procedure Filter
+     (This : in out Sequence;
+      Tester : access function (Element : Any_Element) return Boolean) is
+   begin
+      This.Continue (Filter (Tester));
+   end Filter;
+
+   -------------
+   -- Iterate --
+   -------------
+
+   overriding
+   function Iterate (This : Sequence) return Iterator'Class is
+   begin
+      if This.Has_Last then
+         return Operators.Sequence (This).Iterate;
+      elsif This.Has_First then
+         return This.First;
+      else
+         raise Iterator_Error with "Sequence is uninitialized";
+      end if;
+   end Iterate;
+
    ----------
    -- Just --
    ----------
@@ -65,11 +110,26 @@ package body Iterators.Root.Operators is
    function Just (Element : Any_Element) return Iterator'Class
                   renames Just_Instance.Create;
 
+   ---------
+   -- Map --
+   ---------
+
+   procedure Map (This : in out Sequence;
+                  Map  : not null access
+                    function (E : Any_Element) return Any_Element) is
+   begin
+      This.Map (This, Map);
+   end Map;
+
    -----------
    -- No_Op --
    -----------
 
    package  No_Op_Instance is new Impl_No_Op;
    function No_Op return Operator'Class renames No_Op_Instance.Create;
+   procedure No_Op (This : in out Sequence) is
+   begin
+      This.Continue (No_Op);
+   end No_Op;
 
 end Iterators.Root.Operators;
