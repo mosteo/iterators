@@ -1,14 +1,56 @@
-with Iterators.Generators.Arrays;
-
 procedure Iterators.Tests.Arrays is
 
---     type Positive_Array is array (Positive range <>) of aliased Integer;
+   RO : aliased constant Number_Array := (1, 2, 3);
 
-   package Arrs is new Generators.Arrays (Integer, Positive);
-
-   RO : constant array (1 .. 3) of Integer := (others => 777);
-   RW : array (1 .. 3) of aliased Integer;
+   use Ints.Linking;
+   use type Number_Array;
 
 begin
-   null;
+   --  Constant iteration
+   Check (Arrs.Const_Iter (RO), (1, 2, 3));
+
+   --  Mapping over constant. This is doable because map creates a copy.
+   Check (Arrs.Const_Iter (RO)
+          & Ints.Op.Map (Double'Access),
+          (2, 4, 6));
+
+   --  Check filtering
+   Check (Arrs.Const_Iter (RO)
+          & Ints.Op.Filter (Is_Odd'Access),
+          (1, 3));
+
+   --  Check in-place modification through filter
+   declare
+      RW   : aliased Number_Array := RO;
+      RWit : Ints.Iterator'Class :=
+               Arrs.Iter (RW)
+               & Ints.Op.Filter (Is_Odd'Access);
+   begin
+      for Int of RWit loop
+         Int := 0;
+      end loop;
+      pragma Assert (RW = (0, 2, 0));
+   end;
+
+   --  Abbreviated in-place iteration + modification
+   declare
+      RW : aliased Number_Array := RO;
+   begin
+      for Int of Ints.Looper'(Arrs.Iter (RW)
+                              & Ints.Op.Filter (Is_Odd'Access)).Iter.all
+      loop
+         Int := 0;
+      end loop;
+--        pragma Assert (RW = (0, 2, 0));
+   end;
+
+   --  In-place constant filtering + iteration
+   for Int of Ints.Looper'(Arrs.Const_Iter (RO)
+                           & Ints.Op.Filter (Is_Odd'Access))
+   loop
+      if Int not in 1 | 3 then
+         raise Constraint_Error with "Unexpected value:" & Int'Img;
+      end if;
+   end loop;
+
 end Iterators.Tests.Arrays;

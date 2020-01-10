@@ -20,6 +20,9 @@ package Iterators.From.Elements with Preelaborate is
    subtype Operator is Operators.Operator;
    subtype Sequence is Operators.Sequence;
 
+   --  Simplify loop syntax
+   subtype Looper is Iterator'Class;
+
 --     package Collectors renames List_Iterators.Collectors;
 --     package Col renames Collectors;
 --
