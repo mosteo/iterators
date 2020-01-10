@@ -1,7 +1,5 @@
 --  Situations in which accessibility cannot prevent misuse of iterators.
 
-with Ada.Text_IO; use Ada.Text_IO;
-
 procedure Iterators.Tests.Violations is
 
    package Ints renames Int_Vec_Iters;
@@ -19,6 +17,7 @@ procedure Iterators.Tests.Violations is
       L.Append (3);
       return Ints.Gen.Iter (L);
    end Dangling;
+   --  PAPER
 
 begin
    --  Will bomb because the original list is out of scope

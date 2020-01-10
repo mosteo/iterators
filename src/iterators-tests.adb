@@ -1,12 +1,9 @@
-with Ada.Text_IO;
-
 package body Iterators.Tests is
 
    procedure Check (It : Ints.Iterators.Iterator'Class;
                     Ok : Number_Array)
      --  Ensure that all items in the iterator match expected values
    is
-      use Ada.Text_IO;
       Pos : Positive := Ok'First;
       Dbg : constant Boolean := False;
    begin

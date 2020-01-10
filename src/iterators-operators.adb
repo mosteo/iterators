@@ -1,3 +1,7 @@
+with Ada.Tags;
+
+with GNAT.IO;
+
 with Iterators.Operators.Impl_Map;
 
 package body Iterators.Operators is
@@ -57,6 +61,43 @@ package body Iterators.Operators is
 
    function Iterate (This : Sequence) return Into.Iterator'Class is
      (This.Last.Element);
+
+   -----------------
+   -- Print_Chain --
+   -----------------
+
+   procedure Print_Chain (This : Operator'Class) is
+      use GNAT.IO;
+   begin
+      Put_Line ("--->>>--- Chain start");
+      This.Print_Tag;
+      Put_Line ("--------- Chain end");
+   end Print_Chain;
+
+   function Print_Chain (This : Operator'Class) return Operator'Class is
+   begin
+      This.Print_Chain;
+      return This;
+   end Print_Chain;
+
+
+   ---------------
+   -- Print_Tag --
+   ---------------
+
+   procedure Print_Tag (This : Operator) is
+      use Ada.Tags;
+      use GNAT.IO;
+   begin
+      Put_Line ("It: " & External_Tag (Operator'Class (This)'Tag)
+                & "; Up: " &
+                (if This.Up.Is_Valid
+                   then External_Tag (This.Up.Unchecked_Reference.all'Tag)
+                   else "(empty)"));
+      if This.Up.Is_Valid then
+         This.Up.Unchecked_Reference.Print_Tag;
+      end if;
+   end Print_Tag;
 
    ------------------
    -- Set_Upstream --

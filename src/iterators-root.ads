@@ -90,6 +90,15 @@ package Iterators.Root with Preelaborate is
      (This'Unrestricted_Access);
    --  Workaround to allow somewhat simple "of" iteration on sequences: you
    --  can qualify the chain expression and take the Iter to have a RW copy.
+   --  "of", however, is buggy and using not the proper returned value.
+
+   -----------
+   -- Debug --
+   -----------
+
+   procedure Print_Tag (This : Iterator) is null;
+   --  Declared abstract here so operators can redispatch across types
+   function Print_Tag (This : Iterator'Class) return Iterator'Class;
 
    -------------
    -- Holders --

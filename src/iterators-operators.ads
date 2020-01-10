@@ -95,6 +95,16 @@ package Iterators.Operators with Preelaborate is
                   Map : not null access
                    function (E : From.Any_Element) return Into.Any_Element);
 
+   -----------
+   -- Debug --
+   -----------
+
+   procedure Print_Chain (This : Operator'Class);
+   function Print_Chain (This : Operator'Class) return Operator'Class;
+
+   overriding
+   procedure Print_Tag (This : Operator);
+
 private
 
    subtype Upstream_Holder is From.Holder;

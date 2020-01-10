@@ -36,12 +36,18 @@ begin
    declare
       RW : aliased Number_Array := RO;
    begin
-      for Int of Ints.Looper'(Arrs.Iter (RW)
-                              & Ints.Op.Filter (Is_Odd'Access)).Iter.all
+      Put_Line ("XXX");
+      for Int of Ints.Iterator'Class'(
+                                      Arrs.Iter (RW)
+                                      & Ints.Op.Filter (Is_Odd'Access)
+                                      & Ints.Op.No_Op
+                                     ).Print_Tag
+                                      .Iter.all
       loop
+         Put_Line ("YYY");
          Int := 0;
       end loop;
---        pragma Assert (RW = (0, 2, 0));
+      pragma Assert (RW = (0, 2, 0));
    end;
 
    --  In-place constant filtering + iteration
