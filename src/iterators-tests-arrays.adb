@@ -36,17 +36,17 @@ begin
    declare
       RW : aliased Number_Array := RO;
    begin
-      for Int of Ints.Looper'(Arrs.Iter (RW)
-                              & Ints.Op.Filter (Is_Odd'Access)).Iter.all
+      for Int of Ints.Iter (Arrs.Iter (RW)
+                            & Ints.Op.Filter (Is_Odd'Access)).all
       loop
          Int := 0;
       end loop;
---        pragma Assert (RW = (0, 2, 0));
+      pragma Assert (RW = (0, 2, 0));
    end;
 
    --  In-place constant filtering + iteration
-   for Int of Ints.Looper'(Arrs.Const_Iter (RO)
-                           & Ints.Op.Filter (Is_Odd'Access))
+   for Int of Ints.Const_Iter (Arrs.Const_Iter (RO)
+                               & Ints.Op.Filter (Is_Odd'Access))
    loop
       if Int not in 1 | 3 then
          raise Constraint_Error with "Unexpected value:" & Int'Img;

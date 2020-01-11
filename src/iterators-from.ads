@@ -1,4 +1,4 @@
-package Iterators.From with Pure is
+package Iterators.From with Preelaborate is
 
    --  Root package for generics that make available iterators starting from a
    --  standard Ada container. Available features will vary slightly depending

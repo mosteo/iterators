@@ -1,3 +1,3 @@
-package Iterators.Traits with Pure is
+package Iterators.Traits with Preelaborate is
 
 end Iterators.Traits;
