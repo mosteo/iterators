@@ -2,7 +2,7 @@ with Ada.Containers.Vectors;
 
 with Iterators.Collectors.Sequences;
 with Iterators.From.Keyed;
-with Iterators.Generators;
+with Iterators.Generators.Containers;
 with Iterators.Linkers.Sequences;
 with Iterators.Root.Operators;
 with Iterators.Traits.Containers.Appendable;
@@ -56,7 +56,7 @@ package Iterators.From.Vectors with Preelaborate is
    --  Provides collection back into the same container type.
    package Col renames Collectors;
 
-   package Generators is new Standard.Iterators.Generators
+   package Generators is new Standard.Iterators.Generators.Containers
      (Iterators,
       Container_Traits);
    --  Provides conversion from container into iterator.

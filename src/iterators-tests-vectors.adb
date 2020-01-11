@@ -91,7 +91,7 @@ procedure Iterators.Tests.Vectors is
    procedure Variable_Of_Iteration is
       Count : Natural                := 0;
       Vec   : aliased Ints.Container := Vectors.Vec;
-      It    : Ints.Iterator'Class    := Ints.Generators.Iter (Vec);
+      It    : Ints.Iterator'Class    := Ints.Generators.Iter (Vec); -- PAPER
       --  Unfortunately, for Ada to allow variable iteration, the expression
       --  after "of" must be a variable; so we need an otherwise superfluous
       --  iterator as intermediate variable. This can be avoided by using the

@@ -2,7 +2,7 @@ with Ada.Containers.Ordered_Maps;
 
 with Iterators.Collectors.Mappings;
 with Iterators.From.Keyed;
-with Iterators.Generators;
+with Iterators.Generators.Containers;
 with Iterators.Linkers.Mappings;
 with Iterators.Root.Operators;
 with Iterators.Traits.Containers.Keyed;
@@ -38,7 +38,7 @@ package Iterators.From.Ordered_Maps with Preelaborate is
    subtype Iterator is Iterators.Iterator;
    subtype Cursor   is Iterators.Cursor;
 
-   package Generators is new Standard.Iterators.Generators
+   package Generators is new Standard.Iterators.Generators.Containers
      (Iterators,
       Container_Traits);
    package Gen renames Generators;

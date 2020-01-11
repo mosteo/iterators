@@ -1,9 +1,9 @@
-with Iterators.Generators.Keyed;
+with Iterators.Generators.Containers.Keyed;
 with Iterators.Keyed;
 with Iterators.Traits.Containers.Keyed;
 
 generic
-   with package Unkeyed_Generators is new Iterators.Generators (<>);
+   with package Unkeyed_Generators is new Iterators.Generators.Containers (<>);
    with package Containers is new Iterators.Traits.Containers
      (Element_Type => Unkeyed_Generators.Root.Any_Element,
       others       => <>);

@@ -85,6 +85,25 @@ package Iterators.Root with Preelaborate is
    function Get_Var_Ref (This : aliased in out Iterator'Class;
                          Pos  : Cursor'Class) return Reference;
 
+   pragma Warnings (Off);
+   function Iter (This : aliased Iterator'Class)
+                  return access Iterator'Class is
+     (new Iterator'Class'(This));
+   pragma Warnings (On);
+   --  Workaround to allow somewhat simple "of" iteration on sequences: you
+   --  can qualify the chain expression and take the Iter to have a RW copy.
+   --  "of", however, is buggy and using not the proper returned value.
+   --  This in turn forces to create a copy here and return it, causing a leak.
+   --  TODO: REMOVE LEAK, REPORT BUG, FIND ANOTHER WORKAROUND.
+
+   -----------
+   -- Debug --
+   -----------
+
+   procedure Print_Tag (This : Iterator) is null;
+   --  Declared abstract here so operators can redispatch across types
+   function Print_Tag (This : Iterator'Class) return Iterator'Class;
+
    -------------
    -- Holders --
    -------------

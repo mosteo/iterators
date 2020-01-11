@@ -1,4 +1,4 @@
-package body Iterators.Generators is
+package body Iterators.Generators.Containers is
 
    use Root;
 
@@ -8,17 +8,17 @@ package body Iterators.Generators is
 
    type Const_Iterator is new Iterator with record
       Col : access constant Containers.Container;
-      Pos : Containers.Cursor;
+      Pos : Container_Traits.Cursor;
    end record;
 
    overriding
    function Next (This : in out Const_Iterator) return Cursor'Class is
    begin
-      if Containers.Has_Element (This.Pos) then
+      if Container_Traits.Has_Element (This.Pos) then
          return Pos : constant Cursor :=
-           New_Const_Cursor (Containers.Constant_Reference (This.Col.all, This.Pos).Element.all)
+           New_Const_Cursor (Container_Traits.Constant_Reference (This.Col.all, This.Pos).Element.all)
          do
-            This.Pos := Containers.Next (This.Pos);
+            This.Pos := Container_Traits.Next (This.Pos);
          end return;
       else
          return New_Empty_Cursor;
@@ -27,7 +27,7 @@ package body Iterators.Generators is
 
    function Const_Iter (C : aliased Container) return Iterator'Class is
      (Const_Iterator'(Col => C'Access,
-                      Pos => Containers.First (C)));
+                      Pos => Container_Traits.First (C)));
 
    -------------
    -- To_Iter --
@@ -35,17 +35,17 @@ package body Iterators.Generators is
 
    type Var_Iterator is new Iterator with record
       Col : access Containers.Container;
-      Pos : Containers.Cursor;
+      Pos : Container_Traits.Cursor;
    end record;
 
    overriding
    function Next (This : in out Var_Iterator) return Cursor'Class is
    begin
-      if Containers.Has_Element (This.Pos) then
+      if Container_Traits.Has_Element (This.Pos) then
          return Pos : constant Cursor :=
-           New_Cursor (Containers.Reference (This.Col.all, This.Pos).Element.all)
+           New_Cursor (Container_Traits.Reference (This.Col.all, This.Pos).Element.all)
          do
-            This.Pos := Containers.Next (This.Pos);
+            This.Pos := Container_Traits.Next (This.Pos);
          end return;
       else
          return New_Empty_Cursor;
@@ -54,6 +54,6 @@ package body Iterators.Generators is
 
    function Iter (C : aliased in out Container) return Iterator'Class is
      (Var_Iterator'(Col => C'Access,
-                    Pos => Containers.First (C)));
+                    Pos => Container_Traits.First (C)));
 
-end Iterators.Generators;
+end Iterators.Generators.Containers;

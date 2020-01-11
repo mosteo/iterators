@@ -4,9 +4,10 @@ with Ada.Containers.Vectors;
 with Iterators.From.Elements;
 with Iterators.From.Ordered_Maps;
 with Iterators.From.Vectors;
+with Iterators.Generators.Arrays;
 with Iterators.Operators;
 
-package Iterators.Tests with Preelaborate is
+package Iterators.Tests is
 
    --  Supporting instantiations:
 
@@ -21,7 +22,16 @@ package Iterators.Tests with Preelaborate is
    package Int_Vectors   is new Ada.Containers.Vectors (Positive, Integer);
    package Int_Vec_Iters is new From.Vectors (Int_Vectors);
 
+   package Arrs is new Generators.Arrays (Any_Index   => Positive,
+                                          Any_Element => Integer,
+                                          Root        => Ints.Iterators);
+
+   subtype Number_Array is Arrs.Element_Array;
+
    --  Supporting subprograms:
+
+   procedure Check (It : Ints.Iterators.Iterator'Class;
+                    Ok : Number_Array);
 
    function Double (I : Integer) return Integer is (I * 2);
 

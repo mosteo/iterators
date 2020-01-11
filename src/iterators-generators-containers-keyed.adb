@@ -1,4 +1,4 @@
-package body Iterators.Generators.Keyed is
+package body Iterators.Generators.Containers.Keyed is
 
    package Keyed renames Keyed_Iterators;
 
@@ -91,4 +91,4 @@ package body Iterators.Generators.Keyed is
                     Pos  => Containers.First (C),
                     Pair => <>));
 
-end Iterators.Generators.Keyed;
+end Iterators.Generators.Containers.Keyed;

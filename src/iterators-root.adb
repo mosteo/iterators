@@ -14,15 +14,15 @@ package body Iterators.Root is
    package Ada_Iterators is
 
       type Ada_Iterator is new Ada_Iterator_Interfaces.Forward_Iterator with record
-         Base : access Iterator'Class;
+         Base : Holder;
       end record;
 
       overriding function First (This : Ada_Iterator) return Cursor is
-        (Cursor (This.Base.Next));
+        (Cursor (This.Base.Unchecked_Reference.Next));
 
       overriding function Next (This       : Ada_Iterator;
                                 Pos_Unused : Cursor) return Cursor is
-        (Cursor (This.Base.Next));
+        (Cursor (This.Base.Unchecked_Reference.Next));
 
    end Ada_Iterators;
 
@@ -32,11 +32,7 @@ package body Iterators.Root is
 
    function Iterate (This : aliased Iterator'Class)
                      return Ada_Iterator_Interfaces.Forward_Iterator'Class is
-     (Ada_Iterators.Ada_Iterator'(Base => This'Unrestricted_Access));
-   --  We need to store a RW pointer, so we must "cheat" here. If Ada iterators
-   --  supported several signatures for ro/rw iterate this would not be needed.
-   --  Even standard GNAT containers use Unrestricted_Access for their
-   --  iterators.
+     (Ada_Iterators.Ada_Iterator'(Base => This.To_Holder));
 
    -------------------
    -- Get_Const_Ref --
@@ -117,5 +113,15 @@ package body Iterators.Root is
    function New_Empty_Cursor return Cursor is
      (Data => (Read_Only => True,
                Const_Ptr => null));
+
+   ---------------
+   -- Print_Tag --
+   ---------------
+
+   function Print_Tag (This : Iterator'Class) return Iterator'Class is
+   begin
+      This.Print_Tag;
+      return This;
+   end Print_Tag;
 
 end Iterators.Root;

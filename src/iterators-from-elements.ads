@@ -20,6 +20,14 @@ package Iterators.From.Elements with Preelaborate is
    subtype Operator is Operators.Operator;
    subtype Sequence is Operators.Sequence;
 
+   --  Simplify loop syntax
+   function Iter (This : aliased Iterator'Class)
+                  return access Iterator'Class
+                  renames Iterators.Iter;
+
+   function Const_Iter (This : aliased Iterator'Class)
+                        return Iterator'Class is (This) with Inline;
+
 --     package Collectors renames List_Iterators.Collectors;
 --     package Col renames Collectors;
 --
