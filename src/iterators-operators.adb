@@ -51,11 +51,18 @@ package body Iterators.Operators is
    function Has_Last (This : Sequence) return Boolean is
      (This.Last.Is_Valid);
 
+   ------------------
+   -- Has_Upstream --
+   ------------------
+
+   function Has_Upstream (This : Operator'Class) return Boolean is
+     (This.Up.Is_Valid);
+
    -------------
    -- Iterate --
    -------------
 
-   function Iterate (This : Sequence) return Into.Iterator'Class is
+   function To_Iterator (This : Sequence) return Into.Iterator'Class is
      (This.Last.Element);
 
    ------------------
@@ -68,16 +75,19 @@ package body Iterators.Operators is
       if This.Up.Is_Empty then
          This.Up := Upstream.To_Holder;
       else
-         declare
-            Parent : From.Iterator'Class renames This.Up.Reference.Element.all;
-         begin
-            if Parent in Operator'Class then
-               Operator'Class (Parent).Set_Upstream (Upstream);
-            else
-               --  Root of chain reached
-               This.Up := Upstream.To_Holder;
-            end if;
-         end;
+         raise Iterator_Error with "Attemptint to reparent operator";
+--           declare
+--              Parent : From.Iterator'Class renames This.Up.Reference.Element.all;
+--           begin
+--              if Parent in Operator'Class then
+--              NOTE: this ceased working when Iterator was made Iterable itself
+--              Might be workaroundable by overriding in Root.Operators.
+--                 Operator'Class (Parent).Set_Upstream (Upstream);
+--              else
+--                 --  Root of chain reached
+--                 This.Up := Upstream.To_Holder;
+--              end if;
+--           end;
       end if;
    end Set_Upstream;
 
@@ -88,13 +98,7 @@ package body Iterators.Operators is
    procedure Start (This  : in out Sequence;
                     First :        From.Iterable'Class) is
    begin
-      This.Start (First.Iterate);
-   end Start;
-
-   procedure Start (This  : in out Sequence;
-                    First :        From.Iterator'Class) is
-   begin
-      This.First.Hold (First);
+      This.First.Hold (First.To_Iterator);
       This.Last.Clear;
    end Start;
 
@@ -127,7 +131,7 @@ package body Iterators.Operators is
    is
       Last : Operator'Class := Map_Instance.Create (Map);
    begin
-      Last.Up.Hold (Prev.Iterate);
+      Last.Up.Hold (Prev.To_iterator);
       This.Last.Hold (Last);
    end Map;
 

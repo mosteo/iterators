@@ -46,7 +46,7 @@ package Iterators.Linkers.Mappings with Preelaborate is
                  renames Keyed.Operators.Collect;
 
    function "&" (L : Keyed.Iterator'Class;
-                 R : Keyed.Operator'Class) return Keyed.Iterators.Iterator'Class
+                 R : Keyed.Operators.Operator'Class) return Keyed.Iterators.Iterator'Class
                  renames Keyed.Operators.Operators.Concatenate;
 
    --  Collectors

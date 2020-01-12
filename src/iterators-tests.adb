@@ -2,7 +2,7 @@ with Ada.Text_IO;
 
 package body Iterators.Tests is
 
-   procedure Check (It : Ints.Iterators.Iterator'Class;
+   procedure Check (It : Ints.Iterators.Iterable'Class;
                     Ok : Number_Array)
      --  Ensure that all items in the iterator match expected values
    is
@@ -14,7 +14,7 @@ package body Iterators.Tests is
          Put_Line ("---");
       end if;
 
-      for Int of It loop
+      for Int of It.To_Iterator loop
          if Dbg then
             Put_Line ("Next:" & Int'Img);
          end if;

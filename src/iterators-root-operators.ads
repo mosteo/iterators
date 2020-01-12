@@ -8,17 +8,16 @@ package Iterators.Root.Operators with Preelaborate is
 
    package Operators is new Iterators.Operators (Root, Root);
 
-   subtype Iterator is Root.Iterator;
    subtype Operator is Operators.Operator;
+   subtype Iterator is Root.Iterator;
 
    type Sequence is new Operators.Sequence with null record;
 
-   overriding
    procedure Continue (This : in out Sequence;
-                       Last :        Operator'Class);
+                       Last :        Operators.Operator'Class);
 
    overriding
-   function Iterate (This : Sequence) return Iterator'Class;
+   function To_iterator (This : Sequence) return Iterator'Class;
 
    ---------------
    -- Operators --
@@ -48,7 +47,7 @@ package Iterators.Root.Operators with Preelaborate is
 
    function Map (Map : not null access
                    function (E : Any_Element) return Any_Element)
-                 return Operator'Class is
+                 return Operators.Operator'Class is
      (Operators.Map (Map));
 
    procedure Map (This : in out Sequence;
@@ -92,7 +91,7 @@ package Iterators.Root.Operators with Preelaborate is
       --  an "use"-intended package.
 
       function "&" (L : Iterator'Class;
-                    R : Operator'Class) return Iterator'Class
+                    R : Operators.Operator'Class) return Iterator'Class
                     renames Operators.Linking."&";
 
       function "&" (L : Iterator'Class;

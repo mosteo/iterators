@@ -185,4 +185,13 @@ begin
 
    Keyed_Constant_Iteration;
    Keyed_Variable_Iteration;
+
+   --  PROOF THAT REPARENTING IS UNIMPLEMENTED:
+--     declare
+--        X : constant Ints.Iterator'Class := Ints.Op.No_Op & Ints.Op.No_Op;
+--     begin
+--        for I of Ints.Iterator'Class'(Seq & Ints.Operators.Operator'Class (X)) loop
+--           null;
+--        end loop;
+--     end;
 end Iterators.Tests.Vectors;

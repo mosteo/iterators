@@ -36,11 +36,11 @@ package body Iterators.Root.Operators is
 
    overriding
    procedure Continue (This : in out Sequence;
-                       Last :        Operator'Class) is
+                       Last :        Operators.Operator'Class) is
    begin
       if This.Has_Last then
          Operators.Sequence (This).Continue
-           (Operator'Class (Operators.Concatenate (This.Iterate, Last)));
+           (Operator'Class (Operators.Concatenate (This.To_Iterator, Last)));
       elsif This.Has_First then
          Operators.Sequence (This).Continue
            (Operator'Class (Operators.Concatenate (This.First, Last)));
@@ -91,16 +91,16 @@ package body Iterators.Root.Operators is
    -------------
 
    overriding
-   function Iterate (This : Sequence) return Iterator'Class is
+   function To_Iterator (This : Sequence) return Iterator'Class is
    begin
       if This.Has_Last then
-         return Operators.Sequence (This).Iterate;
+         return Operators.Sequence (This).To_Iterator;
       elsif This.Has_First then
          return This.First;
       else
          raise Iterator_Error with "Sequence is uninitialized";
       end if;
-   end Iterate;
+   end To_Iterator;
 
    ----------
    -- Just --
@@ -131,5 +131,31 @@ package body Iterators.Root.Operators is
    begin
       This.Continue (No_Op);
    end No_Op;
+
+   ------------------
+   -- Set_Upstream --
+   ------------------
+
+   --  This is the version that allows attaching partial chains. This is yet
+   --  unsupported since that would entail creating a new operator derived type
+   --  here, and that breaks a havoc I don't have time for.
+
+--     procedure Set_Upstream (This     : in out Operator;
+--                             Upstream : Iterator'Class) is
+--     begin
+--        if not This.Has_Upstream then
+--           Operators.Operator (This).Set_Upstream (Upstream);
+--        else
+--           declare
+--              Parent : Iterator'Class renames This.Upstream;
+--           begin
+--              if Parent in Operator'Class then
+--                 Operator'Class (Parent).Set_Upstream (Upstream);
+--              else
+--                 raise Iterator_Error with "Attempting to reparent operator";
+--              end if;
+--           end;
+--        end if;
+--     end Set_Upstream;
 
 end Iterators.Root.Operators;

@@ -14,34 +14,34 @@ begin
    --  Test mere setting up an imperative iterator:
 
    Int.Start (Seq);
-   Check (Int.Iterate, (1, 2, 3));
+   Check (Int, (1, 2, 3));
 
    --  Check copy is innocuous
 
    Int.Start (Seq);
    Int.Copy;
    Int.Copy;
-   Check (Int.Iterate, (1, 2, 3));
+   Check (Int, (1, 2, 3));
 
    --  Check filtering
 
    Int.Start (Seq);
    Int.Filter (Is_Odd'Access);
-   Check (Int.Iterate, (1, 3));
+   Check (Int, (1, 3));
 
    --  Filtering plus copy
 
    Int.Start (Seq);
    Int.Copy;
    Int.Filter (Is_Odd'Access);
-   Check (Int.Iterate, (1, 3));
+   Check (Int, (1, 3));
 
    --  Check mapping
 
    Int.Start (Seq);
    Int.Map (Int, Double'Access);
    Int.Copy;
-   Check (Int.Iterate, (2, 4, 6));
+   Check (Int, (2, 4, 6));
 
    --  Check type conversion with No_Op on top
 
@@ -53,6 +53,6 @@ begin
    Str.Start (I2S);
    Str.No_Op;
    S2I.Map (Str, Value'Access);
-   Check (S2I.Iterate, (2, 4, 6));
+   Check (S2I, (2, 4, 6));
 
 end Iterators.Tests.Imperative;
