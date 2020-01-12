@@ -118,17 +118,6 @@ package Iterators.Root with Preelaborate is
    package Elem_Holders is new AAA.Containers.Indefinite_Holders (Any_Element);
    --  Used by some child packages.
 
-   --------------------
-   -- Iterator trait --
-   --------------------
-
-   --  This interface here allows later simpler notation for imperative
-   --  interfaces.
-
---     type Iterator is limited interface;
-
---     function Iterate (This : Iterator) return Iterator'Class is abstract;
-
 private
 
    type Element_Ptr       is access all Any_Element;
