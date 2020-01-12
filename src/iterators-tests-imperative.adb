@@ -39,7 +39,7 @@ begin
    --  Check mapping
 
    Int.Start (Seq);
-   Int.Map (Int, Double'Access);
+   Int.Map (Double'Access);
    Int.Copy;
    Check (Int, (2, 4, 6));
 
@@ -49,10 +49,12 @@ begin
    Int.Copy;
    Int.Map (Double'Access);
    Int.No_Op;
-   I2S.Map (Int, Image'Access);
+   I2S.Resume (Int);
+   I2S.Map (Image'Access);
    Str.Start (I2S);
    Str.No_Op;
-   S2I.Map (Str, Value'Access);
+   S2I.Resume (Str);
+   S2I.Map (Value'Access);
    Check (S2I, (2, 4, 6));
 
 end Iterators.Tests.Imperative;

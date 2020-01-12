@@ -25,9 +25,11 @@ package body Iterators.Operators is
    begin
       if Last.Up.Is_Empty and then This.First.Is_Valid then
          RW.Up.Hold (This.First.Element);
+         This.Last.Hold (RW);
+      else
+         raise Iterator_Error with
+           "Attempting to continue without previous iterator";
       end if;
-
-      This.Last.Hold (RW);
    end Continue;
 
    -----------
@@ -36,6 +38,25 @@ package body Iterators.Operators is
 
    function First (This : Sequence) return From.Iterator'Class is
      (This.First.Element);
+
+   --------------
+   -- Flat_Map --
+   --------------
+
+--     function Flat_Map (Map : not null access
+--                       function (E : From.Any_Element)
+--                                 return Into.Iterable'Class)
+--                        return Operator'Class is
+--     begin
+--     end Flat_Map;
+--     procedure Flat_Map (This : in out Sequence;
+--                         Prev :        From.Iterable'Class;
+--                         Map  : not null access
+--                           function (E : From.Any_Element)
+--                                     return Into.Iterable'Class)
+--     is
+--     begin
+--     end Flat_Map;
 
    ---------------
    -- Has_First --
@@ -125,14 +146,11 @@ package body Iterators.Operators is
      (Map_Instance.Create (Map));
 
    procedure Map (This : in out Sequence;
-                  Prev :        From.Iterable'Class;
                   Map  : not null access
                     function (E : From.Any_Element) return Into.Any_Element)
    is
-      Last : Operator'Class := Map_Instance.Create (Map);
    begin
-      Last.Up.Hold (Prev.To_iterator);
-      This.Last.Hold (Last);
+      This.Continue (Map_Instance.Create (Map));
    end Map;
 
 end Iterators.Operators;

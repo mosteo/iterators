@@ -66,10 +66,11 @@ package Iterators.Operators with Preelaborate is
 
    procedure Start (This  : in out Sequence;
                     First :        From.Iterable'Class);
---     procedure Start (This  : in out Sequence;
---                      First :        From.Iterator'Class);
    --  Begin a sequence with First at the root. If the sequence was already
    --  started it is reset.
+
+   procedure Resume (This : in out Sequence;
+                     Prev :        From.Iterable'Class) renames Start;
 
    procedure Continue (This : in out Sequence;
                        Last :        Operator'Class);
@@ -93,12 +94,20 @@ package Iterators.Operators with Preelaborate is
    -- Operators --
    ---------------
 
+--     function Flat_Map (Map : not null access
+--                          function (E : From.Any_Element)
+--                                    return Into.Iterable'Class)
+--                        return Operator'Class;
+--     procedure Flat_Map (This : in out Sequence;
+--                         Prev :        From.Iterable'Class;
+--                         Map : not null access
+--                          function (E : From.Any_Element)
+--                                    return Into.Iterable'Class);
+
    function Map (Map : not null access
                    function (E : From.Any_Element) return Into.Any_Element)
                  return Operator'Class;
-
    procedure Map (This : in out Sequence;
-                  Prev :        From.Iterable'Class;
                   Map : not null access
                    function (E : From.Any_Element) return Into.Any_Element);
 

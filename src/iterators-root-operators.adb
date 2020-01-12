@@ -39,11 +39,10 @@ package body Iterators.Root.Operators is
                        Last :        Operators.Operator'Class) is
    begin
       if This.Has_Last then
-         Operators.Sequence (This).Continue
-           (Operator'Class (Operators.Concatenate (This.To_Iterator, Last)));
+         This.Resume (This.To_iterator); -- Set ourselves as previous upstream
+         Operators.Sequence (This).Continue (Last); -- And continue from there
       elsif This.Has_First then
-         Operators.Sequence (This).Continue
-           (Operator'Class (Operators.Concatenate (This.First, Last)));
+         Operators.Sequence (This).Continue (Last);
       else
          raise Iterator_Error with
            "Attempting to continue without source iterator";
@@ -110,15 +109,11 @@ package body Iterators.Root.Operators is
    function Just (Element : Any_Element) return Iterator'Class
                   renames Just_Instance.Create;
 
-   ---------
-   -- Map --
-   ---------
-
    procedure Map (This : in out Sequence;
                   Map  : not null access
                     function (E : Any_Element) return Any_Element) is
    begin
-      This.Map (This, Map);
+      Operators.Sequence (This).Map (Map);
    end Map;
 
    -----------

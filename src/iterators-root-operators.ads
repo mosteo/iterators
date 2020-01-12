@@ -13,6 +13,7 @@ package Iterators.Root.Operators with Preelaborate is
 
    type Sequence is new Operators.Sequence with null record;
 
+   overriding
    procedure Continue (This : in out Sequence;
                        Last :        Operators.Operator'Class);
 
