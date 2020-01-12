@@ -23,10 +23,6 @@ package Iterators.Operators with Preelaborate is
    type Operator is abstract new Into.Iterator with private;
    --  Operators that transform from one type into another.
 
-   overriding
-   function To_Iterator (This : Operator) return Into.Iterator'Class is
-     (Into.Iterator'Class (This));
-
    function Has_Upstream (This : Operator'Class) return Boolean;
 
    procedure Set_Upstream (This     : in out Operator;
@@ -62,27 +58,27 @@ package Iterators.Operators with Preelaborate is
    --  The Sequence type is the imperative alternative to "&"; it is a helper
    --  type that stores a sequence of iterator -> operator -> operator ...
 
-   type Sequence is limited new Into.Iterable with private;
+   type Sequence is new Into.Iterator with private;
+
+   overriding
+   function Next (This : in out Sequence) return Into.Cursor'Class;
 
    procedure Start (This  : in out Sequence;
-                    First :        From.Iterable'Class);
---     procedure Start (This  : in out Sequence;
---                      First :        From.Iterator'Class);
+                    First :        From.Iterator'Class);
    --  Begin a sequence with First at the root. If the sequence was already
    --  started it is reset.
+
+   procedure Resume (This : in out Sequence;
+                     Prev :        From.Iterator'Class) renames Start;
 
    procedure Continue (This : in out Sequence;
                        Last :        Operator'Class);
    --  This presumes that This already contains a chain, and Last is going
    --  to become the bottom of the chain, stored in this operator.
 
-   function To_Iterator (This : Sequence) return Into.Iterator'Class
-     with Pre => This.Has_Last;
-   --  Functional view of the sequence
-
    --  Support functions, not normally needed for use
 
-   function First (This : Sequence) return From.Iterator'Class
+   function First (This : in out Sequence) return From.Iterator_Reference
      with Pre => This.Has_First;
 
    function Has_First (This : Sequence) return Boolean;
@@ -93,12 +89,19 @@ package Iterators.Operators with Preelaborate is
    -- Operators --
    ---------------
 
+   function Flat_Map (Map : not null access
+                        function (E : From.Any_Element)
+                                  return Into.Iterator'Class)
+                      return Operator'Class;
+   procedure Flat_Map (This : in out Sequence;
+                       Map : not null access
+                        function (E : From.Any_Element)
+                                  return Into.Iterator'Class);
+
    function Map (Map : not null access
                    function (E : From.Any_Element) return Into.Any_Element)
                  return Operator'Class;
-
    procedure Map (This : in out Sequence;
-                  Prev :        From.Iterable'Class;
                   Map : not null access
                    function (E : From.Any_Element) return Into.Any_Element);
 
@@ -121,7 +124,7 @@ private
    package Holders is new
      AAA.Containers.Indefinite_Holders (Operator'Class);
 
-   type Sequence is limited new Into.Iterable with record
+   type Sequence is new Into.Iterator with record
       First : From.Holder;
       Last  : Into.Holder;
    end record;

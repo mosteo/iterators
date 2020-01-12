@@ -48,23 +48,10 @@ package Iterators.Root with Preelaborate is
      Ada.Iterator_Interfaces (Cursor, Has_Element);
 
    --------------
-   -- Iterable --
-   --------------
-
-   type Iterator;
-
-   type Iterable is limited interface;
-   --  Anything that can be turned into an iterator. This helps in reducing
-   --  prototype duplications with functional/imperative notations, and with
-   --  some operators that take iterators as arguments.
-
-   function To_Iterator (This : Iterable) return Iterator'Class is abstract;
-
-   --------------
    -- Iterator --
    --------------
 
-   type Iterator is abstract new Iterable with null record with
+   type Iterator is interface with
      Constant_Indexing => Get_Const_Ref,
      Variable_Indexing => Get_Var_Ref,
      Default_Iterator => Iterate,
@@ -72,10 +59,6 @@ package Iterators.Root with Preelaborate is
 
    function Next (This : in out Iterator) return Cursor'Class is abstract;
    --  Get next element, if any
-
-   function To_Iterator (This : Iterator) return Iterator'Class is
-     (Iterator'Class (This)) with Inline;
-   --  Identity
 
    type Iterator_Reference (Ptr : access Iterator'Class) is limited null record
      with Implicit_Dereference => Ptr;
@@ -136,15 +119,15 @@ package Iterators.Root with Preelaborate is
    --  Used by some child packages.
 
    --------------------
-   -- Iterable trait --
+   -- Iterator trait --
    --------------------
 
    --  This interface here allows later simpler notation for imperative
    --  interfaces.
 
---     type Iterable is limited interface;
+--     type Iterator is limited interface;
 
---     function Iterate (This : Iterable) return Iterator'Class is abstract;
+--     function Iterate (This : Iterator) return Iterator'Class is abstract;
 
 private
 

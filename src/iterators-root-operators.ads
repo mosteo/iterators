@@ -13,11 +13,12 @@ package Iterators.Root.Operators with Preelaborate is
 
    type Sequence is new Operators.Sequence with null record;
 
+   overriding
    procedure Continue (This : in out Sequence;
                        Last :        Operators.Operator'Class);
 
    overriding
-   function To_iterator (This : Sequence) return Iterator'Class;
+   function Next (This : in out Sequence) return Cursor'Class;
 
    ---------------
    -- Operators --
@@ -33,22 +34,30 @@ package Iterators.Root.Operators with Preelaborate is
    function Copy return Operator'Class;
    --  Copies the preceding iterator, so it is not consumed by subsequent
    --  operators.
-
    procedure Copy (This : in out Sequence);
 
    function Filter
      (Tester : access function (Element : Any_Element) return Boolean)
       return Operator'Class;
    --  Let only pass elements accepted by the function argument.
-
    procedure Filter
      (This : in out Sequence;
       Tester : access function (Element : Any_Element) return Boolean);
 
+   function Flat_Map (Map : not null access
+                        function (E : Any_Element)
+                                  return Iterator'Class)
+                      return Operators.Operator'Class
+                      renames Operators.Flat_Map;
+   procedure Flat_Map (This : in out Sequence;
+                       Map : not null access
+                        function (E : Any_Element)
+                                  return Iterator'Class);
+
    function Map (Map : not null access
                    function (E : Any_Element) return Any_Element)
-                 return Operators.Operator'Class is
-     (Operators.Map (Map));
+                 return Operators.Operator'Class
+                 renames Operators.Map;
 
    procedure Map (This : in out Sequence;
                   Map  : not null access
@@ -77,6 +86,8 @@ package Iterators.Root.Operators with Preelaborate is
    -------------
    -- Sources --
    -------------
+
+   function Empty return Iterator'Class;
 
    function Just (Element : Any_Element) return Iterator'Class;
    --  Convert an element into an iterator for use as start of a sequence.

@@ -7,19 +7,14 @@ package body Iterators.Operators.Impl_Map is
 
    overriding
    function Next (This : in out Operator) return Into.Cursor'Class is
+      Pos : constant From.Cursor'Class := This.Upstream.Next;
    begin
-      loop
-         declare
-            Pos : constant From.Cursor'Class := This.Upstream.Next;
-         begin
-            if Pos.Is_Empty then
-               return Into.New_Empty_Cursor;
-            else
-               This.Elem.Hold (This.Map (Pos.Get));
-               return Into.New_Cursor (This.Elem.Reference);
-            end if;
-         end;
-      end loop;
+      if Pos.Is_Empty then
+         return Into.New_Empty_Cursor;
+      else
+         This.Elem.Hold (This.Map (Pos.Get));
+         return Into.New_Cursor (This.Elem.Reference);
+      end if;
    end Next;
 
    ------------

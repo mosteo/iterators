@@ -1,3 +1,4 @@
+with Iterators.Operators.Impl_Flat_Map;
 with Iterators.Operators.Impl_Map;
 
 package body Iterators.Operators is
@@ -25,17 +26,19 @@ package body Iterators.Operators is
    begin
       if Last.Up.Is_Empty and then This.First.Is_Valid then
          RW.Up.Hold (This.First.Element);
+         This.Last.Hold (RW);
+      else
+         raise Iterator_Error with
+           "Attempting to continue without previous iterator";
       end if;
-
-      This.Last.Hold (RW);
    end Continue;
 
    -----------
    -- First --
    -----------
 
-   function First (This : Sequence) return From.Iterator'Class is
-     (This.First.Element);
+   function First (This : in out Sequence) return From.Iterator_Reference is
+     (This.First.As_Iterator);
 
    ---------------
    -- Has_First --
@@ -58,12 +61,13 @@ package body Iterators.Operators is
    function Has_Upstream (This : Operator'Class) return Boolean is
      (This.Up.Is_Valid);
 
-   -------------
-   -- Iterate --
-   -------------
+   ----------
+   -- Next --
+   ----------
 
-   function To_Iterator (This : Sequence) return Into.Iterator'Class is
-     (This.Last.Element);
+   overriding
+   function Next (This : in out Sequence) return Into.Cursor'Class is
+     (This.Last.As_Iterator.Next);
 
    ------------------
    -- Set_Upstream --
@@ -80,7 +84,7 @@ package body Iterators.Operators is
 --              Parent : From.Iterator'Class renames This.Up.Reference.Element.all;
 --           begin
 --              if Parent in Operator'Class then
---              NOTE: this ceased working when Iterator was made Iterable itself
+--              NOTE: this ceased working when Iterator was made Iterator itself
 --              Might be workaroundable by overriding in Root.Operators.
 --                 Operator'Class (Parent).Set_Upstream (Upstream);
 --              else
@@ -96,9 +100,9 @@ package body Iterators.Operators is
    -----------
 
    procedure Start (This  : in out Sequence;
-                    First :        From.Iterable'Class) is
+                    First :        From.Iterator'Class) is
    begin
-      This.First.Hold (First.To_Iterator);
+      This.First.Hold (First);
       This.Last.Clear;
    end Start;
 
@@ -114,6 +118,25 @@ package body Iterators.Operators is
    -- OPERATORS ------------------------------------------------------------
    -------------------------------------------------------------------------
 
+  --------------
+   -- Flat_Map --
+   --------------
+
+   package Flat_Map_Instance is new Impl_Flat_Map;
+   function Flat_Map (Map : not null access
+                     function (E : From.Any_Element)
+                               return Into.Iterator'Class)
+                      return Operator'Class is
+      (Flat_Map_Instance.Create (Map));
+   procedure Flat_Map (This : in out Sequence;
+                       Map  : not null access
+                         function (E : From.Any_Element)
+                                   return Into.Iterator'Class)
+   is
+   begin
+      This.Continue (Flat_Map (Map));
+   end Flat_Map;
+
    ---------
    -- Map --
    ---------
@@ -125,14 +148,11 @@ package body Iterators.Operators is
      (Map_Instance.Create (Map));
 
    procedure Map (This : in out Sequence;
-                  Prev :        From.Iterable'Class;
                   Map  : not null access
                     function (E : From.Any_Element) return Into.Any_Element)
    is
-      Last : Operator'Class := Map_Instance.Create (Map);
    begin
-      Last.Up.Hold (Prev.To_iterator);
-      This.Last.Hold (Last);
+      This.Continue (Operators.Map (Map));
    end Map;
 
 end Iterators.Operators;
