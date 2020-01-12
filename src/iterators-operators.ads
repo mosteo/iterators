@@ -20,12 +20,19 @@ package Iterators.Operators with Preelaborate is
    -- Operator --
    --------------
 
-   type Operator is abstract new Into.Iterator and Into.Iterable with private;
+   type Operator is abstract new Into.Iterator with private;
    --  Operators that transform from one type into another.
 
    overriding
-   function Iterate (This : Operator) return Into.Iterator'Class is
+   function To_Iterator (This : Operator) return Into.Iterator'Class is
      (Into.Iterator'Class (This));
+
+   function Has_Upstream (This : Operator'Class) return Boolean;
+
+   procedure Set_Upstream (This     : in out Operator;
+                           Upstream : From.Iterator'Class);
+   --  Replaces upstream going up the chain to the root upstream that has no
+   --  parent yet still is an Operator'Class
 
    function Upstream (This : in out Operator'Class)
                       return From.Iterator_Reference;
@@ -59,8 +66,8 @@ package Iterators.Operators with Preelaborate is
 
    procedure Start (This  : in out Sequence;
                     First :        From.Iterable'Class);
-   procedure Start (This  : in out Sequence;
-                    First :        From.Iterator'Class);
+--     procedure Start (This  : in out Sequence;
+--                      First :        From.Iterator'Class);
    --  Begin a sequence with First at the root. If the sequence was already
    --  started it is reset.
 
@@ -69,7 +76,7 @@ package Iterators.Operators with Preelaborate is
    --  This presumes that This already contains a chain, and Last is going
    --  to become the bottom of the chain, stored in this operator.
 
-   function Iterate (This : Sequence) return Into.Iterator'Class
+   function To_Iterator (This : Sequence) return Into.Iterator'Class
      with Pre => This.Has_Last;
    --  Functional view of the sequence
 
@@ -103,12 +110,9 @@ private
    -- Operator --
    --------------
 
-   type Operator is abstract new Into.Iterator and Into.Iterable with record
+   type Operator is abstract new Into.Iterator with record
       Up : Upstream_Holder; -- An operator has a mandatory upstream Iterator
    end record;
-
-   procedure Set_Upstream (This     : in out Operator;
-                           Upstream : From.Iterator'Class);
 
    --------------
    -- Sequence --

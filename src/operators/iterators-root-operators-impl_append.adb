@@ -1,6 +1,6 @@
 package body Iterators.Root.Operators.Impl_Append is
 
-   type Operator is new Operators.Operator with record
+   type Operator is new Root.Operators.Operator with record
       Extra : Holder; -- A Just iterator
    end record;
 
@@ -15,8 +15,8 @@ package body Iterators.Root.Operators.Impl_Append is
       end if;
    end Next;
 
-   function Create (Element : Any_Element) return Operators.Operator'Class is
-     (Operator'(Operators.Operator with
+   function Create (Element : Any_Element) return Root.Operators.Operator'Class is
+     (Operator'(Root.Operators.Operator with
                 Extra => Just (Element).To_Holder));
 
    function Append (L : Root.Iterator'Class;
