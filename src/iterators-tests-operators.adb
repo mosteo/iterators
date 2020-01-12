@@ -6,6 +6,12 @@ procedure Iterators.Tests.Operators is
 --     use type Number_Array;
 
 begin
+
+   --  Flat map
+   Check (Arrs.Const_Iter (RO)
+          & Ints.Op.Flat_Map (Ints.Op.Just'Access),
+          OK => (1, 2, 3));
+
    --  Map
    Check (Arrs.Const_Iter (RO)
           & Ints.Op.Map (Double'Access),

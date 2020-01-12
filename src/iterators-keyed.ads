@@ -23,6 +23,7 @@ package Iterators.Keyed with Preelaborate is
    --  Some types are re-exposed here for the benefit of clients and children:
 
    subtype Any_Element is Iterators.Elements;
+   subtype Iterable is Iterators.Iterable;
    subtype Iterator is Iterators.Iterator;
    subtype Operator is Operators.Operator;
 

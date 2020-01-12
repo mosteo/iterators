@@ -1,3 +1,4 @@
+with Iterators.Operators.Impl_Flat_Map;
 with Iterators.Operators.Impl_Map;
 
 package body Iterators.Operators is
@@ -6,11 +7,11 @@ package body Iterators.Operators is
    -- Concatenate --
    -----------------
 
-   function Concatenate (L : From.Iterator'Class;
-                         R : Operator'Class) return Into.Iterator'Class is
+   function Concatenate (L : From.Iterable'Class;
+                         R : Operator'Class) return Into.Iterable'Class is
    begin
       return RW : Operator'Class := R do
-         RW.Set_Upstream (L);
+         RW.Set_Upstream (L.To_Iterator);
       end return;
    end Concatenate;
 
@@ -38,25 +39,6 @@ package body Iterators.Operators is
 
    function First (This : Sequence) return From.Iterator'Class is
      (This.First.Element);
-
-   --------------
-   -- Flat_Map --
-   --------------
-
---     function Flat_Map (Map : not null access
---                       function (E : From.Any_Element)
---                                 return Into.Iterable'Class)
---                        return Operator'Class is
---     begin
---     end Flat_Map;
---     procedure Flat_Map (This : in out Sequence;
---                         Prev :        From.Iterable'Class;
---                         Map  : not null access
---                           function (E : From.Any_Element)
---                                     return Into.Iterable'Class)
---     is
---     begin
---     end Flat_Map;
 
    ---------------
    -- Has_First --
@@ -135,6 +117,25 @@ package body Iterators.Operators is
    -- OPERATORS ------------------------------------------------------------
    -------------------------------------------------------------------------
 
+  --------------
+   -- Flat_Map --
+   --------------
+
+   package Flat_Map_Instance is new Impl_Flat_Map;
+   function Flat_Map (Map : not null access
+                     function (E : From.Any_Element)
+                               return Into.Iterable'Class)
+                      return Operator'Class is
+      (Flat_Map_Instance.Create (Map));
+   procedure Flat_Map (This : in out Sequence;
+                       Map  : not null access
+                         function (E : From.Any_Element)
+                                   return Into.Iterable'Class)
+   is
+   begin
+      This.Continue (Flat_Map (Map));
+   end Flat_Map;
+
    ---------
    -- Map --
    ---------
@@ -150,7 +151,7 @@ package body Iterators.Operators is
                     function (E : From.Any_Element) return Into.Any_Element)
    is
    begin
-      This.Continue (Map_Instance.Create (Map));
+      This.Continue (Operators.Map (Map));
    end Map;
 
 end Iterators.Operators;

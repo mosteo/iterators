@@ -15,7 +15,7 @@ package body Iterators.Root.Operators is
    package  Append_Instance is new Impl_Append;
    function Append (Element : Any_Element) return Operator'Class
                     renames Append_Instance.Create;
-   function Append (L : Iterator'Class; R : Any_Element) return Iterator'Class
+   function Append (L : Iterable'Class; R : Any_Element) return Iterable'Class
                     renames Append_Instance.Append;
 
    -------------
@@ -24,9 +24,9 @@ package body Iterators.Root.Operators is
 
    package Collect_Instance is new Impl_Collect;
    function Collect return List is (Lists.Empty_List);
-   function Collect (It : Iterator'Class) return List is
+   function Collect (It : Iterable'Class) return List is
       (Collect_Instance.Reduce (It, Lists.Empty_List));
-   function Collect (L : Iterator'Class; R : List) return List
+   function Collect (L : Iterable'Class; R : List) return List
                      renames Collect_Instance.Reduce;
 
 
@@ -67,7 +67,7 @@ package body Iterators.Root.Operators is
 
    package Count_Instance is new Impl_Count;
    function Count return Counter is (null record);
-   function Count (L : Iterator'Class; R : Counter) return Natural is (Count (L));
+   function Count (L : Iterable'Class; R : Counter) return Natural is (Count (L));
    function Count (It : Iterator'Class) return Natural renames Count_Instance.Reduce;
 
    ------------
@@ -84,6 +84,18 @@ package body Iterators.Root.Operators is
    begin
       This.Continue (Filter (Tester));
    end Filter;
+
+   --------------
+   -- Flat_Map --
+   --------------
+
+   procedure Flat_Map (This : in out Sequence;
+                       Map : not null access
+                        function (E : Any_Element)
+                                  return Iterable'Class) is
+   begin
+      Operators.Sequence (This).Flat_Map (Map);
+   end Flat_Map;
 
    -------------
    -- Iterate --
@@ -106,8 +118,12 @@ package body Iterators.Root.Operators is
    ----------
 
    package  Just_Instance is new Impl_Just;
-   function Just (Element : Any_Element) return Iterator'Class
-                  renames Just_Instance.Create;
+   function Just (Element : Any_Element) return Iterable'Class
+                  is (Just_Instance.Create (Element));
+
+   ---------
+   -- Map --
+   ---------
 
    procedure Map (This : in out Sequence;
                   Map  : not null access

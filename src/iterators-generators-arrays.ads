@@ -12,8 +12,8 @@ package Iterators.Generators.Arrays with Preelaborate is
 
    type Element_Array is array (Any_Index range <>) of aliased Any_Element;
 
-   function Const_Iter (C : aliased Element_Array) return Root.Iterator'Class;
+   function Const_Iter (C : aliased Element_Array) return Root.Iterable'Class;
 
-   function Iter (C : aliased in out Element_Array) return Root.Iterator'Class;
+   function Iter (C : aliased in out Element_Array) return Root.Iterable'Class;
 
 end Iterators.Generators.Arrays;

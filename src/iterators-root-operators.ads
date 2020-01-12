@@ -28,7 +28,7 @@ package Iterators.Root.Operators with Preelaborate is
    -- collector is invoked at the end of a chain of operators.
 
    function Append (Element : Any_Element) return Operator'Class;
-   function Append (L : Iterator'Class; R : Any_Element) return Iterator'Class;
+   function Append (L : Iterable'Class; R : Any_Element) return Iterable'Class;
    --  Add an element to the previous iterator sequence.
 
    function Copy return Operator'Class;
@@ -46,10 +46,20 @@ package Iterators.Root.Operators with Preelaborate is
      (This : in out Sequence;
       Tester : access function (Element : Any_Element) return Boolean);
 
+   function Flat_Map (Map : not null access
+                        function (E : Any_Element)
+                                  return Iterable'Class)
+                      return Operators.Operator'Class
+                      renames Operators.Flat_Map;
+   procedure Flat_Map (This : in out Sequence;
+                       Map : not null access
+                        function (E : Any_Element)
+                                  return Iterable'Class);
+
    function Map (Map : not null access
                    function (E : Any_Element) return Any_Element)
-                 return Operators.Operator'Class is
-     (Operators.Map (Map));
+                 return Operators.Operator'Class
+                 renames Operators.Map;
 
    procedure Map (This : in out Sequence;
                   Map  : not null access
@@ -67,19 +77,19 @@ package Iterators.Root.Operators with Preelaborate is
    --  Reducers trigger the pulling of elements until the sequence is exhausted.
 
    function Collect return List;
-   function Collect (It : Iterator'Class) return List;
-   function Collect (L : Iterator'Class; R : List) return List;
+   function Collect (It : Iterable'Class) return List;
+   function Collect (L : Iterable'Class; R : List) return List;
 
    type Counter (<>) is private;
    function Count return Counter;
-   function Count (It : Iterator'Class) return Natural;
-   function Count (L : Iterator'Class; R : Counter) return Natural;
+   function Count (It : Iterable'Class) return Natural;
+   function Count (L : Iterable'Class; R : Counter) return Natural;
 
    -------------
    -- Sources --
    -------------
 
-   function Just (Element : Any_Element) return Iterator'Class;
+   function Just (Element : Any_Element) return Iterable'Class;
    --  Convert an element into an iterator for use as start of a sequence.
 
    -------------
@@ -91,19 +101,19 @@ package Iterators.Root.Operators with Preelaborate is
       --  Expose here the linking operators for Operators and Reducers. This is
       --  an "use"-intended package.
 
-      function "&" (L : Iterator'Class;
-                    R : Operators.Operator'Class) return Iterator'Class
+      function "&" (L : Iterable'Class;
+                    R : Operators.Operator'Class) return Iterable'Class
                     renames Operators.Linking."&";
 
-      function "&" (L : Iterator'Class;
-                    R : Any_Element) return Iterator'Class
+      function "&" (L : Iterable'Class;
+                    R : Any_Element) return Iterable'Class
               renames Append;
 
-      function "&" (L : Iterator'Class;
+      function "&" (L : Iterable'Class;
                     R : Counter) return Natural
                     renames Count;
 
-      function "&" (L : Iterator'Class;
+      function "&" (L : Iterable'Class;
                     R : List) return List
                     renames Collect;
 

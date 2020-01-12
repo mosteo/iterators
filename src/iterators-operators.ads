@@ -37,8 +37,8 @@ package Iterators.Operators with Preelaborate is
    function Upstream (This : in out Operator'Class)
                       return From.Iterator_Reference;
 
-   function Concatenate (L : From.Iterator'Class;
-                         R : Operator'Class) return Into.Iterator'Class;
+   function Concatenate (L : From.Iterable'Class;
+                         R : Operator'Class) return Into.Iterable'Class;
    --  Function to build a chain of iterator & operators.
    --  Intended to be renamed as "&" in Linkers packages.
 
@@ -48,8 +48,8 @@ package Iterators.Operators with Preelaborate is
 
    package Linking is
 
-      function "&" (L : From.Iterator'Class;
-                    R : Operator'Class) return Into.Iterator'Class
+      function "&" (L : From.Iterable'Class;
+                    R : Operator'Class) return Into.Iterable'Class
                     renames Concatenate;
       --  Function to build a chain of iterator & operators.
 
@@ -62,7 +62,7 @@ package Iterators.Operators with Preelaborate is
    --  The Sequence type is the imperative alternative to "&"; it is a helper
    --  type that stores a sequence of iterator -> operator -> operator ...
 
-   type Sequence is limited new Into.Iterable with private;
+   type Sequence is new Into.Iterator with private;
 
    procedure Start (This  : in out Sequence;
                     First :        From.Iterable'Class);
@@ -94,15 +94,14 @@ package Iterators.Operators with Preelaborate is
    -- Operators --
    ---------------
 
---     function Flat_Map (Map : not null access
---                          function (E : From.Any_Element)
---                                    return Into.Iterable'Class)
---                        return Operator'Class;
---     procedure Flat_Map (This : in out Sequence;
---                         Prev :        From.Iterable'Class;
---                         Map : not null access
---                          function (E : From.Any_Element)
---                                    return Into.Iterable'Class);
+   function Flat_Map (Map : not null access
+                        function (E : From.Any_Element)
+                                  return Into.Iterable'Class)
+                      return Operator'Class;
+   procedure Flat_Map (This : in out Sequence;
+                       Map : not null access
+                        function (E : From.Any_Element)
+                                  return Into.Iterable'Class);
 
    function Map (Map : not null access
                    function (E : From.Any_Element) return Into.Any_Element)
@@ -130,7 +129,7 @@ private
    package Holders is new
      AAA.Containers.Indefinite_Holders (Operator'Class);
 
-   type Sequence is limited new Into.Iterable with record
+   type Sequence is new Into.Iterator with record
       First : From.Holder;
       Last  : Into.Holder;
    end record;
