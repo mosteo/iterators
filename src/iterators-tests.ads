@@ -30,7 +30,7 @@ package Iterators.Tests is
 
    --  Supporting subprograms:
 
-   procedure Check (It : Ints.Iterators.Iterable'Class;
+   procedure Check (It : Ints.Iterators.Iterator'Class;
                     Ok : Number_Array);
 
    function Double (I : Integer) return Integer is (I * 2);

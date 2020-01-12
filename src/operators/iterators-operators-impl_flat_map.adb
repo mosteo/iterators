@@ -1,28 +1,51 @@
 package body Iterators.Operators.Impl_Flat_Map is
 
    type Operator is new Operators.Operator with record
+      Done : Boolean := False;
       Map  : Mapper;
-      Elem : Into.Elem_Holders.Holder; -- The mapped element
       Iter : Into.Holder;
    end record;
 
+   ----------
+   -- Next --
+   ----------
+
    overriding
    function Next (This : in out Operator) return Into.Cursor'Class is
-      pragma Unreferenced (This);
+
+      ------------------
+      -- Prepare_Iter --
+      ------------------
+
+      function Prepare_Iter return Into.Cursor'Class is
+         C : constant From.Cursor'Class := This.Upstream.Next;
+      begin
+         This.Iter.Clear;
+         if C.Has_Element then
+            This.Iter := This.Map (C.Element).To_Holder;
+            return This.Next;
+            -- Even if current Iter is empty, this ensures we move on to the
+            -- next value.
+         else
+            This.Done := True;
+            return Into.New_Empty_Cursor;
+         end if;
+      end Prepare_Iter;
+
    begin
-      return Into.New_Empty_Cursor;
---        loop
---           declare
---              Pos : constant From.Cursor'Class := This.Upstream.Next;
---           begin
---              if Pos.Is_Empty then
---                 return Into.New_Empty_Cursor;
---              else
---                 This.Elem.Hold (This.Map (Pos.Get));
---                 return Into.New_Cursor (This.Elem.Reference);
---              end if;
---           end;
---        end loop;
+      if This.Iter.Is_Valid then
+         declare
+            C : constant Into.Cursor'Class := This.Iter.As_Iterator.Next;
+         begin
+            if C.Has_Element then
+               return C;
+            else
+               return Prepare_Iter;
+            end if;
+         end;
+      else
+         return Prepare_Iter;
+      end if;
    end Next;
 
    ------------
@@ -31,8 +54,8 @@ package body Iterators.Operators.Impl_Flat_Map is
 
    function Create (Map : not null Mapper) return Operators.Operator'Class is
      (Operator'(Operators.Operator with
+                Done => False,
                 Map  => Map,
-                Elem => <>,
                 Iter => <>));
 
 end Iterators.Operators.Impl_Flat_Map;

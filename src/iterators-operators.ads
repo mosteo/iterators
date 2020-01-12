@@ -23,10 +23,6 @@ package Iterators.Operators with Preelaborate is
    type Operator is abstract new Into.Iterator with private;
    --  Operators that transform from one type into another.
 
-   overriding
-   function To_Iterator (This : Operator) return Into.Iterator'Class is
-     (Into.Iterator'Class (This));
-
    function Has_Upstream (This : Operator'Class) return Boolean;
 
    procedure Set_Upstream (This     : in out Operator;
@@ -37,8 +33,8 @@ package Iterators.Operators with Preelaborate is
    function Upstream (This : in out Operator'Class)
                       return From.Iterator_Reference;
 
-   function Concatenate (L : From.Iterable'Class;
-                         R : Operator'Class) return Into.Iterable'Class;
+   function Concatenate (L : From.Iterator'Class;
+                         R : Operator'Class) return Into.Iterator'Class;
    --  Function to build a chain of iterator & operators.
    --  Intended to be renamed as "&" in Linkers packages.
 
@@ -48,8 +44,8 @@ package Iterators.Operators with Preelaborate is
 
    package Linking is
 
-      function "&" (L : From.Iterable'Class;
-                    R : Operator'Class) return Into.Iterable'Class
+      function "&" (L : From.Iterator'Class;
+                    R : Operator'Class) return Into.Iterator'Class
                     renames Concatenate;
       --  Function to build a chain of iterator & operators.
 
@@ -64,26 +60,25 @@ package Iterators.Operators with Preelaborate is
 
    type Sequence is new Into.Iterator with private;
 
+   overriding
+   function Next (This : in out Sequence) return Into.Cursor'Class;
+
    procedure Start (This  : in out Sequence;
-                    First :        From.Iterable'Class);
+                    First :        From.Iterator'Class);
    --  Begin a sequence with First at the root. If the sequence was already
    --  started it is reset.
 
    procedure Resume (This : in out Sequence;
-                     Prev :        From.Iterable'Class) renames Start;
+                     Prev :        From.Iterator'Class) renames Start;
 
    procedure Continue (This : in out Sequence;
                        Last :        Operator'Class);
    --  This presumes that This already contains a chain, and Last is going
    --  to become the bottom of the chain, stored in this operator.
 
-   function To_Iterator (This : Sequence) return Into.Iterator'Class
-     with Pre => This.Has_Last;
-   --  Functional view of the sequence
-
    --  Support functions, not normally needed for use
 
-   function First (This : Sequence) return From.Iterator'Class
+   function First (This : in out Sequence) return From.Iterator_Reference
      with Pre => This.Has_First;
 
    function Has_First (This : Sequence) return Boolean;
@@ -96,12 +91,12 @@ package Iterators.Operators with Preelaborate is
 
    function Flat_Map (Map : not null access
                         function (E : From.Any_Element)
-                                  return Into.Iterable'Class)
+                                  return Into.Iterator'Class)
                       return Operator'Class;
    procedure Flat_Map (This : in out Sequence;
                        Map : not null access
                         function (E : From.Any_Element)
-                                  return Into.Iterable'Class);
+                                  return Into.Iterator'Class);
 
    function Map (Map : not null access
                    function (E : From.Any_Element) return Into.Any_Element)

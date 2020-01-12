@@ -2,11 +2,28 @@ with Iterators.Root.Operators.Impl_Append;
 with Iterators.Root.Operators.Impl_Collect;
 with Iterators.Root.Operators.Impl_Copy;
 with Iterators.Root.Operators.Impl_Count;
+with Iterators.Root.Operators.Impl_Empty;
 with Iterators.Root.Operators.Impl_Filter;
 with Iterators.Root.Operators.Impl_Just;
 with Iterators.Root.Operators.Impl_No_Op;
 
 package body Iterators.Root.Operators is
+
+   ----------
+   -- Next --
+   ----------
+
+   overriding
+   function Next (This : in out Sequence) return Cursor'Class is
+     (if This.Has_Last
+      then Operators.Sequence (This).Next
+      elsif This.Has_First
+      then This.First.Next
+      else raise Iterator_Error with "Uninitialized sequence");
+
+   ----------------
+   --  OPERATORS --
+   ----------------
 
    ------------
    -- Append --
@@ -15,7 +32,7 @@ package body Iterators.Root.Operators is
    package  Append_Instance is new Impl_Append;
    function Append (Element : Any_Element) return Operator'Class
                     renames Append_Instance.Create;
-   function Append (L : Iterable'Class; R : Any_Element) return Iterable'Class
+   function Append (L : Iterator'Class; R : Any_Element) return Iterator'Class
                     renames Append_Instance.Append;
 
    -------------
@@ -24,9 +41,9 @@ package body Iterators.Root.Operators is
 
    package Collect_Instance is new Impl_Collect;
    function Collect return List is (Lists.Empty_List);
-   function Collect (It : Iterable'Class) return List is
+   function Collect (It : Iterator'Class) return List is
       (Collect_Instance.Reduce (It, Lists.Empty_List));
-   function Collect (L : Iterable'Class; R : List) return List
+   function Collect (L : Iterator'Class; R : List) return List
                      renames Collect_Instance.Reduce;
 
 
@@ -39,7 +56,7 @@ package body Iterators.Root.Operators is
                        Last :        Operators.Operator'Class) is
    begin
       if This.Has_Last then
-         This.Resume (This.To_iterator); -- Set ourselves as previous upstream
+         This.Resume (This); -- Set ourselves as previous upstream
          Operators.Sequence (This).Continue (Last); -- And continue from there
       elsif This.Has_First then
          Operators.Sequence (This).Continue (Last);
@@ -67,8 +84,15 @@ package body Iterators.Root.Operators is
 
    package Count_Instance is new Impl_Count;
    function Count return Counter is (null record);
-   function Count (L : Iterable'Class; R : Counter) return Natural is (Count (L));
+   function Count (L : Iterator'Class; R : Counter) return Natural is (Count (L));
    function Count (It : Iterator'Class) return Natural renames Count_Instance.Reduce;
+
+   -----------
+   -- Empty --
+   -----------
+
+   package Empty_Instance is new Impl_Empty;
+   function Empty return Iterator'Class renames Empty_Instance.Create;
 
    ------------
    -- Filter --
@@ -92,33 +116,17 @@ package body Iterators.Root.Operators is
    procedure Flat_Map (This : in out Sequence;
                        Map : not null access
                         function (E : Any_Element)
-                                  return Iterable'Class) is
+                                  return Iterator'Class) is
    begin
       Operators.Sequence (This).Flat_Map (Map);
    end Flat_Map;
-
-   -------------
-   -- Iterate --
-   -------------
-
-   overriding
-   function To_Iterator (This : Sequence) return Iterator'Class is
-   begin
-      if This.Has_Last then
-         return Operators.Sequence (This).To_Iterator;
-      elsif This.Has_First then
-         return This.First;
-      else
-         raise Iterator_Error with "Sequence is uninitialized";
-      end if;
-   end To_Iterator;
 
    ----------
    -- Just --
    ----------
 
    package  Just_Instance is new Impl_Just;
-   function Just (Element : Any_Element) return Iterable'Class
+   function Just (Element : Any_Element) return Iterator'Class
                   is (Just_Instance.Create (Element));
 
    ---------

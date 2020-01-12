@@ -11,7 +11,7 @@ procedure Iterators.Tests.Violations is
    -- Dangling --
    --------------
 
-   function Dangling return Iterator'Class is
+   function Dangling return Ints.Iterator'Class is
       L : Ints.Container;
    begin
       L.Append (1);

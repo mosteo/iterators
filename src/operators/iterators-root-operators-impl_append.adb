@@ -17,11 +17,11 @@ package body Iterators.Root.Operators.Impl_Append is
 
    function Create (Element : Any_Element) return Root.Operators.Operator'Class is
      (Operator'(Root.Operators.Operator with
-                Extra => Just (Element).To_Iterator.To_Holder));
+                Extra => Just (Element).To_Holder));
 
-   function Append (L : Root.Iterable'Class;
+   function Append (L : Root.Iterator'Class;
                     R : Any_Element)
-                    return Root.Iterable'Class is
+                    return Root.Iterator'Class is
         (Operators.Concatenate (L, Append (R)));
 
 end Iterators.Root.Operators.Impl_Append;
