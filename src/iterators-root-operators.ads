@@ -11,14 +11,14 @@ package Iterators.Root.Operators with Preelaborate is
    subtype Operator is Operators.Operator;
    subtype Iterator is Root.Iterator;
 
-   type Sequence is new Operators.Sequence with null record;
+   type Chain is new Operators.Chain with null record;
 
    overriding
-   procedure Continue (This : in out Sequence;
+   procedure Continue (This : in out Chain;
                        Last :        Operators.Operator'Class);
 
    overriding
-   function Next (This : in out Sequence) return Cursor'Class;
+   function Next (This : in out Chain) return Cursor'Class;
 
    ---------------
    -- Operators --
@@ -34,14 +34,14 @@ package Iterators.Root.Operators with Preelaborate is
    function Copy return Operator'Class;
    --  Copies the preceding iterator, so it is not consumed by subsequent
    --  operators.
-   procedure Copy (This : in out Sequence);
+   procedure Copy (This : in out Chain);
 
    function Filter
      (Tester : access function (Element : Any_Element) return Boolean)
       return Operator'Class;
    --  Let only pass elements accepted by the function argument.
    procedure Filter
-     (This : in out Sequence;
+     (This : in out Chain;
       Tester : access function (Element : Any_Element) return Boolean);
 
    function Flat_Map (Map : not null access
@@ -49,7 +49,7 @@ package Iterators.Root.Operators with Preelaborate is
                                   return Iterator'Class)
                       return Operators.Operator'Class
                       renames Operators.Flat_Map;
-   procedure Flat_Map (This : in out Sequence;
+   procedure Flat_Map (This : in out Chain;
                        Map : not null access
                         function (E : Any_Element)
                                   return Iterator'Class);
@@ -59,14 +59,14 @@ package Iterators.Root.Operators with Preelaborate is
                  return Operators.Operator'Class
                  renames Operators.Map;
 
-   procedure Map (This : in out Sequence;
+   procedure Map (This : in out Chain;
                   Map  : not null access
                     function (E : Any_Element) return Any_Element);
 
    function No_Op return Operator'Class;
    --  Does nothing.
 
-   procedure No_Op (This : in out Sequence);
+   procedure No_Op (This : in out Chain);
 
    --------------
    -- Reducers --

@@ -14,9 +14,9 @@ package body Iterators.Root.Operators is
    ----------
 
    overriding
-   function Next (This : in out Sequence) return Cursor'Class is
+   function Next (This : in out Chain) return Cursor'Class is
      (if This.Has_Last
-      then Operators.Sequence (This).Next
+      then Operators.Chain (This).Next
       elsif This.Has_First
       then This.First.Next
       else raise Iterator_Error with "Uninitialized sequence");
@@ -52,14 +52,14 @@ package body Iterators.Root.Operators is
    --------------
 
    overriding
-   procedure Continue (This : in out Sequence;
+   procedure Continue (This : in out Chain;
                        Last :        Operators.Operator'Class) is
    begin
       if This.Has_Last then
          This.Resume (This); -- Set ourselves as previous upstream
-         Operators.Sequence (This).Continue (Last); -- And continue from there
+         Operators.Chain (This).Continue (Last); -- And continue from there
       elsif This.Has_First then
-         Operators.Sequence (This).Continue (Last);
+         Operators.Chain (This).Continue (Last);
       else
          raise Iterator_Error with
            "Attempting to continue without source iterator";
@@ -73,7 +73,7 @@ package body Iterators.Root.Operators is
    package  Copy_Instance is new Impl_Copy;
    function Copy return Operator'Class renames Copy_Instance.Create;
 
-   procedure Copy (This : in out Sequence) is
+   procedure Copy (This : in out Chain) is
    begin
       This.Continue (Copy);
    end Copy;
@@ -103,7 +103,7 @@ package body Iterators.Root.Operators is
      (Tester : access function (Element : Any_Element) return Boolean)
       return Operator'Class is (Filter_Instance.Create (Tester));
    procedure Filter
-     (This : in out Sequence;
+     (This : in out Chain;
       Tester : access function (Element : Any_Element) return Boolean) is
    begin
       This.Continue (Filter (Tester));
@@ -113,12 +113,12 @@ package body Iterators.Root.Operators is
    -- Flat_Map --
    --------------
 
-   procedure Flat_Map (This : in out Sequence;
+   procedure Flat_Map (This : in out Chain;
                        Map : not null access
                         function (E : Any_Element)
                                   return Iterator'Class) is
    begin
-      Operators.Sequence (This).Flat_Map (Map);
+      Operators.Chain (This).Flat_Map (Map);
    end Flat_Map;
 
    ----------
@@ -133,11 +133,11 @@ package body Iterators.Root.Operators is
    -- Map --
    ---------
 
-   procedure Map (This : in out Sequence;
+   procedure Map (This : in out Chain;
                   Map  : not null access
                     function (E : Any_Element) return Any_Element) is
    begin
-      Operators.Sequence (This).Map (Map);
+      Operators.Chain (This).Map (Map);
    end Map;
 
    -----------
@@ -146,7 +146,7 @@ package body Iterators.Root.Operators is
 
    package  No_Op_Instance is new Impl_No_Op;
    function No_Op return Operator'Class renames No_Op_Instance.Create;
-   procedure No_Op (This : in out Sequence) is
+   procedure No_Op (This : in out Chain) is
    begin
       This.Continue (No_Op);
    end No_Op;

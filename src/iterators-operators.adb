@@ -19,7 +19,7 @@ package body Iterators.Operators is
    -- Continue --
    --------------
 
-   procedure Continue (This : in out Sequence;
+   procedure Continue (This : in out Chain;
                        Last :        Operator'Class)
    is
       RW : Operator'Class := Last;
@@ -37,21 +37,21 @@ package body Iterators.Operators is
    -- First --
    -----------
 
-   function First (This : in out Sequence) return From.Iterator_Reference is
+   function First (This : in out Chain) return From.Iterator_Reference is
      (This.First.As_Iterator);
 
    ---------------
    -- Has_First --
    ---------------
 
-   function Has_First (This : Sequence) return Boolean is
+   function Has_First (This : Chain) return Boolean is
      (This.First.Is_Valid);
 
    --------------
    -- Has_Last --
    --------------
 
-   function Has_Last (This : Sequence) return Boolean is
+   function Has_Last (This : Chain) return Boolean is
      (This.Last.Is_Valid);
 
    ------------------
@@ -66,7 +66,7 @@ package body Iterators.Operators is
    ----------
 
    overriding
-   function Next (This : in out Sequence) return Into.Cursor'Class is
+   function Next (This : in out Chain) return Into.Cursor'Class is
      (This.Last.As_Iterator.Next);
 
    ------------------
@@ -99,7 +99,7 @@ package body Iterators.Operators is
    -- Start --
    -----------
 
-   procedure Start (This  : in out Sequence;
+   procedure Start (This  : in out Chain;
                     First :        From.Iterator'Class) is
    begin
       This.First.Hold (First);
@@ -128,7 +128,7 @@ package body Iterators.Operators is
                                return Into.Iterator'Class)
                       return Operator'Class is
       (Flat_Map_Instance.Create (Map));
-   procedure Flat_Map (This : in out Sequence;
+   procedure Flat_Map (This : in out Chain;
                        Map  : not null access
                          function (E : From.Any_Element)
                                    return Into.Iterator'Class)
@@ -147,7 +147,7 @@ package body Iterators.Operators is
                  return Operator'Class is
      (Map_Instance.Create (Map));
 
-   procedure Map (This : in out Sequence;
+   procedure Map (This : in out Chain;
                   Map  : not null access
                     function (E : From.Any_Element) return Into.Any_Element)
    is

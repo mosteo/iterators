@@ -5,9 +5,9 @@ procedure Iterators.Tests.Imperative is
 
    Seq : constant Ints.Iterator'Class := Ints.Op.Just (1) & 2 & 3;
    Int : Ints.Sequence;
-   I2S : Int2str.Sequence;
+   I2S : Int2str.Chain;
    Str : Strings.Sequence;
-   S2I : Str2int.Sequence;
+   S2I : Str2int.Chain;
 
 begin
 

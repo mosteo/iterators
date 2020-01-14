@@ -51,39 +51,39 @@ package Iterators.Operators with Preelaborate is
 
    end Linking;
 
-   --------------
-   -- Sequence --
-   --------------
+   -----------
+   -- Chain --
+   -----------
 
-   --  The Sequence type is the imperative alternative to "&"; it is a helper
+   --  The Chain type is the imperative alternative to "&"; it is a helper
    --  type that stores a sequence of iterator -> operator -> operator ...
 
-   type Sequence is new Into.Iterator with private;
+   type Chain is new Into.Iterator with private;
 
    overriding
-   function Next (This : in out Sequence) return Into.Cursor'Class;
+   function Next (This : in out Chain) return Into.Cursor'Class;
 
-   procedure Start (This  : in out Sequence;
+   procedure Start (This  : in out Chain;
                     First :        From.Iterator'Class);
    --  Begin a sequence with First at the root. If the sequence was already
    --  started it is reset.
 
-   procedure Resume (This : in out Sequence;
+   procedure Resume (This : in out Chain;
                      Prev :        From.Iterator'Class) renames Start;
 
-   procedure Continue (This : in out Sequence;
+   procedure Continue (This : in out Chain;
                        Last :        Operator'Class);
    --  This presumes that This already contains a chain, and Last is going
    --  to become the bottom of the chain, stored in this operator.
 
    --  Support functions, not normally needed for use
 
-   function First (This : in out Sequence) return From.Iterator_Reference
+   function First (This : in out Chain) return From.Iterator_Reference
      with Pre => This.Has_First;
 
-   function Has_First (This : Sequence) return Boolean;
+   function Has_First (This : Chain) return Boolean;
 
-   function Has_Last (This : Sequence) return Boolean;
+   function Has_Last (This : Chain) return Boolean;
 
    ---------------
    -- Operators --
@@ -93,7 +93,7 @@ package Iterators.Operators with Preelaborate is
                         function (E : From.Any_Element)
                                   return Into.Iterator'Class)
                       return Operator'Class;
-   procedure Flat_Map (This : in out Sequence;
+   procedure Flat_Map (This : in out Chain;
                        Map : not null access
                         function (E : From.Any_Element)
                                   return Into.Iterator'Class);
@@ -101,7 +101,7 @@ package Iterators.Operators with Preelaborate is
    function Map (Map : not null access
                    function (E : From.Any_Element) return Into.Any_Element)
                  return Operator'Class;
-   procedure Map (This : in out Sequence;
+   procedure Map (This : in out Chain;
                   Map : not null access
                    function (E : From.Any_Element) return Into.Any_Element);
 
@@ -124,7 +124,7 @@ private
    package Holders is new
      AAA.Containers.Indefinite_Holders (Operator'Class);
 
-   type Sequence is new Into.Iterator with record
+   type Chain is new Into.Iterator with record
       First : From.Holder;
       Last  : Into.Holder;
    end record;

@@ -18,7 +18,7 @@ package Iterators.From.Elements with Preelaborate is
    --  Re-expose common user types:
    subtype Iterator is Iterators.Iterator;
    subtype Operator is Operators.Operator;
-   subtype Sequence is Operators.Sequence;
+   subtype Sequence is Operators.Chain;
 
    --  Simplify loop syntax
    function Iter (This : aliased Iterator'Class)
