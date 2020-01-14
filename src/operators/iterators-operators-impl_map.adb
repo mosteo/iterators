@@ -13,7 +13,7 @@ package body Iterators.Operators.Impl_Map is
          return Into.New_Empty_Cursor;
       else
          This.Elem.Hold (This.Map (Pos.Get));
-         return Into.New_Cursor (This.Elem.Reference);
+         return Into.New_Const_Cursor (This.Elem.Reference);
       end if;
    end Next;
 
