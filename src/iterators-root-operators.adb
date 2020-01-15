@@ -6,6 +6,7 @@ with Iterators.Root.Operators.Impl_Empty;
 with Iterators.Root.Operators.Impl_Filter;
 with Iterators.Root.Operators.Impl_Just;
 with Iterators.Root.Operators.Impl_No_Op;
+with Iterators.Root.Operators.Impl_Take;
 
 package body Iterators.Root.Operators is
 
@@ -121,6 +122,21 @@ package body Iterators.Root.Operators is
       Operators.Chain (This).Flat_Map (Map);
    end Flat_Map;
 
+   --------------
+   -- For_Each --
+   --------------
+
+   procedure For_Each
+     (It    : in out Iterator'Class;
+      Apply : access procedure (Element : in out Any_Element) := null) is
+   begin
+      for Element of It loop
+         if Apply /= null then
+            Apply (Element);
+         end if;
+      end loop;
+   end For_Each;
+
    ----------
    -- Just --
    ----------
@@ -176,5 +192,9 @@ package body Iterators.Root.Operators is
 --           end;
 --        end if;
 --     end Set_Upstream;
+
+   package Take_Instance is new Impl_Take;
+   function Take (At_Most : Natural) return Operator'Class
+                  renames Take_Instance.Create;
 
 end Iterators.Root.Operators;

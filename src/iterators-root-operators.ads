@@ -68,6 +68,8 @@ package Iterators.Root.Operators with Preelaborate is
 
    procedure No_Op (This : in out Chain);
 
+   function Take (At_Most : Natural) return Operator'Class;
+
    --------------
    -- Reducers --
    --------------
@@ -91,6 +93,14 @@ package Iterators.Root.Operators with Preelaborate is
 
    function Just (Element : Any_Element) return Iterator'Class;
    --  Convert an element into an iterator for use as start of a sequence.
+
+   ---------------
+   -- Terminals --
+   ---------------
+
+   procedure For_Each
+     (It    : in out Iterator'Class;
+      Apply : access procedure (Element : in out Any_Element) := null);
 
    -------------
    -- Linking --
