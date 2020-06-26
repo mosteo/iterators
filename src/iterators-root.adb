@@ -96,7 +96,7 @@ package body Iterators.Root is
 
    function New_Cursor (Element : aliased in out Any_Element) return Cursor is
      (Data => (Read_Only => False,
-               Ptr       => Element'Access));
+               Ptr       => Element'Unchecked_Access));
 
    ----------------------
    -- New_Const_Cursor --
@@ -104,7 +104,7 @@ package body Iterators.Root is
 
    function New_Const_Cursor (Element : aliased Any_Element) return Cursor is
      (Data => (Read_Only => True,
-               Const_Ptr => Element'Access));
+               Const_Ptr => Element'Unchecked_Access));
 
    ----------------------
    -- New_Empty_Cursor --

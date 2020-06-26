@@ -31,7 +31,7 @@ package body Iterators.Generators.Arrays is
    end Next;
 
    function Const_Iter (C : aliased Element_Array) return Root.Iterator'Class
-   is (Const_Iterator'(Col   => C'Access,
+   is (Const_Iterator'(Col   => C'Unchecked_Access,
                        Pos   => C'First,
                        Ended => C'Length = 0));
 
@@ -64,8 +64,8 @@ package body Iterators.Generators.Arrays is
    end Next;
 
    function Iter (C : aliased in out Element_Array) return Root.Iterator'Class
-   is (Var_Iterator'(Col   => C'Access,
-                       Pos   => C'First,
-                       Ended => C'Length = 0));
+   is (Var_Iterator'(Col   => C'Unchecked_Access,
+                     Pos   => C'First,
+                     Ended => C'Length = 0));
 
 end Iterators.Generators.Arrays;

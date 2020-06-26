@@ -26,7 +26,7 @@ package body Iterators.Generators.Containers is
    end Next;
 
    function Const_Iter (C : aliased Container) return Iterator'Class is
-     (Const_Iterator'(Col => C'Access,
+     (Const_Iterator'(Col => C'Unchecked_Access,
                       Pos => Container_Traits.First (C)));
 
    -------------
@@ -53,7 +53,7 @@ package body Iterators.Generators.Containers is
    end Next;
 
    function Iter (C : aliased in out Container) return Iterator'Class is
-     (Var_Iterator'(Col => C'Access,
+     (Var_Iterator'(Col => C'Unchecked_Access,
                     Pos => Container_Traits.First (C)));
 
 end Iterators.Generators.Containers;
