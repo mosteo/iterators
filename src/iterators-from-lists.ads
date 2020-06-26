@@ -1,7 +1,7 @@
 with Ada.Containers.Doubly_Linked_Lists;
 
 with Iterators.Collectors.Sequences;
-with Iterators.Generators;
+with Iterators.Generators.Containers;
 with Iterators.Linkers.Sequences;
 with Iterators.Root.Operators;
 with Iterators.Traits.Containers.Appendable;
@@ -38,11 +38,13 @@ package Iterators.From.Lists with Preelaborate is
      (Iterators,
       Container_Traits,
       Appendable_Traits);
+   package Col renames Collectors;
    --  Provides collection back into the same container type.
 
-   package Generators is new Standard.Iterators.Generators
+   package Generators is new Standard.Iterators.Generators.Containers
      (Iterators,
       Container_Traits);
+   package Gen renames Generators;
    --  Provides conversion from container into iterator.
 
    package Operators is new Iterators.Operators;

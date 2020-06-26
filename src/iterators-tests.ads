@@ -1,7 +1,7 @@
 with Ada.Containers.Ordered_Maps;
 with Ada.Containers.Vectors;
 
-with Iterators.From.Elements;
+with Iterators.From.Elements.Lists;
 with Iterators.From.Ordered_Maps;
 with Iterators.From.Vectors;
 with Iterators.Generators.Arrays;
@@ -15,6 +15,8 @@ package Iterators.Tests is
    package Strings is new From.Elements (String);
    package Int2str is new Operators (Ints.Iterators, Strings.Iterators);
    package Str2int is new Operators (Strings.Iterators, Ints.Iterators);
+
+   package Int_Lists is new Ints.Lists;
 
    package Int_Maps      is new Ada.Containers.Ordered_Maps (Positive, Integer);
    package Int_Map_Iters is new From.Ordered_Maps (Int_Maps);
