@@ -1,3 +1,4 @@
+with Iterators.Meta;
 with Iterators.Root.Operators;
 
 generic
@@ -12,6 +13,10 @@ package Iterators.From.Elements with Preelaborate is
 
    package Operators is new Iterators.Operators;
    package Op renames Operators;
+
+   package Meta_Operators is new Standard.Iterators.Meta (Iterators,
+                                                          Operators);
+   package Meta renames Meta_Operators;
 
    package Linking renames Operators.Linking;
 

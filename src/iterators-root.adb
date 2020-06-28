@@ -124,4 +124,56 @@ package body Iterators.Root is
       return This;
    end Print_Tag;
 
+   --------------------
+   -- LIST ITERATORS --
+   --------------------
+
+   type List_Iterator is new Iterator with record
+      Cont  : access List;
+      Const : Boolean;
+      Pos   : Lists.Cursor;
+   end record;
+
+   ----------
+   -- Next --
+   ----------
+
+   overriding
+   function Next (This : in out List_Iterator) return Cursor'Class
+   is
+
+      -----------------
+      -- Next_Cursor --
+      -----------------
+
+      function Next_Cursor return Cursor'Class
+      is (if This.Const then
+             New_Const_Cursor (This.Cont.Constant_Reference (This.Pos))
+          else
+             New_Cursor (This.Cont.Reference (This.Pos).Element.all));
+
+   begin
+      if not Lists.Has_Element (This.Pos) then
+         return New_Empty_Cursor;
+      end if;
+
+      return C : constant Cursor'Class := Next_Cursor do
+         if Lists.Has_Element (This.Pos) then
+            Lists.Next (This.Pos);
+         end if;
+      end return;
+   end Next;
+
+   function Const_Iter (This : List) return Iterator'Class
+   is (List_Iterator'(Iterator with
+                      Cont => This'Unrestricted_Access,
+                      Const => True,
+                      Pos   => This.First));
+
+   function Iter (This : List) return Iterator'Class
+   is (List_Iterator'(Iterator with
+                      Cont => This'Unrestricted_Access,
+                      Const => False,
+                      Pos   => This.First));
+
 end Iterators.Root;

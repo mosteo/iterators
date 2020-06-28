@@ -69,7 +69,11 @@ package Iterators.Root with Preelaborate is
 
    package Lists is new Ada.Containers.Indefinite_Doubly_Linked_Lists (Any_Element);
 
-   subtype List is Lists.List;
+   type List is new Lists.List with null record;
+
+   function Const_Iter (This : List) return Iterator'Class;
+
+   function Iter (This : List) return Iterator'Class;
 
    ------------------------
    -- Standard Iteration --

@@ -103,7 +103,13 @@ package Iterators.Operators with Preelaborate is
                  return Operator'Class;
    procedure Map (This : in out Chain;
                   Map : not null access
-                   function (E : From.Any_Element) return Into.Any_Element);
+                    function (E : From.Any_Element) return Into.Any_Element);
+
+   function Scan (Initial : Into.Any_Element;
+                  Scan_Fn : not null access function (L : Into.Any_Element;
+                                                      R : From.Any_Element)
+                                                      return Into.Any_Element)
+                  return Operator'Class;
 
 private
 

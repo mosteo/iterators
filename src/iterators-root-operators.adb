@@ -1,3 +1,5 @@
+with Ada.Unchecked_Conversion;
+
 with Iterators.Root.Operators.Impl_Append;
 with Iterators.Root.Operators.Impl_Collect;
 with Iterators.Root.Operators.Impl_Copy;
@@ -5,7 +7,9 @@ with Iterators.Root.Operators.Impl_Count;
 with Iterators.Root.Operators.Impl_Empty;
 with Iterators.Root.Operators.Impl_Filter;
 with Iterators.Root.Operators.Impl_Just;
+with Iterators.Root.Operators.Impl_Last;
 with Iterators.Root.Operators.Impl_No_Op;
+with Iterators.Root.Operators.Impl_Reduce;
 with Iterators.Root.Operators.Impl_Take;
 
 package body Iterators.Root.Operators is
@@ -41,9 +45,9 @@ package body Iterators.Root.Operators is
    -------------
 
    package Collect_Instance is new Impl_Collect;
-   function Collect return List is (Lists.Empty_List);
+   function Collect return List is (Lists.Empty_List with null record);
    function Collect (It : Iterator'Class) return List is
-      (Collect_Instance.Reduce (It, Lists.Empty_List));
+      (Collect_Instance.Reduce (It, (Lists.Empty_List with null record)));
    function Collect (L : Iterator'Class; R : List) return List
                      renames Collect_Instance.Reduce;
 
@@ -127,10 +131,30 @@ package body Iterators.Root.Operators is
    --------------
 
    procedure For_Each
-     (It    : in out Iterator'Class;
-      Apply : access procedure (Element : in out Any_Element) := null) is
+     (Iter  : Iterator'Class;
+      Apply : Const_Apply := null)
+   is
    begin
-      for Element of It loop
+      for Element of Iter loop
+         if Apply /= null then
+            Apply (Element);
+         end if;
+      end loop;
+   end For_Each;
+
+   --------------
+   -- For_Each --
+   --------------
+
+   procedure For_Each
+     (Iter  : Iterator'Class;
+      Apply : Var_Apply := null)
+   is
+      use Linking;
+      RW : Iterator'Class := Iter & No_Op;
+   begin
+      --  We iterate no matter what, to consume the sequence:
+      for Element of RW loop
          if Apply /= null then
             Apply (Element);
          end if;
@@ -144,6 +168,13 @@ package body Iterators.Root.Operators is
    package  Just_Instance is new Impl_Just;
    function Just (Element : Any_Element) return Iterator'Class
                   is (Just_Instance.Create (Element));
+
+   ----------
+   -- Last --
+   ----------
+
+   package Last_Instance is new Impl_Last;
+   function Last return Operator'Class renames Last_Instance.Create;
 
    ---------
    -- Map --
@@ -166,6 +197,41 @@ package body Iterators.Root.Operators is
    begin
       This.Continue (No_Op);
    end No_Op;
+
+   ------------
+   -- Reduce --
+   ------------
+
+   package Reduce_Instance is new Impl_Reduce;
+   function Reduce (L : Iterator'Class; R : Reducer) return Any_Element
+                    renames Reduce_Instance.Reduce;
+   function Reduce (Initial   : Any_Element;
+                    Reduce_Fn : Reduce_Fn_Access)
+                    return Reducer
+   is
+      --  function Cast is new Ada.Unchecked_Conversion (
+   begin
+        return Reducer'(Initial   => Elem_Holders.To_Holder (Initial),
+                        Reduce_Fn => Reduce_Fn);
+   end Reduce;
+
+   ----------
+   -- Scan --
+   ----------
+
+   function Scan (Initial : Any_Element;
+                  Scan_Fn : not null access function (L, R : Any_Element)
+                  return Any_Element)
+                  return Operator'Class
+                  renames Operators.Scan;
+
+   ----------
+   -- Take --
+   ----------
+
+   package Take_Instance is new Impl_Take;
+   function Take (At_Most : Natural) return Operator'Class
+                  renames Take_Instance.Create;
 
    ------------------
    -- Set_Upstream --
@@ -192,9 +258,5 @@ package body Iterators.Root.Operators is
 --           end;
 --        end if;
 --     end Set_Upstream;
-
-   package Take_Instance is new Impl_Take;
-   function Take (At_Most : Natural) return Operator'Class
-                  renames Take_Instance.Create;
 
 end Iterators.Root.Operators;

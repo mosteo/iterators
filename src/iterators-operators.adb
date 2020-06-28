@@ -1,5 +1,6 @@
 with Iterators.Operators.Impl_Flat_Map;
 with Iterators.Operators.Impl_Map;
+with Iterators.Operators.Impl_Scan;
 
 package body Iterators.Operators is
 
@@ -79,19 +80,21 @@ package body Iterators.Operators is
       if This.Up.Is_Empty then
          This.Up := Upstream.To_Holder;
       else
-         raise Iterator_Error with "Attemptint to reparent operator";
---           declare
---              Parent : From.Iterator'Class renames This.Up.Reference.Element.all;
---           begin
---              if Parent in Operator'Class then
---              NOTE: this ceased working when Iterator was made Iterator itself
---              Might be workaroundable by overriding in Root.Operators.
---                 Operator'Class (Parent).Set_Upstream (Upstream);
---              else
---                 --  Root of chain reached
---                 This.Up := Upstream.To_Holder;
---              end if;
---           end;
+         --  raise Iterator_Error with "Attemptint to reparent operator";
+         --  MEGANOTE: this below in theory shouldn't work, but it does??????
+         --  It seems changes undone in commit b857dc4 allow this to work again.
+         declare
+            Parent : From.Iterator'Class renames This.Up.Reference.Element.all;
+         begin
+            if Parent in Operator'Class then
+            --  NOTE: this ceased working when Iterator was made Iterator itself
+            --  Might be workaroundable by overriding in Root.Operators.
+               Operator'Class (Parent).Set_Upstream (Upstream);
+            else
+               --  Root of chain reached
+               This.Up := Upstream.To_Holder;
+            end if;
+         end;
       end if;
    end Set_Upstream;
 
@@ -154,5 +157,17 @@ package body Iterators.Operators is
    begin
       This.Continue (Operators.Map (Map));
    end Map;
+
+   ----------
+   -- Scan --
+   ----------
+
+   package Scan_Instance is new Impl_Scan;
+   function Scan (Initial : Into.Any_Element;
+                  Scan_Fn : not null access function (L : Into.Any_Element;
+                                                      R : From.Any_Element)
+                                                      return Into.Any_Element)
+                  return Operator'Class
+   is (Scan_Instance.Create (Initial, Scan_Fn));
 
 end Iterators.Operators;

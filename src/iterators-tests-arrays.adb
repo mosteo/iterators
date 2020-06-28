@@ -53,4 +53,12 @@ begin
       end if;
    end loop;
 
+   --  Reduction
+   declare
+      function Add (L, R : Integer) return Integer is (Standard."+" (L, R));
+   begin
+      pragma Assert (Arrs.Const_Iter (RO)
+                     & Ints.Op.Reduce (0, Add'Unrestricted_Access) = 6);
+   end;
+
 end Iterators.Tests.Arrays;

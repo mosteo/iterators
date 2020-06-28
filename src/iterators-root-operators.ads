@@ -52,7 +52,9 @@ package Iterators.Root.Operators with Preelaborate is
    procedure Flat_Map (This : in out Chain;
                        Map : not null access
                         function (E : Any_Element)
-                                  return Iterator'Class);
+                       return Iterator'Class);
+
+   function Last return Operator'Class;
 
    function Map (Map : not null access
                    function (E : Any_Element) return Any_Element)
@@ -67,6 +69,11 @@ package Iterators.Root.Operators with Preelaborate is
    --  Does nothing.
 
    procedure No_Op (This : in out Chain);
+
+   function Scan (Initial : Any_Element;
+                  Scan_Fn : not null access function (L, R : Any_Element)
+                                                      return Any_Element)
+                  return Operator'Class;
 
    function Take (At_Most : Natural) return Operator'Class;
 
@@ -85,6 +92,16 @@ package Iterators.Root.Operators with Preelaborate is
    function Count (It : Iterator'Class) return Natural;
    function Count (L : Iterator'Class; R : Counter) return Natural;
 
+   type Reducer (<>) is private;
+   type Reduce_Fn_Access is
+     access function (L, R : Any_Element) return Any_Element;
+   function Reduce (L : Iterator'Class; R : Reducer) return Any_Element;
+   function Reduce (Initial   : Any_Element;
+                    Reduce_Fn : Reduce_Fn_Access)
+                    return Reducer;
+   --  Generic reduction, from a starting value and applying Reduce_Fn to each
+   --  incoming element.
+
    -------------
    -- Sources --
    -------------
@@ -98,9 +115,22 @@ package Iterators.Root.Operators with Preelaborate is
    -- Terminals --
    ---------------
 
+   type Const_Apply is access procedure (Element : Any_Element);
+   type Var_Apply   is access procedure (Element : in out Any_Element);
+   --  These named access types allow having two For_Each with the same name.
+   --  Otherwise, the "in out" is not enough to avoid the name clash.
+
    procedure For_Each
-     (It    : in out Iterator'Class;
-      Apply : access procedure (Element : in out Any_Element) := null);
+     (Iter  : Iterator'Class;
+      Apply : Const_Apply := null);
+
+   procedure For_Each
+     (Iter  : Iterator'Class;
+      Apply : Var_Apply := null);
+   --  Although Iter is mode "in", to allow direct application to a returned
+   --  chain (e.g., A & B), the actual writability depends on the root iterator
+   --  being created with Iter and not Const_Iter. Otherwise, this will be
+   --  detected at runtime.
 
    -------------
    -- Linking --
@@ -127,10 +157,19 @@ package Iterators.Root.Operators with Preelaborate is
                     R : List) return List
                     renames Collect;
 
+      function "&" (L : Iterator'Class;
+                    R : Reducer) return Any_Element
+                    renames Reduce;
+
    end Linking;
 
 private
 
    type Counter is null record;
+
+   type Reducer is record
+      Initial   : Elem_Holders.Holder;
+      Reduce_Fn : Reduce_Fn_Access;
+   end record;
 
 end Iterators.Root.Operators;
