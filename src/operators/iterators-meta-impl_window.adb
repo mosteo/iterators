@@ -7,6 +7,10 @@ package body Iterators.Meta.Impl_Window is
       Done       : Boolean := False;
    end record;
 
+   ----------
+   -- Next --
+   ----------
+
    overriding
    function Next (This : in out Operator) return Meta_Root.Cursor'Class is
 
@@ -15,6 +19,11 @@ package body Iterators.Meta.Impl_Window is
          This.Iter.Hold (This.List.Const_Iter);
          return Meta_Root.New_Const_Cursor (This.Iter.Get);
       end New_List_Iter;
+
+      New_Data : Boolean := False;
+      --  If no new data has been added to the window and upstream is
+      --  exhausted, we don't return values that were already returned, even
+      --  if the window has advanced.
 
    begin
       if This.Done then
@@ -37,18 +46,25 @@ package body Iterators.Meta.Impl_Window is
             Pos : constant Base_Root.Cursor'Class := This.Upstream.Next;
          begin
             if Pos.Is_Empty then
-               if This.List.Is_Empty then
-                  This.Done := True;
-                  return Meta_Root.New_Empty_Cursor;
-               else
-                  This.Done := True;
+
+               This.Done := True;
+
+               if New_Data then
                   return New_List_Iter;
+               else
+                  return Meta_Root.New_Empty_Cursor;
                end if;
+
             else -- There is at least one more element
+
+               New_Data := New_Data or True;
+
                This.List.Append (Pos.Get);
+
                if Natural (This.List.Length) = This.Size then
                   return New_List_Iter;
                end if;
+
             end if;
          end;
       end loop;

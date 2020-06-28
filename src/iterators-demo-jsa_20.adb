@@ -88,7 +88,7 @@ procedure Iterators.Demo.JSA_20 is
         (Text_IO.Lines ("file_avg_demo.txt")
          & Map (Value'Access)
          & Filter (Is_Positive'Access)
-         & Window (Size => Width, Skip => Width)
+         & Window (Size => Width, Skip => 1)
          & Flat_Map (Scan (0.0, "+"'Access)
                      & Last)
          & Map (Div'Access)
