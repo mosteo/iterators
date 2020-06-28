@@ -52,7 +52,9 @@ package Iterators.Root.Operators with Preelaborate is
    procedure Flat_Map (This : in out Chain;
                        Map : not null access
                         function (E : Any_Element)
-                                  return Iterator'Class);
+                       return Iterator'Class);
+
+   function Last return Operator'Class;
 
    function Map (Map : not null access
                    function (E : Any_Element) return Any_Element)
@@ -67,6 +69,11 @@ package Iterators.Root.Operators with Preelaborate is
    --  Does nothing.
 
    procedure No_Op (This : in out Chain);
+
+   function Scan (Initial : Any_Element;
+                  Scan_Fn : not null access function (L, R : Any_Element)
+                                                      return Any_Element)
+                  return Operator'Class;
 
    function Take (At_Most : Natural) return Operator'Class;
 

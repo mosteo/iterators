@@ -69,29 +69,28 @@ procedure Iterators.Demo.JSA_20 is
    ------------------
 
    procedure File_Average (Width : Positive := 3) is
-      use Std.Strings.Linking;
+      --  use Std.Strings.Linking;
       use Float2str.Linking;
       use Str2Float.Linking;
       use Float_Iters.Meta.Linking;
 
       use Float_Iters.Meta;
       use Float_Iters.Op;
+      --  use Std.Strings.Op;
 
       use Float2str;
       use Str2float;
 
-      function Sum (Iter : Float_Iters.Iterator'Class) return Float
-      is (Iter & Reduce (0.0, "+"'access));
-
       function Div (F : Float) return Float is (F / Float (Width));
    begin
       Std.Strings.Op.For_Each
-        (Std.Strings.Op.Just ("7") & "8" & "6" & "-1" & "12" & "15" & "-1"
-         --  Text_IO.Lines ("file_avg_demo.txt")
+        --  (Just ("7") & "8" & "6" & "-1" & "12" & "15" & "-1" & "18"
+        (Text_IO.Lines ("file_avg_demo.txt")
          & Map (Value'Access)
          & Filter (Is_Positive'Access)
          & Window (Size => Width, Skip => Width)
-         & Flat_Map (No_Op)
+         & Flat_Map (Scan (0.0, "+"'Access)
+                     & Last)
          & Map (Div'Access)
          & Map (Image'Access),
          GNAT.IO.Put_Line'Access);
@@ -101,5 +100,4 @@ begin
    Average;
    Top_Ten;
    File_Average;
-
 end Iterators.Demo.JSA_20;

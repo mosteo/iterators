@@ -53,6 +53,7 @@ begin
           OK => (1, 1, 3));
 
    --  For each
+
    declare
       Arr : aliased Number_Array := (1, 2, 3);
       procedure Nullify (Int : in out Integer) is
@@ -64,12 +65,37 @@ begin
       pragma Assert (Arr = (0, 0, 0));
    end;
 
+   --  Last
+
+   Check (Arrs.Const_Iter (A_1_3)
+          & Ints.Op.Last,
+          OK => (1 => 3));
+
+   Check (Arrs.Const_Iter (Empty)
+          & Ints.Op.Last,
+          OK => Empty);
+
    --  Map
+
    Check (Arrs.Const_Iter (A_1_3)
           & Ints.Op.Map (Double'Access),
           OK => (2, 4, 6));
 
+   --  Scan
+
+   Check (Arrs.Const_Iter (A_1_3)
+          & Ints.Op.Scan (0, Add'Access),
+          OK => (1, 3, 6));
+
+   --  Scan + Last
+
+   Check (Arrs.Const_Iter (A_1_3)
+          & Ints.Op.Scan (0, Add'Access)
+          & Ints.Op.Last,
+          OK => (1 => 6));
+
    --  Take
+
    Check (Arrs.Const_Iter (A_1_3)
           & Ints.Op.Take (2),
           OK => (1, 2));

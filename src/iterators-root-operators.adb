@@ -7,6 +7,7 @@ with Iterators.Root.Operators.Impl_Count;
 with Iterators.Root.Operators.Impl_Empty;
 with Iterators.Root.Operators.Impl_Filter;
 with Iterators.Root.Operators.Impl_Just;
+with Iterators.Root.Operators.Impl_Last;
 with Iterators.Root.Operators.Impl_No_Op;
 with Iterators.Root.Operators.Impl_Reduce;
 with Iterators.Root.Operators.Impl_Take;
@@ -168,6 +169,13 @@ package body Iterators.Root.Operators is
    function Just (Element : Any_Element) return Iterator'Class
                   is (Just_Instance.Create (Element));
 
+   ----------
+   -- Last --
+   ----------
+
+   package Last_Instance is new Impl_Last;
+   function Last return Operator'Class renames Last_Instance.Create;
+
    ---------
    -- Map --
    ---------
@@ -206,6 +214,16 @@ package body Iterators.Root.Operators is
         return Reducer'(Initial   => Elem_Holders.To_Holder (Initial),
                         Reduce_Fn => Reduce_Fn);
    end Reduce;
+
+   ----------
+   -- Scan --
+   ----------
+
+   function Scan (Initial : Any_Element;
+                  Scan_Fn : not null access function (L, R : Any_Element)
+                  return Any_Element)
+                  return Operator'Class
+                  renames Operators.Scan;
 
    ----------
    -- Take --

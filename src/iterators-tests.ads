@@ -35,6 +35,8 @@ package Iterators.Tests is
 
    --  Supporting subprograms:
 
+   function Add (L, R : Integer) return Integer is (L + R);
+
    procedure Check (It : Ints.Iterators.Iterator'Class;
                     Ok : Number_Array);
 

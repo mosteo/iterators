@@ -1,5 +1,6 @@
 with Iterators.Operators.Impl_Flat_Map;
 with Iterators.Operators.Impl_Map;
+with Iterators.Operators.Impl_Scan;
 
 package body Iterators.Operators is
 
@@ -156,5 +157,17 @@ package body Iterators.Operators is
    begin
       This.Continue (Operators.Map (Map));
    end Map;
+
+   ----------
+   -- Scan --
+   ----------
+
+   package Scan_Instance is new Impl_Scan;
+   function Scan (Initial : Into.Any_Element;
+                  Scan_Fn : not null access function (L : Into.Any_Element;
+                                                      R : From.Any_Element)
+                                                      return Into.Any_Element)
+                  return Operator'Class
+   is (Scan_Instance.Create (Initial, Scan_Fn));
 
 end Iterators.Operators;
