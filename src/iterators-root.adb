@@ -141,16 +141,27 @@ package body Iterators.Root is
    overriding
    function Next (This : in out List_Iterator) return Cursor'Class
    is
+
+      -----------------
+      -- Next_Cursor --
+      -----------------
+
+      function Next_Cursor return Cursor'Class
+      is (if This.Const then
+             New_Const_Cursor (This.Cont.Constant_Reference (This.Pos))
+          else
+             New_Cursor (This.Cont.Reference (This.Pos).Element.all));
+
    begin
       if not Lists.Has_Element (This.Pos) then
          return New_Empty_Cursor;
       end if;
 
-      if This.Const then
-         return New_Const_Cursor (This.Cont.Constant_Reference (This.Pos).Element.all);
-      else
-         return New_Cursor (This.Cont.Reference (This.Pos).Element.all);
-      end if;
+      return C : constant Cursor'Class := Next_Cursor do
+         if Lists.Has_Element (This.Pos) then
+            Lists.Next (This.Pos);
+         end if;
+      end return;
    end Next;
 
    function Const_Iter (This : List) return Iterator'Class

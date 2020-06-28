@@ -4,6 +4,7 @@ package body Iterators.Meta.Impl_Window is
       Size, Skip : Positive;
       List       : Base_Root.List;
       Iter       : Base_Root.Holder;
+      Done       : Boolean := False;
    end record;
 
    overriding
@@ -16,6 +17,9 @@ package body Iterators.Meta.Impl_Window is
       end New_List_Iter;
 
    begin
+      if This.Done then
+         return Meta_Root.New_Empty_Cursor;
+      end if;
 
       --  Prune list if just returned:
 
@@ -34,8 +38,10 @@ package body Iterators.Meta.Impl_Window is
          begin
             if Pos.Is_Empty then
                if This.List.Is_Empty then
+                  This.Done := True;
                   return Meta_Root.New_Empty_Cursor;
                else
+                  This.Done := True;
                   return New_List_Iter;
                end if;
             else -- There is at least one more element

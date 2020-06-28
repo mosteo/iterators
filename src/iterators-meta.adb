@@ -9,9 +9,7 @@ package body Iterators.Meta is
 
    package Flatmap_Instance is new Impl_Flatmap;
 
-   function Flat_Map (Map : not null access
-                        function (Iter : Base_Root.Iterator'Class)
-                                  return Base_Root.Any_Element)
+   function Flat_Map (Map : Base_Root.Iterator'Class := Base_Operators.No_Op)
                       return Meta2iter.Operator'Class
                       renames Flatmap_Instance.Create;
 

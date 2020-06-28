@@ -91,7 +91,7 @@ procedure Iterators.Demo.JSA_20 is
          & Map (Value'Access)
          & Filter (Is_Positive'Access)
          & Window (Size => Width, Skip => Width)
-         & Flat_Map (Sum'Access)
+         & Flat_Map (No_Op)
          & Map (Div'Access)
          & Map (Image'Access),
          GNAT.IO.Put_Line'Access);
@@ -100,6 +100,6 @@ procedure Iterators.Demo.JSA_20 is
 begin
    Average;
    Top_Ten;
-   --  File_Average;
+   File_Average;
 
 end Iterators.Demo.JSA_20;

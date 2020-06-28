@@ -16,10 +16,10 @@ package Iterators.Meta with Preelaborate is
 
    subtype Meta_Operator is Iter2meta.Operator;
 
-   function Flat_Map (Map : not null access
-                       function (Iter : Base_Root.Iterator'Class)
-                                 return Base_Root.Any_Element)
-                      return Meta2iter.Operator'Class;
+   --  function Flat_Map (Map : not null access
+   --                      function (Iter : Base_Root.Iterator'Class)
+   --                                return Base_Root.Any_Element)
+   --                     return Meta2iter.Operator'Class;
    --  Flatten a sequence of iterators, by applying a function to each
    --  iterator and making the result available as part of a single iterator
    --  of elements. For example, it can flatten a sequence created with Window.
@@ -29,6 +29,12 @@ package Iterators.Meta with Preelaborate is
    --  (so more elements than one can be obtained from each meta_iter). In this
    --  case, a default value for the function could be provided, which just
    --  lets through all elements.
+
+   function Flat_Map (Map : Base_Root.Iterator'Class := Base_Operators.No_Op)
+                      return Meta2iter.Operator'Class;
+   --  Map is a partial chain that will be attached to the incoming individual
+   --  observables. Its results will be emitted; by default all are flattened
+   --  using No_Op into a single sequence.
 
    function Window (Size : Positive;
                     Skip : Natural := 0)
