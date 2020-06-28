@@ -79,19 +79,21 @@ package body Iterators.Operators is
       if This.Up.Is_Empty then
          This.Up := Upstream.To_Holder;
       else
-         raise Iterator_Error with "Attemptint to reparent operator";
---           declare
---              Parent : From.Iterator'Class renames This.Up.Reference.Element.all;
---           begin
---              if Parent in Operator'Class then
---              NOTE: this ceased working when Iterator was made Iterator itself
---              Might be workaroundable by overriding in Root.Operators.
---                 Operator'Class (Parent).Set_Upstream (Upstream);
---              else
---                 --  Root of chain reached
---                 This.Up := Upstream.To_Holder;
---              end if;
---           end;
+         --  raise Iterator_Error with "Attemptint to reparent operator";
+         --  MEGANOTE: this below in theory shouldn't work, but it does??????
+         --  It seems changes undone in commit b857dc4 allow this to work again.
+         declare
+            Parent : From.Iterator'Class renames This.Up.Reference.Element.all;
+         begin
+            if Parent in Operator'Class then
+            --  NOTE: this ceased working when Iterator was made Iterator itself
+            --  Might be workaroundable by overriding in Root.Operators.
+               Operator'Class (Parent).Set_Upstream (Upstream);
+            else
+               --  Root of chain reached
+               This.Up := Upstream.To_Holder;
+            end if;
+         end;
       end if;
    end Set_Upstream;
 
