@@ -17,6 +17,12 @@ package Iterators.Root.Operators with Preelaborate is
    procedure Continue (This : in out Chain;
                        Last :        Operators.Operator'Class);
 
+   --  procedure Partial (This  : in out Chain;
+   --                     First          Operator'Class);
+   --  Start a partial chain with no source iterator. This partial chain will
+   --  have to be somehow assembled into a complete chain to be usable (e.g.,
+   --  as argument to Flat_Map).
+
    overriding
    function Next (This : in out Chain) return Cursor'Class;
 

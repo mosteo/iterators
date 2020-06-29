@@ -76,6 +76,16 @@ package Iterators.Operators with Preelaborate is
    --  This presumes that This already contains a chain, and Last is going
    --  to become the bottom of the chain, stored in this operator.
 
+   --  procedure Partial (This  : in out Chain;
+   --                     First :        From.Iterator'Class);
+   --  Start a partial chain with no source iterator. This partial chain will
+   --  have to be somehow assembled into a complete chain to be usable (e.g.,
+   --  as argument to Flat_Map).
+
+   procedure For_Each
+     (This  : in out Chain;
+      Apply : access procedure (Element : Into.Any_Element));
+
    --  Support functions, not normally needed for use
 
    function First (This : in out Chain) return From.Iterator_Reference
@@ -84,6 +94,12 @@ package Iterators.Operators with Preelaborate is
    function Has_First (This : Chain) return Boolean;
 
    function Has_Last (This : Chain) return Boolean;
+
+   function Last (This : in out Chain) return Into.Iterator_Reference
+     with Pre => This.Has_Last;
+
+   function As_Iterator (This : in out Chain) return Into.Iterator_Reference
+                         renames Last;
 
    ---------------
    -- Operators --

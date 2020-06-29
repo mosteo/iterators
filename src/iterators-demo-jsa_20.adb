@@ -98,6 +98,42 @@ procedure Iterators.Demo.JSA_20 is
          GNAT.IO.Put_Line'Access);            --  Print running average
    end File_Running_Average;
 
+   -------------------------------------
+   -- File_Running_Average_Imperative --
+   -------------------------------------
+   --  Alternative using the Chain type instead of "&" concatenators
+   procedure File_Running_Average_Imperative (Width : Positive := 3) is
+      S2F : Str2Float.Chain;
+      Flt : Float_Iters.Operators.Chain;
+      F2M : Float_Iters.Meta.Chain_To_Meta;
+      M2F : Float_Iters.Meta.Chain_From_Meta;
+      Sum : Float_Iters.Operators.Chain;
+      Avg : Float_Iters.Operators.Chain;
+      F2S : Float2Str.Chain;
+
+      use Float_Iters.Op;
+
+      function Div (F : Float) return Float is (F / Float (Width));
+   begin
+      S2F.Start (Text_IO.Lines ("file_avg_demo.txt"));
+      S2F.Map (Value'Access);
+      Flt.Resume (S2F);
+      Flt.Filter (Is_Positive'Access);
+      F2M.Resume (Flt);
+      F2M.Window (Size => Width, Skip => 1);
+      M2F.Resume (F2M);
+
+      Sum.Start (Scan (0.0, "+"'Access));
+      Sum.Continue (Last);
+      M2F.Flat_Map (Sum.As_Iterator);
+
+      Avg.Resume (M2F);
+      Avg.Map (Div'Access);
+      F2S.Resume (Avg);
+      F2S.Map (Image'Access);
+      F2S.For_Each (GNAT.IO.Put_Line'Access);
+   end File_Running_Average_Imperative;
+
    ------------------------------------
    -- File_Running_Average_Classical --
    ------------------------------------
@@ -152,9 +188,12 @@ begin
    Average;
    Top_Ten;
 
-   GNAT.IO.Put_Line ("Iterators version");
+   GNAT.IO.Put_Line ("Iterators functional version");
    File_Running_Average;
 
-   GNAT.IO.Put_Line ("Classical version");
+   GNAT.IO.Put_Line ("Iterators imperative version");
+   File_Running_Average_Imperative;
+
+   GNAT.IO.Put_Line ("Classical no-iterators version");
    File_Running_Average_Classical;
 end Iterators.Demo.JSA_20;

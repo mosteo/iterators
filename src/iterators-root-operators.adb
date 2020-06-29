@@ -198,6 +198,16 @@ package body Iterators.Root.Operators is
       This.Continue (No_Op);
    end No_Op;
 
+   -------------
+   -- Partial --
+   -------------
+
+   --  procedure Partial (This  : in out Chain;
+   --                     First          Operator'Class)
+   --  is
+   --  begin
+   --  end Partial;
+
    ------------
    -- Reduce --
    ------------

@@ -43,6 +43,25 @@ package Iterators.Meta with Preelaborate is
    --  forward M=Skip items on the original sequence and repeat. When Skip =
    --  0, Size will be used instead.
 
+   -----------
+   -- Chain --
+   -----------
+
+   type Chain_From_Meta is new Meta2iter.Chain with null record;
+
+   procedure Flat_Map (This : in out Chain_From_Meta;
+                       Map  : Base_Root.Iterator'Class := Base_Operators.No_Op);
+
+   type Chain_To_Meta is new Iter2meta.Chain with null record;
+
+   procedure Window (This : in out Chain_To_Meta;
+                     Size : Positive;
+                     Skip : Natural := 0);
+
+   -------------
+   -- Linking --
+   -------------
+
    package Linking is
 
       function "&" (L : Base_Root.Iterator'Class;

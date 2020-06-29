@@ -13,6 +13,13 @@ package body Iterators.Meta is
                       return Meta2iter.Operator'Class
                       renames Flatmap_Instance.Create;
 
+   procedure Flat_Map (This : in out Chain_From_Meta;
+                       Map  : Base_Root.Iterator'Class := Base_Operators.No_Op)
+   is
+   begin
+      This.Continue (Flat_Map (Map));
+   end Flat_Map;
+
    ------------
    -- Window --
    ------------
@@ -26,5 +33,13 @@ package body Iterators.Meta is
                                (if Skip = 0
                                 then Size
                                 else Skip)));
+
+   procedure Window (This : in out Chain_To_Meta;
+                     Size : Positive;
+                     Skip : Natural := 0)
+   is
+   begin
+      This.Continue (Window (Size, Skip));
+   end Window;
 
 end Iterators.Meta;

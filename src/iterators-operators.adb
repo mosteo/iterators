@@ -63,6 +63,13 @@ package body Iterators.Operators is
      (This.Up.Is_Valid);
 
    ----------
+   -- Last --
+   ----------
+
+   function Last (This : in out Chain) return Into.Iterator_Reference is
+     (This.Last.As_Iterator);
+
+   ----------
    -- Next --
    ----------
 
@@ -120,6 +127,20 @@ package body Iterators.Operators is
    -------------------------------------------------------------------------
    -- OPERATORS ------------------------------------------------------------
    -------------------------------------------------------------------------
+
+   --------------
+   -- For_Each --
+   --------------
+
+   procedure For_Each
+     (This  : in out Chain;
+      Apply : access procedure (Element : Into.Any_Element))
+   is
+   begin
+      for Elem of This.Last.Get loop
+         Apply (Elem);
+      end loop;
+   end For_Each;
 
   --------------
    -- Flat_Map --
