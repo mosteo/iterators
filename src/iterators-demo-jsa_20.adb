@@ -66,11 +66,11 @@ procedure Iterators.Demo.JSA_20 is
 
    end Top_Ten;
 
-   --------------------------
-   -- File_Running_Average --
-   --------------------------
+   ---------------------------
+   -- Print_Running_Average --
+   ---------------------------
 
-   procedure File_Running_Average (Width : Positive := 3) is
+   procedure Print_Running_Average (Width : Positive := 3) is
       --  use Std.Strings.Linking;
       use Float2str.Linking;
       use Str2Float.Linking;
@@ -96,13 +96,13 @@ procedure Iterators.Demo.JSA_20 is
          & Map (Div'Access)                   --  Divide by window size
          & Map (Image'Access),                --  Back to string
          GNAT.IO.Put_Line'Access);            --  Print running average
-   end File_Running_Average;
+   end Print_Running_Average;
 
-   -------------------------------------
-   -- File_Running_Average_Imperative --
-   -------------------------------------
+   --------------------------------------
+   -- Print_Running_Average_Imperative --
+   --------------------------------------
    --  Alternative using the Chain type instead of "&" concatenators
-   procedure File_Running_Average_Imperative (Width : Positive := 3) is
+   procedure Print_Running_Average_Imperative (Width : Positive := 3) is
       S2F : Str2Float.Chain;
       Flt : Float_Iters.Operators.Chain;
       F2M : Float_Iters.Meta.Chain_To_Meta;
@@ -132,13 +132,13 @@ procedure Iterators.Demo.JSA_20 is
       F2S.Resume (Avg);
       F2S.Map (Image'Access);
       F2S.For_Each (GNAT.IO.Put_Line'Access);
-   end File_Running_Average_Imperative;
+   end Print_Running_Average_Imperative;
 
-   ------------------------------------
-   -- File_Running_Average_Classical --
-   ------------------------------------
+   -------------------------------------
+   -- Print_Running_Average_Classical --
+   -------------------------------------
    --  Functionally equivalent classical implementation
-   procedure File_Running_Average_Classical (Width : Positive := 3) is
+   procedure Print_Running_Average_Classical (Width : Positive := 3) is
       use Ada.Text_IO;
       File : File_Type;
       Window : Float_Iters.Iterators.List;
@@ -182,18 +182,18 @@ procedure Iterators.Demo.JSA_20 is
       end loop;
 
       Close (File);
-   end File_Running_Average_Classical;
+   end Print_Running_Average_Classical;
 
 begin
    Average;
    Top_Ten;
 
    GNAT.IO.Put_Line ("Iterators functional version");
-   File_Running_Average;
+   Print_Running_Average;
 
    GNAT.IO.Put_Line ("Iterators imperative version");
-   File_Running_Average_Imperative;
+   Print_Running_Average_Imperative;
 
    GNAT.IO.Put_Line ("Classical no-iterators version");
-   File_Running_Average_Classical;
+   Print_Running_Average_Classical;
 end Iterators.Demo.JSA_20;

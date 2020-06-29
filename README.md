@@ -1,7 +1,12 @@
 [![Linux CI](https://github.com/mosteo/iterators/workflows/CI%20linux/badge.svg)](https://github.com/mosteo/iterators/actions?workflow=CI+linux)
 
 # Iterators
-Chainable functional iterators for Ada 2012.
+Chainable functional iterators for Ada 2012. Requires GNAT Community 2020.
+
+Clone with submodules (`git clone URL --init`).
+
+Compile with `gprbuild -p -P iterators_dev`. Compilation takes a long (long) time due
+to the heavy use of generics.
 
 Check the tests in `src/iterators-tests-*` for more examples of use.
 
