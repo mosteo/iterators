@@ -14,6 +14,8 @@ package body Iterators.Text_IO is
    type Iterator is new Std.Strings.Iterator with record
       File : File_Access;
       Line : String_Access;
+      --  TODO: these pointers should be refcounted, in case the file is not
+      --  read in its entirety.
    end record;
 
    ----------
@@ -28,6 +30,7 @@ package body Iterators.Text_IO is
       if This.File = null then
          return Std.Strings.Iterators.New_Empty_Cursor;
       elsif End_Of_File (This.File.all) then
+         Close (This.File.all);
          Free (This.File);
          Free (This.Line);
          return Std.Strings.Iterators.New_Empty_Cursor;

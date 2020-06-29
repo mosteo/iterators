@@ -1,4 +1,5 @@
 with Ada.Numerics.Float_Random;
+with Ada.Text_IO;
 
 with Iterators.Std;
 with Iterators.Text_IO;
@@ -21,6 +22,7 @@ procedure Iterators.Demo.JSA_20 is
    procedure Average is
       Average : Float := 0.0;
    begin
+
       --  Manually compute an average
 
       for I in Data'Range loop
@@ -31,9 +33,9 @@ procedure Iterators.Demo.JSA_20 is
       --  same average using Reduce
 
       pragma Assert (Average =
-                     (Float_Array_Iters.Const_Iter (Data)
+                       (Float_Array_Iters.Const_Iter (Data)
                         & Float_Iters.Op.Reduce (0.0, "+"'Access))
-                     / Float (Data'Length));
+                        / Float (Data'Length));
    end Average;
 
    -------------
@@ -55,7 +57,7 @@ procedure Iterators.Demo.JSA_20 is
          Set_Winner (Element);
       end loop;
 
-      --  For_Each loop
+      --  Alternative: For_Each loop
 
       Float_Iters.Op.For_Each (Float_Array_Iters.Iter (Data)
                                & Float_Iters.Op.Filter (Is_Candidate'Access)
@@ -64,11 +66,11 @@ procedure Iterators.Demo.JSA_20 is
 
    end Top_Ten;
 
-   ------------------
-   -- File_Average --
-   ------------------
+   --------------------------
+   -- File_Running_Average --
+   --------------------------
 
-   procedure File_Average (Width : Positive := 3) is
+   procedure File_Running_Average (Width : Positive := 3) is
       --  use Std.Strings.Linking;
       use Float2str.Linking;
       use Str2Float.Linking;
@@ -85,19 +87,74 @@ procedure Iterators.Demo.JSA_20 is
    begin
       Std.Strings.Op.For_Each
         --  (Just ("7") & "8" & "6" & "-1" & "12" & "15" & "-1" & "18"
-        (Text_IO.Lines ("file_avg_demo.txt")
-         & Map (Value'Access)
-         & Filter (Is_Positive'Access)
-         & Window (Size => Width, Skip => 1)
-         & Flat_Map (Scan (0.0, "+"'Access)
-                     & Last)
-         & Map (Div'Access)
-         & Map (Image'Access),
-         GNAT.IO.Put_Line'Access);
-   end File_Average;
+        (Text_IO.Lines ("file_avg_demo.txt")  --  For each line
+         & Map (Value'Access)                 --  Convert to Float
+         & Filter (Is_Positive'Access)        --  Skip "NaN"
+         & Window (Size => Width, Skip => 1)  --  Group into new iterator
+         & Flat_Map (Scan (0.0, "+"'Access)   --     Sum subiterator
+                     & Last)                  --     Take last (total sum)
+         & Map (Div'Access)                   --  Divide by window size
+         & Map (Image'Access),                --  Back to string
+         GNAT.IO.Put_Line'Access);            --  Print running average
+   end File_Running_Average;
+
+   ------------------------------------
+   -- File_Running_Average_Classical --
+   ------------------------------------
+   --  Functionally equivalent classical implementation
+   procedure File_Running_Average_Classical (Width : Positive := 3) is
+      use Ada.Text_IO;
+      File : File_Type;
+      Window : Float_Iters.Iterators.List;
+      --  Any list-like type would do; we use this one that's already available
+      --  instead of instantiating a new one.
+   begin
+      Open (File, In_File, "file_avg_demo.txt");
+
+      while not End_Of_File (File) loop
+         declare
+            Line : constant String := Get_Line (File);
+            Num  : constant Float  := Float'Value (Line);
+         begin
+            --  Skip "NaN"
+            if Num >= 0.0 then
+               --  Add new sample
+               Window.Append (Num);
+               --  Prune the window
+               if Natural (Window.Length) > Width then
+                  Window.Delete_First;
+               end if;
+               --  New averaged value?
+               if Natural (Window.Length) = Width then
+                  declare
+                     Total : Float := 0.0;
+                  begin
+                     --  Compute total. This could be done more efficiently
+                     --  by keeping a running total. However, that might have
+                     --  numerical implications due to unneeded substractions,
+                     --  would not be functionally equivalent to the Iterator
+                     --  version, and would be less self-evident.
+                     for Sample of Window loop
+                        Total := Total + Sample;
+                     end loop;
+                     --  Write the new running average value
+                     GNAT.IO.Put_Line (Float'Image (Total / Float (Width)));
+                  end;
+               end if;
+            end if;
+         end;
+      end loop;
+
+      Close (File);
+   end File_Running_Average_Classical;
 
 begin
    Average;
    Top_Ten;
-   File_Average;
+
+   GNAT.IO.Put_Line ("Iterators version");
+   File_Running_Average;
+
+   GNAT.IO.Put_Line ("Classical version");
+   File_Running_Average_Classical;
 end Iterators.Demo.JSA_20;
