@@ -1,12 +1,14 @@
 name = "iterators"
-description = "Shiny new project"
-version = "0.0.0"
+description = "Functional iterators a la Rust"
+version = "0.1.0"
 
 authors = ["Alejandro R. Mosteo"]
 maintainers = ["Alejandro R. Mosteo <alejandro@mosteo.com>"]
 maintainers-logins = ["mosteo"]
+website = "https://github.com/mosteo/iterators"
 
-executables = ["iterators"]
+licenses = ["LGPL 3.0"]
+tags = ["iterators", "functional"]
 
 [[depends-on]]
 aaa = "~0.2.1"
