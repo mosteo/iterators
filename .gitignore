@@ -5,6 +5,7 @@
 *-loc.xml
 
 alire/
+alire.lock
 bin
 gnatinspect.*
 lib

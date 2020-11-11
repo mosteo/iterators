@@ -12,3 +12,4 @@ tags = ["iterators", "functional"]
 
 [[depends-on]]
 aaa = "~0.2.1"
+gnat = ">=10"
