@@ -1,4 +1,3 @@
-with Ada.Text_IO;
 with Ada.Unchecked_Deallocation;
 
 package body Iterators.Text_IO is
@@ -61,5 +60,83 @@ package body Iterators.Text_IO is
          end;
       end return;
    end Lines;
+
+   -------------------------
+   -- Ada iterator things --
+   -------------------------
+
+   --------------
+   -- Finalize --
+   --------------
+
+   overriding procedure Finalize (This : in out Ada_Iterator) is
+   begin
+      if Is_Open (This.File) then
+         Close (This.File);
+      end if;
+   end Finalize;
+
+   -----------------
+   -- Has_Element --
+   -----------------
+
+   function Has_Element (Cursor : Ada_Cursor) return Boolean
+   is (not Cursor.EOF);
+
+   -----------
+   -- Lines --
+   -----------
+
+   function Get_Lines (File_Name : String) return Ada_Iterator is
+   begin
+      return This : Ada_Iterator (File_Name'Length) do
+         This.Name := File_Name;
+         Open (This.File, In_File, File_Name);
+      end return;
+   end Get_Lines;
+
+   -----------
+   -- First --
+   -----------
+
+   overriding function First (This : Ada_Iterator) return Ada_Cursor is
+   begin
+      if End_Of_File (This.File) then
+         return (EOF => True, Line => Null_Unbounded_String);
+      else
+         declare
+            Line : constant String := Get_Line (This.File);
+         begin
+            return (EOF => False, Line => To_Unbounded_String (Line));
+         end;
+      end if;
+   end First;
+
+   overriding function Next
+     (This     : Ada_Iterator;
+      Position : Ada_Cursor) return Ada_Cursor
+   is (if Position.EOF
+       then raise Use_Error with "EOF already reached"
+       else This.First);
+
+   -------------
+   -- Element --
+   -------------
+
+   function Element (This : aliased Ada_Iterator'Class;
+                     Pos  : Ada_Cursor) return String
+   is (To_String (Pos.Line));
+
+   -------------
+   -- Iterate --
+   -------------
+
+   function Iterate (This : aliased Ada_Iterator)
+                     return Ada_Iterator_Interfaces.Forward_Iterator'Class
+   is
+   begin
+      This'Unrestricted_Access.Finalize;
+      return Get_Lines (This.Name);
+   end Iterate;
 
 end Iterators.Text_IO;

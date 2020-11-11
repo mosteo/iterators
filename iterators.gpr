@@ -14,7 +14,11 @@ project Iterators is
 
    package Builder renames Aaa.Builder;
 
-   package Compiler renames Aaa.Compiler;
+   package Compiler is
+      for Switches ("ada") use ("-gnatVa", "-gnatwae", "-g", "-O2",
+                                "-gnata", "-gnato", "-fstack-check",
+                                "-gnat2020", "-gnatx");
+   end Compiler;
 
    package Binder renames Aaa.Binder;
 

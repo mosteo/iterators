@@ -89,7 +89,7 @@ procedure Iterators.Demo.JSA_20 is
         --  (Just ("7") & "8" & "6" & "-1" & "12" & "15" & "-1" & "18"
         (Text_IO.Lines ("file_avg_demo.txt")  --  For each line
          & Map (Value'Access)                 --  Convert to Float
-         & Filter (Is_Positive'Access)        --  Skip "NaN"
+         & Filter (Is_Positive'Access)        --  Skip negative numbers
          & Window (Size => Width, Skip => 1)  --  Group into new iterator
          & Flat_Map (Scan (0.0, "+"'Access)   --     Sum subiterator
                      & Last)                  --     Take last (total sum)
@@ -152,7 +152,7 @@ procedure Iterators.Demo.JSA_20 is
             Line : constant String := Get_Line (File);
             Num  : constant Float  := Float'Value (Line);
          begin
-            --  Skip "NaN"
+            --  Skip negative numbers, used to signal invalid samples
             if Num >= 0.0 then
                --  Add new sample
                Window.Append (Num);
@@ -184,6 +184,52 @@ procedure Iterators.Demo.JSA_20 is
       Close (File);
    end Print_Running_Average_Classical;
 
+   -----------------------------------
+   -- Print_Running_Average_Ada202x --
+   -----------------------------------
+
+   procedure Print_Running_Average_Ada202x (Width : Positive := 3) is
+      Window : Float_Iters.Iterators.List;
+      --  Any list-like type would do; we use this one that's already available
+      --  instead of instantiating a new one.
+   begin
+      for Line of Text_IO.Get_Lines ("file_avg_demo.txt") loop
+         -- We would want to use a "when Float'Value (Line) >= 0" filter in the
+         -- previous line, which is alas not yet implemented by GNAT.
+
+         declare
+            Num  : constant Float  := Float'Value (Line);
+         begin
+            --  Skip negative numbers, used to signal invalid samples
+            if Num >= 0.0 then
+               --  Add new sample
+               Window.Append (Num);
+               --  Prune the window
+               if Natural (Window.Length) > Width then
+                  Window.Delete_First;
+               end if;
+               --  New averaged value?
+               if Natural (Window.Length) = Width then
+                  declare
+                     Total : Float := 0.0;
+                  begin
+                     --  Compute total. This could be done more efficiently
+                     --  by keeping a running total. However, that might have
+                     --  numerical implications due to unneeded substractions,
+                     --  would not be functionally equivalent to the Iterator
+                     --  version, and would be less self-evident.
+                     for Sample of Window loop
+                        Total := Total + Sample;
+                     end loop;
+                     --  Write the new running average value
+                     GNAT.IO.Put_Line (Float'Image (Total / Float (Width)));
+                  end;
+               end if;
+            end if;
+         end;
+      end loop;
+   end Print_Running_Average_Ada202x;
+
 begin
    Average;
    Top_Ten;
@@ -196,4 +242,8 @@ begin
 
    GNAT.IO.Put_Line ("Classical no-iterators version");
    Print_Running_Average_Classical;
+
+   GNAT.IO.Put_Line ("Ada 202x iterators version");
+   Print_Running_Average_Ada202x;
+
 end Iterators.Demo.JSA_20;
