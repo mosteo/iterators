@@ -1,12 +1,13 @@
-[![Linux CI](https://github.com/mosteo/iterators/workflows/CI%20linux/badge.svg)](https://github.com/mosteo/iterators/actions?workflow=CI+linux)
+[![Build](https://github.com/mosteo/iterators/workflows/CI%20linux/badge.svg)](https://github.com/mosteo/iterators/actions?workflow=CI+linux)
+[![Alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/iterators.json)](https://alire.ada.dev/crates/iterators.html)
 
 # Iterators
 Chainable functional iterators for Ada 2012. Requires GNAT Community 2020.
 
-Clone with submodules (`git clone URL --init`).
-
-Compile with `gprbuild -p -P iterators_dev`. Compilation takes a long (long) time due
+Clone with submodules (`git clone URL --init`). Compile with `gprbuild -p -P iterators_dev`. Compilation takes a long (long) time due
 to the heavy use of generics.
+
+Alternatively, build with `alr build`.
 
 Check the tests in `src/iterators-tests-*` for more examples of use.
 

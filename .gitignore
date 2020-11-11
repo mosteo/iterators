@@ -4,6 +4,7 @@
 *.o
 *-loc.xml
 
+alire/
 bin
 gnatinspect.*
 lib
