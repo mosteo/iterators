@@ -2,7 +2,7 @@
 [![Alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/iterators.json)](https://alire.ada.dev/crates/iterators.html)
 
 # Iterators
-Chainable functional iterators for Ada 2012. Requires GNAT Community 2020.
+Chainable functional iterators for Ada 2012. Requires GNAT Community 2020 or GNAT FSF 10.
 
 Clone with submodules (`git clone URL --init`). Compile with `gprbuild -p -P iterators_dev`. Compilation takes a long (long) time due
 to the heavy use of generics.
