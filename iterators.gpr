@@ -12,14 +12,14 @@ project Iterators is
                  "iterators-tests-violations.adb"
                 );
 
-   package Builder renames Aaa.Builder;
-
    package Compiler is
       for Switches ("ada") use ("-gnatVa", "-gnatwae", "-g", "-O2",
                                 "-gnata", "-gnato", "-fstack-check",
                                 "-gnat2020", "-gnatx");
    end Compiler;
 
-   package Binder renames Aaa.Binder;
+   package Binder is
+      for Switches ("Ada") use ("-Es"); --  Symbolic traceback
+   end Binder;
 
 end Iterators;
