@@ -1,0 +1,17 @@
+name = "demos"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+authors = ["Alejandro R. Mosteo"]
+maintainers = ["Alejandro R. Mosteo <alejandro@mosteo.com>"]
+maintainers-logins = ["mosteo"]
+
+executables = ["iterators-demo-jsa_20",
+               "iterators-tests-main",
+               "iterators-tests-violations"]
+
+[configuration]
+disabled = true
+
+[[pins]]
+iterators = { path = ".." }

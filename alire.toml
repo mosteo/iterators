@@ -1,15 +1,18 @@
 name = "iterators"
 description = "Functional iterators a la Rust"
-version = "0.1.0"
+version = "0.2.0"
 
 authors = ["Alejandro R. Mosteo"]
 maintainers = ["Alejandro R. Mosteo <alejandro@mosteo.com>"]
 maintainers-logins = ["mosteo"]
 website = "https://github.com/mosteo/iterators"
 
-licenses = ["LGPL 3.0"]
+licenses = "LGPL-3.0-only"
 tags = ["iterators", "functional"]
+
+[configuration]
+disabled = true
 
 [[depends-on]]
 aaa = "~0.2.1"
-gnat = "^10"
+gnat = "^10"  # gnat 11 is causing many new errors, migration pending
